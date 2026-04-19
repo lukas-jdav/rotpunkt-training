@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JDAV Aachen – Rotpunkt-Trainingskonzept</title>
+<script>(function(){var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');})();</script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -1083,7 +1084,16 @@
   em { font-style: italic; }
 
   /* ── AUTH UI ── */
-  .header-right { align-self: center; }
+  .header-right { align-self: center; display: flex; align-items: center; gap: 10px; }
+
+  /* ── THEME TOGGLE ── */
+  .theme-btn {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    border: 1px solid var(--gray-200); background: white; color: var(--gray-600);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  .theme-btn:hover { background: var(--gray-50); }
   .auth-signin-btn {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 9px 16px; border-radius: 8px;
@@ -1116,6 +1126,54 @@
   }
   .auth-signout-btn:hover { background: var(--gray-50); }
   @media (max-width: 600px) { .auth-name { display: none; } .auth-sync { display: none; } }
+
+  /* ── DARK MODE ── */
+  [data-theme="dark"] {
+    color-scheme: dark;
+    --gray-50:  #0F1117;
+    --gray-100: #181C27;
+    --gray-200: #272C3C;
+    --gray-300: #373D52;
+    --gray-400: #6B7280;
+    --gray-600: #CDD0D9;
+    --gray-800: #F1F3F8;
+    --dav-green-light: #091E14;
+    --dav-green-border: #175430;
+    --accent-light: #200C06;
+    --accent-border: #5C1A0D;
+    --yellow-light: #1A1206;
+    --blue-light: #081629;
+  }
+  [data-theme="dark"] body { background: var(--gray-50); color: var(--gray-800); }
+  [data-theme="dark"] .info-block,
+  [data-theme="dark"] .tracker-card,
+  [data-theme="dark"] .collapsible-section,
+  [data-theme="dark"] .grade-card,
+  [data-theme="dark"] .metric-card,
+  [data-theme="dark"] .route-table-shell { background: var(--gray-100); border-color: var(--gray-200); }
+  [data-theme="dark"] .collapsible-section summary,
+  [data-theme="dark"] .route-table-head { background: var(--gray-100); }
+  [data-theme="dark"] .field-group input,
+  [data-theme="dark"] .field-group select,
+  [data-theme="dark"] .field-group textarea,
+  [data-theme="dark"] .route-toolbar input,
+  [data-theme="dark"] .route-toolbar select {
+    background: var(--gray-100); color: var(--gray-800); border-color: var(--gray-200);
+  }
+  [data-theme="dark"] .route-row-open    { background: #11141B; }
+  [data-theme="dark"] .route-row-toprope { background: #0E141C; }
+  [data-theme="dark"] .route-row-flash   { background: #160F08; }
+  [data-theme="dark"] .route-row-rotpunkt { background: #0C150D; }
+  [data-theme="dark"] .route-quick-toggle { background: var(--gray-100); border-color: var(--gray-200); }
+  [data-theme="dark"] .badge-open { color: #FBBD23; border-color: #5A3E08; }
+  [data-theme="dark"] .block-yellow { border-color: #5A3E08; }
+  [data-theme="dark"] .block-blue  { border-color: #1A3D6A; }
+  [data-theme="dark"] .auth-signin-btn,
+  [data-theme="dark"] .auth-signout-btn,
+  [data-theme="dark"] .theme-btn { background: var(--gray-100); border-color: var(--gray-200); color: var(--gray-600); }
+  [data-theme="dark"] .auth-signin-btn:hover,
+  [data-theme="dark"] .auth-signout-btn:hover,
+  [data-theme="dark"] .theme-btn:hover { background: var(--gray-200); }
 </style>
 </head>
 <body>
@@ -1123,11 +1181,14 @@
 <!-- HEADER -->
 <div class="header">
   <div class="header-left">
-    <div class="org-tag">Sektion Aachen · DAV Leistungsgruppe</div>
-    <h1>Sektion Aachen · DAV Leistungsgruppe</h1>
+    <div class="org-tag">Sektion Aachen · JDAV Leistungsgruppe</div>
+    <h1>Rotpunkt-Trainingskonzept</h1>
     <div class="header-meta">Ergänzendes Langzeit-Konzept · Altersklassen U9 – U17</div>
   </div>
-  <div class="header-right" id="auth-ui"></div>
+  <div class="header-right">
+    <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()" title="Dark Mode umschalten" aria-label="Dark Mode umschalten"></button>
+    <div id="auth-ui"></div>
+  </div>
 </div>
 
 <!-- TABS -->
@@ -1661,7 +1722,7 @@
 
 <!-- FOOTER -->
 <div class="footer">
-  <span>Sektion Aachen · DAV Leistungsgruppe</span>
+  <span>Sektion Aachen · JDAV Leistungsgruppe</span>
   <span>Konzept: Andi &nbsp;·&nbsp; Dashboard: Lukas &nbsp;·&nbsp; Aufbereitung für Athlet*innen</span>
 </div>
 
@@ -2894,6 +2955,29 @@
   } else {
     updateAuthUI(null);
   }
+  // ─────────────────────────────────────────────────────────────────────────
+
+  // ── Dark Mode ─────────────────────────────────────────────────────────────
+  const SUN_ICON  = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+  const MOON_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" fill="currentColor"/></svg>';
+
+  function updateThemeBtn() {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    btn.innerHTML = isDark ? SUN_ICON : MOON_ICON;
+    btn.title = isDark ? 'Light Mode' : 'Dark Mode';
+  }
+
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const next = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    updateThemeBtn();
+  }
+
+  updateThemeBtn();
   // ─────────────────────────────────────────────────────────────────────────
 </script>
 
