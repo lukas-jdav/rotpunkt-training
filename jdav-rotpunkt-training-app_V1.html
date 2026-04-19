@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JDAV Aachen – Rotpunkt-Trainingskonzept</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
   :root {
     --dav-green: #006633;
@@ -1078,6 +1081,41 @@
   }
   strong { font-weight: 700; }
   em { font-style: italic; }
+
+  /* ── AUTH UI ── */
+  .header-right { align-self: center; }
+  .auth-signin-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px; border-radius: 8px;
+    border: 1px solid var(--gray-200); background: white;
+    color: var(--gray-800); font-size: 13px; font-weight: 500;
+    cursor: pointer; font-family: inherit; white-space: nowrap;
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .auth-signin-btn:hover { background: var(--gray-50); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  .auth-user { display: flex; align-items: center; gap: 8px; }
+  .auth-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--dav-green); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; overflow: hidden; flex-shrink: 0;
+  }
+  .auth-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .auth-name {
+    font-size: 13px; font-weight: 500; color: var(--gray-800);
+    max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .auth-sync {
+    font-size: 11px; color: var(--dav-green); min-width: 90px; text-align: right;
+  }
+  .auth-sync.error { color: var(--accent); }
+  .auth-signout-btn {
+    padding: 5px 10px; border-radius: 6px; border: 1px solid var(--gray-200);
+    background: white; color: var(--gray-600); font-size: 12px;
+    cursor: pointer; font-family: inherit; transition: background 0.15s;
+  }
+  .auth-signout-btn:hover { background: var(--gray-50); }
+  @media (max-width: 600px) { .auth-name { display: none; } .auth-sync { display: none; } }
 </style>
 </head>
 <body>
@@ -1089,6 +1127,7 @@
     <h1>Sektion Aachen · DAV Leistungsgruppe</h1>
     <div class="header-meta">Ergänzendes Langzeit-Konzept · Altersklassen U9 – U17</div>
   </div>
+  <div class="header-right" id="auth-ui"></div>
 </div>
 
 <!-- TABS -->
@@ -1630,6 +1669,32 @@
 <script>
   const STORAGE_KEY = 'jdavRotpunktRouteLog.v3.flash.defaultOpen';
   const FIRST_OPEN_KEY = STORAGE_KEY + '.initialized';
+
+  // ── Firebase-Konfiguration ────────────────────────────────────────────────
+  // 1. Gehe zu https://console.firebase.google.com und erstelle ein Projekt
+  // 2. Füge eine Web-App hinzu und kopiere die Konfiguration hierher
+  // 3. Aktiviere: Authentication → Google; Firestore Database
+  // 4. Firestore-Regeln:
+  //    match /users/{userId}/{document=**} {
+  //      allow read, write: if request.auth != null && request.auth.uid == userId;
+  //    }
+  const FIREBASE_CONFIG = {
+    apiKey:            'DEINE_API_KEY',
+    authDomain:        'DEIN_PROJEKT.firebaseapp.com',
+    projectId:         'DEIN_PROJEKT_ID',
+    storageBucket:     'DEIN_PROJEKT.appspot.com',
+    messagingSenderId: 'DEINE_SENDER_ID',
+    appId:             'DEINE_APP_ID'
+  };
+  let db = null, auth = null, currentUser = null;
+  try {
+    if (window.firebase && FIREBASE_CONFIG.apiKey !== 'DEINE_API_KEY') {
+      firebase.initializeApp(FIREBASE_CONFIG);
+      auth = firebase.auth();
+      db   = firebase.firestore();
+    }
+  } catch (e) { console.warn('Firebase init:', e); }
+  // ─────────────────────────────────────────────────────────────────────────
   const routeLogForm = document.getElementById('route-log-form');
   const formFeedback = document.getElementById('form-feedback');
   const gradeSummary = document.getElementById('grade-summary');
@@ -1942,6 +2007,13 @@
   function saveRouteEntries() {
     const persistedEntries = routeEntries.filter(shouldPersistEntry).map(serializeEntry);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(persistedEntries));
+    if (db && currentUser) {
+      setSyncStatus('syncing');
+      db.collection('users').doc(currentUser.uid).collection('data').doc('routes')
+        .set({ entries: persistedEntries, updatedAt: firebase.firestore.FieldValue.serverTimestamp() })
+        .then(() => setSyncStatus('synced'))
+        .catch(() => setSyncStatus('error'));
+    }
   }
 
   function formatDate(dateString) {
@@ -2732,6 +2804,97 @@
 
   resetRouteForm();
   renderDashboard();
+
+  // ── Firebase Auth ─────────────────────────────────────────────────────────
+  const escHtml = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+  function signInWithGoogle() {
+    if (!auth) return;
+    auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => console.error('Login:', e));
+  }
+
+  function signOut() {
+    if (!auth) return;
+    auth.signOut();
+  }
+
+  function setSyncStatus(status) {
+    const el = document.getElementById('auth-sync');
+    if (!el) return;
+    if (status === 'syncing') {
+      el.textContent = '↻ Wird gespeichert…';
+      el.className = 'auth-sync';
+    } else if (status === 'error') {
+      el.textContent = '⚠ Sync-Fehler';
+      el.className = 'auth-sync error';
+    } else {
+      el.textContent = '✓ Gespeichert';
+      el.className = 'auth-sync';
+    }
+  }
+
+  function updateAuthUI(user) {
+    const ui = document.getElementById('auth-ui');
+    if (!ui) return;
+    if (!auth) { ui.innerHTML = ''; return; }
+    if (user) {
+      const initial = (user.displayName || user.email || '?')[0].toUpperCase();
+      const photo   = user.photoURL
+        ? `<img src="${escHtml(user.photoURL)}" alt="">`
+        : escHtml(initial);
+      ui.innerHTML = `
+        <div class="auth-user">
+          <span class="auth-sync" id="auth-sync"></span>
+          <div class="auth-avatar">${photo}</div>
+          <span class="auth-name">${escHtml(user.displayName || user.email)}</span>
+          <button class="auth-signout-btn" onclick="signOut()">Abmelden</button>
+        </div>`;
+    } else {
+      ui.innerHTML = `
+        <button class="auth-signin-btn" onclick="signInWithGoogle()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Mit Google anmelden
+        </button>`;
+    }
+  }
+
+  if (auth) {
+    auth.onAuthStateChanged(async user => {
+      currentUser = user;
+      updateAuthUI(user);
+      if (user) {
+        setSyncStatus('syncing');
+        try {
+          const doc = await db.collection('users').doc(user.uid).collection('data').doc('routes').get();
+          if (doc.exists) {
+            const cloudEntries = (doc.data().entries || []).map(normalizeEntry).filter(Boolean);
+            routeEntries = mergeRouteEntries(cloudEntries);
+          } else {
+            const local = routeEntries.filter(shouldPersistEntry).map(serializeEntry);
+            if (local.length > 0) {
+              await db.collection('users').doc(user.uid).collection('data').doc('routes')
+                .set({ entries: local, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+            }
+          }
+          setSyncStatus('synced');
+        } catch (e) {
+          setSyncStatus('error');
+        }
+        renderDashboard();
+      } else {
+        routeEntries = loadRouteEntries();
+        renderDashboard();
+      }
+    });
+  } else {
+    updateAuthUI(null);
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 </script>
 
 </body>
