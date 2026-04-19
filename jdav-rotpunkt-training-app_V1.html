@@ -1884,7 +1884,7 @@
     const legacyStyle = typeof entry.style === 'string' ? entry.style : '';
     const nextStatus = typeof entry.status === 'string'
       ? entry.status
-      : (legacyStyle === 'projekt' ? 'open' : 'done');
+      : (legacyStyle === 'projekt' ? 'open' : (legacyStyle ? 'done' : 'open'));
 
     const nextAscentType = typeof entry.ascentType === 'string'
       ? entry.ascentType
