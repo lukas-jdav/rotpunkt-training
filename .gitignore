@@ -1,0 +1,16 @@
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Local editor and OS files
+.vscode/
+.idea/
+
+# Temporary exports or notes
+*.log
+*.tmp
+*.bak
+
+# Local backups and reference materials
+Save/
+Unterlagen/

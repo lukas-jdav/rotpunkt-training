@@ -1,0 +1,2738 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JDAV Aachen – Rotpunkt-Trainingskonzept</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dav-green: #006633;
+    --dav-green-mid: #007A3D;
+    --dav-green-light: #E8F4EC;
+    --dav-green-border: #B3D9C2;
+    --accent: #E8401A;
+    --accent-light: #FDF0EC;
+    --accent-border: #F4B8A8;
+    --gray-50: #F7F8F9;
+    --gray-100: #ECEEF0;
+    --gray-200: #D5D9DE;
+    --gray-300: #B8BEC6;
+    --gray-400: #8A9199;
+    --gray-600: #4A5260;
+    --gray-800: #1E2530;
+    --yellow: #F5A623;
+    --yellow-light: #FEF8EC;
+    --blue: #1A6EBF;
+    --blue-light: #EEF4FB;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 20px 40px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 3px solid var(--dav-green);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+  }
+  .header-left {}
+  .org-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dav-green);
+    margin-bottom: 4px;
+  }
+  .header h1 {
+    font-size: 1.55em;
+    font-weight: 700;
+    color: var(--gray-800);
+    line-height: 1.2;
+  }
+  .header-meta {
+    font-size: 12.5px;
+    color: var(--gray-400);
+    margin-top: 5px;
+  }
+
+  /* ── TABS ── */
+  .tab-nav {
+    display: flex;
+    gap: 2px;
+    border-bottom: 2px solid var(--gray-200);
+    margin-bottom: 22px;
+  }
+  .tab-btn {
+    padding: 9px 18px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    color: var(--gray-400);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--gray-600); }
+  .tab-btn.active {
+    color: var(--dav-green);
+    border-bottom-color: var(--dav-green);
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── SHARED LAYOUT ── */
+  .section { margin-bottom: 22px; }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dav-green);
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--dav-green-border);
+  }
+
+  /* ── INFO BLOCKS ── */
+  .info-block {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .info-block p + p { margin-top: 8px; }
+  .info-block ul {
+    padding-left: 18px;
+    margin-top: 6px;
+  }
+  .info-block ul li { margin-bottom: 4px; }
+
+  .block-green {
+    background: var(--dav-green-light);
+    border-color: var(--dav-green-border);
+    border-left: 4px solid var(--dav-green);
+  }
+  .block-red {
+    background: var(--accent-light);
+    border-color: var(--accent-border);
+    border-left: 4px solid var(--accent);
+  }
+  .block-yellow {
+    background: var(--yellow-light);
+    border-color: #F5DDA5;
+    border-left: 4px solid var(--yellow);
+  }
+  .block-blue {
+    background: var(--blue-light);
+    border-color: #B3CFED;
+    border-left: 4px solid var(--blue);
+  }
+  .block-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--gray-800);
+  }
+
+  /* ── TWO-COL GRID ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width: 560px){ .two-col { grid-template-columns: 1fr; } }
+
+  /* ── ALTERSGRUPPEN TABLE ── */
+  .age-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+    font-size: 13.5px;
+  }
+  .age-table thead tr {
+    background: var(--dav-green);
+    color: white;
+  }
+  .age-table th {
+    padding: 10px 14px;
+    font-weight: 600;
+    text-align: left;
+    font-size: 12.5px;
+  }
+  .age-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: top;
+  }
+  .age-table tbody tr:last-child td { border-bottom: none; }
+  .age-table tbody tr:nth-child(even) td { background: var(--gray-50); }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .tag-pflicht { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); }
+  .tag-frei    { background: var(--blue-light); color: var(--blue); border: 1px solid #B3CFED; }
+  .tag-ok      { background: var(--dav-green-light); color: var(--dav-green); border: 1px solid var(--dav-green-border); }
+
+  /* ── STEPS ── */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step-row {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 0;
+    position: relative;
+  }
+  .step-row:not(:last-child) .step-line {
+    position: absolute;
+    left: 27px;
+    top: 38px;
+    width: 2px;
+    bottom: 0;
+    background: var(--gray-200);
+    z-index: 0;
+  }
+  .step-dot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .step-circle {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--dav-green);
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .step-body {
+    padding: 10px 0 20px 4px;
+  }
+  .step-label {
+    font-weight: 700;
+    font-size: 13.5px;
+    color: var(--gray-800);
+    margin-bottom: 5px;
+  }
+  .step-body p { font-size: 13.5px; color: var(--gray-600); }
+  .step-body .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    background: var(--gray-100);
+    border-radius: 4px;
+    padding: 2px 7px;
+    color: var(--gray-800);
+  }
+
+  /* ── UNLOCK BAR ── */
+  .unlock-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .grade-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 5px;
+  }
+  .grade-done {
+    background: var(--dav-green);
+    color: white;
+  }
+  .grade-active {
+    background: var(--accent);
+    color: white;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .grade-locked {
+    background: var(--gray-100);
+    color: var(--gray-400);
+    border: 1px solid var(--gray-200);
+  }
+  .arr { color: var(--gray-400); font-size: 13px; font-weight: 600; }
+  .arr.on { color: var(--dav-green); }
+  .unlock-legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+  .unlock-legend span { display: flex; align-items: center; gap: 5px; }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  /* ── GLOSSARY ── */
+  .gloss-item {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+  }
+  .gloss-term {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--dav-green);
+    margin-bottom: 5px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .gloss-en {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--gray-400);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .gloss-def { color: var(--gray-600); font-size: 13.5px; line-height: 1.6; }
+  .gloss-note {
+    margin-top: 7px;
+    padding: 7px 11px;
+    background: var(--dav-green-light);
+    border-radius: 5px;
+    font-size: 12.5px;
+    color: var(--dav-green);
+  }
+
+  /* ── DASHBOARD ── */
+  .dashboard-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .dashboard-main {
+    background: linear-gradient(135deg, #0B6B39 0%, #0E8B4C 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .dashboard-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.78;
+    margin-bottom: 10px;
+  }
+  .dashboard-main h2 {
+    font-size: 1.8em;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .dashboard-main p {
+    color: rgba(255, 255, 255, 0.9);
+    max-width: none;
+  }
+  .progress-stack {
+    margin-top: 18px;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+    flex-wrap: wrap;
+    margin-bottom: 9px;
+    font-size: 12px;
+  }
+  .progress-meta strong {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .progress-track {
+    width: 100%;
+    height: 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #F5A623 0%, #FFF2CF 100%);
+    transition: width 0.18s ease-out;
+  }
+  .dashboard-list {
+    list-style: none;
+    margin-top: 16px;
+    display: grid;
+    gap: 8px;
+  }
+  .dashboard-list li {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    padding: 9px 11px;
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+  .dashboard-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .tracker-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .tracker-card {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .tracker-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 6px;
+  }
+  .tracker-card p {
+    color: var(--gray-600);
+    font-size: 13.5px;
+  }
+  .collapsible-section {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .collapsible-section summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    background: linear-gradient(180deg, #fbfcfc 0%, #f4f7f5 100%);
+  }
+  .collapsible-section summary::-webkit-details-marker {
+    display: none;
+  }
+  .collapsible-summary-copy strong {
+    display: block;
+    font-size: 14px;
+    color: var(--gray-800);
+  }
+  .collapsible-summary-copy span {
+    display: block;
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--gray-400);
+  }
+  .collapsible-chevron {
+    flex-shrink: 0;
+    font-size: 18px;
+    line-height: 1;
+    color: var(--dav-green);
+    transition: transform 0.15s ease;
+  }
+  .collapsible-section[open] .collapsible-chevron {
+    transform: rotate(90deg);
+  }
+  .collapsible-content {
+    padding: 18px;
+    border-top: 1px solid var(--gray-100);
+  }
+  .tracker-form {
+    margin-top: 14px;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .form-grid .full-width {
+    grid-column: 1 / -1;
+  }
+  .field-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-600);
+  }
+  .field-group input,
+  .field-group select,
+  .field-group textarea,
+  .route-toolbar input,
+  .route-toolbar select {
+    width: 100%;
+    border: 1px solid var(--gray-200);
+    border-radius: 7px;
+    padding: 10px 12px;
+    font: inherit;
+    color: var(--gray-800);
+    background: white;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field-group textarea {
+    min-height: 92px;
+    resize: vertical;
+  }
+  .field-group input:focus,
+  .field-group select:focus,
+  .field-group textarea:focus,
+  .route-toolbar input:focus,
+  .route-toolbar select:focus {
+    outline: none;
+    border-color: var(--dav-green);
+    box-shadow: 0 0 0 3px rgba(0, 102, 51, 0.12);
+  }
+  .field-help {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+  .form-feedback {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+  .form-feedback.show {
+    display: block;
+  }
+  .feedback-success {
+    background: var(--dav-green-light);
+    border: 1px solid var(--dav-green-border);
+    color: var(--dav-green);
+  }
+  .feedback-error {
+    background: var(--accent-light);
+    border: 1px solid var(--accent-border);
+    color: var(--accent);
+  }
+  .tracker-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .tracker-btn {
+    border: none;
+    border-radius: 7px;
+    padding: 10px 14px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.12s, opacity 0.12s, background 0.12s;
+  }
+  .tracker-btn:hover {
+    transform: translateY(-1px);
+  }
+  .tracker-btn-primary {
+    background: var(--dav-green);
+    color: white;
+  }
+  .tracker-btn-secondary {
+    background: var(--gray-100);
+    color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+  }
+  .tracker-btn-danger {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+  }
+  .metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .metric-card {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 14px;
+    min-height: 108px;
+  }
+  .metric-value {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dav-green);
+    line-height: 1.1;
+  }
+  .metric-label {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+  .metric-note {
+    display: block;
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--gray-600);
+    line-height: 1.4;
+  }
+  .insight-box {
+    margin-top: 14px;
+    padding: 12px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-100);
+    border-radius: 10px;
+  }
+  .insight-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+  }
+  .insight-value {
+    margin-top: 5px;
+    font-weight: 700;
+    color: var(--gray-800);
+  }
+  .grade-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .grade-chip {
+    background: var(--dav-green-light);
+    border: 1px solid var(--dav-green-border);
+    border-radius: 999px;
+    padding: 7px 10px;
+    font-size: 12px;
+    color: var(--dav-green);
+    line-height: 1.35;
+  }
+  .grade-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .grade-card {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .grade-card-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .grade-card h3 {
+    font-size: 18px;
+    line-height: 1.15;
+  }
+  .grade-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 4px 9px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .badge-done {
+    background: var(--dav-green-light);
+    color: var(--dav-green);
+    border: 1px solid var(--dav-green-border);
+  }
+  .badge-current {
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+  }
+  .badge-open {
+    background: var(--yellow-light);
+    color: #A36A08;
+    border: 1px solid #F5DDA5;
+  }
+  .badge-locked {
+    background: var(--gray-100);
+    color: var(--gray-400);
+    border: 1px solid var(--gray-200);
+  }
+  .grade-progress-track {
+    margin-top: 12px;
+    width: 100%;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--gray-100);
+    overflow: hidden;
+  }
+  .grade-progress-fill {
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #006633 0%, #00A85A 100%);
+  }
+  .grade-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--gray-600);
+  }
+  .grade-hint {
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--gray-400);
+  }
+  .route-toolbar {
+    display: grid;
+    grid-template-columns: minmax(220px, 1.5fr) 160px 180px;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .route-board {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .route-table-shell {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .route-table-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--gray-100);
+    background: linear-gradient(180deg, #fbfcfc 0%, #f4f7f5 100%);
+  }
+  .route-table-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dav-green);
+  }
+  .route-table-meta {
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+  .route-table-wrap {
+    overflow-x: auto;
+  }
+  .route-table {
+    width: 100%;
+    min-width: 1040px;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  .route-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 11px 12px;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    text-align: left;
+    white-space: nowrap;
+  }
+  .route-table tbody td {
+    padding: 12px;
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: top;
+  }
+  .route-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .route-row-open {
+    background: #fffdfa;
+  }
+  .route-row-toprope {
+    background: #fafdff;
+  }
+  .route-row-flash {
+    background: #fff8f1;
+  }
+  .route-row-rotpunkt {
+    background: #fbfefb;
+  }
+  .route-cell-check {
+    width: 64px;
+  }
+  .route-cell-grade {
+    width: 78px;
+  }
+  .route-cell-status {
+    width: 120px;
+  }
+  .route-cell-actions {
+    width: 280px;
+  }
+  .route-name-main {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-800);
+  }
+  .route-name-sub {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+  .route-inline-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .route-mini-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--gray-100);
+    color: var(--gray-600);
+  }
+  .route-location-text,
+  .route-date-text,
+  .route-notes-text {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--gray-600);
+  }
+  .route-notes-text {
+    margin-top: 6px;
+    color: var(--gray-400);
+  }
+  .route-meta-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .route-info-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .route-colors {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .route-color-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(30, 37, 48, 0.16);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  }
+  .route-meta-link {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .route-meta-link:hover {
+    text-decoration: underline;
+  }
+  .route-grade-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--dav-green-light);
+    color: var(--dav-green);
+    border: 1px solid var(--dav-green-border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .tracker-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 4px 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+  .pill-rotpunkt {
+    background: var(--dav-green-light);
+    color: var(--dav-green);
+    border: 1px solid var(--dav-green-border);
+  }
+  .pill-toprope {
+    background: var(--blue-light);
+    color: var(--blue);
+    border: 1px solid #B3CFED;
+  }
+  .pill-flash {
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+  }
+  .pill-projekt {
+    background: var(--yellow-light);
+    color: #A36A08;
+    border: 1px solid #F5DDA5;
+  }
+  .route-status-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .route-quick-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    color: var(--gray-600);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .route-quick-toggle input {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--dav-green);
+    cursor: pointer;
+  }
+  .route-quick-toggle.checked {
+    background: var(--dav-green-light);
+    border-color: var(--dav-green-border);
+    color: var(--dav-green);
+  }
+  .route-quick-toggle.locked {
+    background: var(--gray-100);
+    border-color: var(--gray-200);
+    color: var(--gray-400);
+    cursor: not-allowed;
+  }
+  .route-quick-toggle.locked input {
+    cursor: not-allowed;
+  }
+  .status-btn {
+    border: 1px solid var(--gray-200);
+    background: white;
+    color: var(--gray-600);
+    padding: 7px 10px;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.12s, background 0.12s, color 0.12s;
+  }
+  .status-btn.active.status-open {
+    background: var(--yellow-light);
+    border-color: #F5DDA5;
+    color: #A36A08;
+  }
+  .status-btn.active.status-toprope {
+    background: var(--blue-light);
+    border-color: #B3CFED;
+    color: var(--blue);
+  }
+  .status-btn.active.status-flash {
+    background: var(--accent-light);
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+  .status-btn.active.status-rotpunkt {
+    background: var(--dav-green-light);
+    border-color: var(--dav-green-border);
+    color: var(--dav-green);
+  }
+  .status-btn.delete-btn {
+    border-radius: 7px;
+    margin-left: auto;
+    color: var(--accent);
+    border-color: var(--accent-border);
+  }
+  .status-btn:disabled {
+    background: var(--gray-100);
+    border-color: var(--gray-200);
+    color: var(--gray-400);
+    cursor: not-allowed;
+  }
+  .route-lock-note {
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: var(--gray-400);
+  }
+  .table-link-btn {
+    text-decoration: none;
+  }
+  .tracker-empty {
+    background: white;
+    border: 1px dashed var(--gray-200);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    color: var(--gray-400);
+    font-size: 13px;
+  }
+
+  @media(max-width: 780px) {
+    .dashboard-hero,
+    .tracker-layout {
+      grid-template-columns: 1fr;
+    }
+    .dashboard-summary,
+    .metric-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media(max-width: 700px) {
+    .route-toolbar {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media(max-width: 560px) {
+    .form-grid,
+    .dashboard-summary,
+    .metric-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 28px;
+    padding-top: 14px;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11.5px;
+    color: var(--gray-400);
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="org-tag">Sektion Aachen · DAV Leistungsgruppe</div>
+    <h1>Sektion Aachen · DAV Leistungsgruppe</h1>
+    <div class="header-meta">Ergänzendes Langzeit-Konzept · Altersklassen U9 – U17</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('dashboard', this)">Dashboard</button>
+  <button class="tab-btn" onclick="switchTab('konzept', this)">Konzept</button>
+  <button class="tab-btn" onclick="switchTab('regeln', this)">Vorstieg-Regeln</button>
+  <button class="tab-btn" onclick="switchTab('ablauf', this)">Trainingsablauf</button>
+  <button class="tab-btn" onclick="switchTab('sturztraining', this)">Sturztraining</button>
+  <button class="tab-btn" onclick="switchTab('erlaeuterungen', this)">Erläuterungen</button>
+</div>
+
+<!-- ═══════════════════════════════════ TAB 1: DASHBOARD ═══════════════════ -->
+<div id="tab-dashboard" class="tab-panel active">
+
+  <div class="section">
+    <div class="section-title">Fortschritt auf einen Blick</div>
+    <div class="dashboard-hero">
+      <div class="dashboard-main">
+        <span class="dashboard-eyebrow">Kernfunktion</span>
+        <h2>Routen abhaken und Freischaltung live verfolgen</h2>
+        <p>Die aktuelle Tivoli-Hallenliste ist bereits geladen. Hake die Routen direkt in der Übersicht ab und behalte live im Blick, welcher Grad bereits abgeschlossen ist und wann der nächste freigeschaltet wird.</p>
+
+        <div class="progress-stack">
+          <div class="progress-meta">
+            <strong id="overall-progress-label">Hallenliste wird geladen</strong>
+            <span id="overall-progress-hint">Starte mit dem ersten Grad deiner aktuellen Trainingsphase.</span>
+          </div>
+          <div class="progress-track">
+            <div id="overall-progress-fill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <ul class="dashboard-list">
+          <li>Jede Route erscheint nur einmal in deiner Liste. Danach wird sie direkt am Dashboard abgehakt.</li>
+          <li>Toprope, Flash und Rotpunkt zählen im Dashboard als abgeschlossen und bleiben klar unterscheidbar.</li>
+          <li>Wenn in einem Grad nur noch 2 Routen offen sind, zeigt dir das Dashboard die Freischaltung des nächsten Grades an.</li>
+        </ul>
+      </div>
+
+      <div class="dashboard-summary" aria-live="polite">
+        <div class="metric-card">
+          <span id="metric-total-routes" class="metric-value">0</span>
+          <span class="metric-label">Routen im Board</span>
+          <span class="metric-note">Alle Tivoli-Routen plus eigene Zusatzrouten, die du verfolgst.</span>
+        </div>
+        <div class="metric-card">
+          <span id="metric-completed-routes" class="metric-value">0</span>
+          <span class="metric-label">Abgehakt</span>
+          <span class="metric-note">Toprope, Flash und Rotpunkt zählen als erledigt.</span>
+        </div>
+        <div class="metric-card">
+          <span id="metric-open-routes" class="metric-value">0</span>
+          <span class="metric-label">Noch offen</span>
+          <span class="metric-note">Diese Routen warten noch auf einen sauberen Durchstieg.</span>
+        </div>
+        <div class="metric-card">
+          <span id="metric-current-grade" class="metric-value">-</span>
+          <span class="metric-label">Aktueller Grad</span>
+          <span id="metric-current-grade-note" class="metric-note">Die Freischaltung richtet sich nach deinen abgehakten Hallenrouten.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Freischaltstatus</div>
+    <div class="tracker-card">
+      <h3>Aktueller Trainingsstand</h3>
+      <p>Das Dashboard wertet deine Grade automatisch aus und zeigt an, ob du noch im aktuellen Grad arbeitest oder schon parallel weitergehen darfst.</p>
+
+      <div class="insight-box">
+        <div class="insight-label">Fokus gerade</div>
+        <div id="focus-grade-value" class="insight-value">Noch kein Grad aktiv</div>
+      </div>
+
+      <div class="insight-box">
+        <div class="insight-label">Nächster Schritt</div>
+        <div id="unlock-message" class="insight-value">Starte mit den offenen Routen deines Trainingsgrades.</div>
+      </div>
+
+      <div class="grade-summary" id="grade-summary" aria-live="polite"></div>
+
+      <div class="tracker-actions">
+        <button type="button" id="clear-all-routes" class="tracker-btn tracker-btn-danger">Fortschritt zurücksetzen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Fortschritt pro Grad</div>
+    <div id="grade-progress-board" class="grade-board" aria-live="polite"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Hallenliste</div>
+    <div class="route-toolbar">
+      <input id="route-search" type="search" placeholder="Nach Route, Grad, Linie oder Halle filtern">
+      <select id="route-grade-filter">
+        <option value="all">Alle Grade</option>
+      </select>
+      <select id="route-status-filter">
+        <option value="all">Alle Stati</option>
+        <option value="open">Noch offen</option>
+        <option value="toprope">Toprope</option>
+        <option value="flash">Flash</option>
+        <option value="rotpunkt">Rotpunkt</option>
+      </select>
+    </div>
+    <div id="route-board" class="route-board" aria-live="polite"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Zusatzrouten</div>
+    <details class="collapsible-section">
+      <summary>
+        <div class="collapsible-summary-copy">
+          <strong>Zusatzroute anlegen</strong>
+          <span>Nur für neue oder spezielle Routen, die noch nicht in der Hallenliste auftauchen.</span>
+        </div>
+        <span class="collapsible-chevron" aria-hidden="true">›</span>
+      </summary>
+
+      <div class="collapsible-content">
+        <form id="route-log-form" class="tracker-form">
+          <div class="form-grid">
+            <div class="field-group">
+              <label for="route-date">Datum</label>
+              <input id="route-date" name="date" type="date" required>
+            </div>
+            <div class="field-group">
+              <label for="route-grade">Grad</label>
+              <select id="route-grade" name="grade" required>
+                <option value="">Bitte wählen</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+              </select>
+            </div>
+
+            <div class="field-group full-width">
+              <label for="route-name">Route</label>
+              <input id="route-name" name="name" type="text" placeholder="z. B. Grüne Kante" required>
+            </div>
+
+            <div class="field-group">
+              <label for="route-status">Aktueller Status</label>
+              <select id="route-status" name="status" required>
+                <option value="open">Noch offen / Projekt</option>
+                <option value="toprope">Toprope geschafft</option>
+                <option value="flash">Flash geschafft</option>
+                <option value="rotpunkt">Rotpunkt geschafft</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="route-location">Halle / Wand</label>
+              <input id="route-location" name="location" type="text" placeholder="optional">
+            </div>
+
+            <div class="field-group full-width">
+              <label for="route-notes">Notiz</label>
+              <textarea id="route-notes" name="notes" placeholder="z. B. harter Zug an kleiner Leiste, im 2. Versuch geklappt"></textarea>
+              <div class="field-help">Tipp: Die importierten Hallenrouten kannst du oben direkt abhaken. Hier nur Ergänzungen eintragen.</div>
+            </div>
+          </div>
+
+          <div id="form-feedback" class="form-feedback" aria-live="polite"></div>
+
+          <div class="tracker-actions">
+            <button type="submit" class="tracker-btn tracker-btn-primary">Route speichern</button>
+            <button type="reset" class="tracker-btn tracker-btn-secondary">Felder leeren</button>
+          </div>
+        </form>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════ TAB 2: KONZEPT ═══════════════════ -->
+<div id="tab-konzept" class="tab-panel">
+
+  <div class="section">
+    <div class="section-title">Grundprinzip</div>
+    <div class="info-block block-green">
+      <div class="block-title">Das Freischalt-Prinzip</div>
+      <p>
+        Erst wenn <strong>alle möglichen Routen eines Schwierigkeitsgrades</strong> im Rotpunkt geklettert wurden, wird der nächste Grad freigeschaltet. Der Einstiegspunkt liegt <strong>2–3 Grade unter dem persönlichen Rotpunkt-Maximum</strong>.
+      </p>
+      <p style="margin-top:8px;">
+        Ziel ist es, systematisch eine solide Basis aufzubauen und echte Rotpunkt-Begehungen zu sammeln – keine halbfertigen Versuche.
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Beispiel: Freischalt-Fortschritt (Rotpunkt-Max = 7)</div>
+    <div class="unlock-bar">
+      <span class="grade-pill grade-done">5</span>
+      <span class="arr on">→</span>
+      <span class="grade-pill grade-done">6</span>
+      <span class="arr on">→</span>
+      <span class="grade-pill grade-active">7 ◀ aktuell</span>
+      <span class="arr">→</span>
+      <span class="grade-pill grade-locked">8 🔒</span>
+      <span class="arr">→</span>
+      <span class="grade-pill grade-locked">9 🔒</span>
+    </div>
+    <div class="unlock-legend">
+      <span><span class="dot" style="background:var(--dav-green)"></span> Abgeschlossen (alle Routen RP)</span>
+      <span><span class="dot" style="background:var(--accent)"></span> Aktuell in Arbeit</span>
+      <span><span class="dot" style="background:var(--gray-200);border:1px solid var(--gray-300)"></span> Gesperrt</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Hinweise</div>
+    <div class="two-col">
+      <div class="info-block block-yellow">
+        <div class="block-title">Fast am Ziel eines Grades?</div>
+        <p>Sobald nur noch <strong>2 Routen</strong> eines Grades fehlen, darf der nächste Grad bereits begonnen werden. Die fehlenden Routen werden weiterhin versucht.</p>
+      </div>
+      <div class="info-block block-blue">
+        <div class="block-title">Abgeschlossene Grade nutzen</div>
+        <p>Routen aus abgeschlossenen Graden eignen sich ideal zum <strong>Aufwärmen</strong> oder als aktive Pause zwischen Projekt-Versuchen.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════ TAB 2: REGELN ════════════════════ -->
+<div id="tab-regeln" class="tab-panel">
+
+  <div class="section">
+    <div class="section-title">Vorstieg-Pflicht nach Altersklasse</div>
+    <table class="age-table">
+      <thead>
+        <tr>
+          <th>Altersklasse</th>
+          <th>Vorstieg</th>
+          <th>Toprope-Ausnahme</th>
+          <th>Gilt als geschafft?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>U9 / U11</strong></td>
+          <td><span class="tag tag-frei">Freiwillig</span></td>
+          <td>Unbegrenzt</td>
+          <td>✅ Ja, auch Toprope</td>
+        </tr>
+        <tr>
+          <td><strong>U13</strong></td>
+          <td><span class="tag tag-frei">Ziel: alle im VS</span></td>
+          <td>Unbegrenzt möglich</td>
+          <td>✅ Ja, auch Toprope</td>
+        </tr>
+        <tr>
+          <td><strong>U15 / U17</strong></td>
+          <td><span class="tag tag-pflicht">Pflicht</span></td>
+          <td><strong>2 Routen pro Grad</strong> in Toprope erlaubt</td>
+          <td>✅ Ja, die 2 TR-Routen auch</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Erklärung zur Toprope-Ausnahme (U15 / U17)</div>
+    <div class="info-block">
+      <p>Pro Schwierigkeitsgrad dürfen <strong>maximal 2 Routen im Toprope</strong> geklettert werden und zählen trotzdem als abgehakt. Alle weiteren Routen des Grades müssen im <strong>Vorstieg (Rotpunkt)</strong> geklettert werden.</p>
+      <p style="margin-top:8px; color: var(--gray-400);">
+        <em>Beispiel: In Grad 7 gibt es 8 Routen → 6 müssen Rotpunkt im Vorstieg sein, 2 dürfen Toprope sein.</em>
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Zusatzaufgabe – gilt für alle Altersklassen</div>
+    <div class="info-block block-green">
+      <div class="block-title">↓ Am Ende jeder Route reinspringen</div>
+      <p>
+        Nach dem letzten Zug wird der Umlenker <strong>nicht</strong> eingeclippt – stattdessen wird am Ende der Route <strong>bewusst und kontrolliert ins Seil gesprungen</strong>. Ziel ist es, Sturztraining in jede Einheit zu integrieren und die Scheu vor dem Sturz im Vorstieg langfristig abzubauen.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════ TAB 3: ABLAUF ════════════════════ -->
+<div id="tab-ablauf" class="tab-panel">
+
+  <div class="section">
+    <div class="section-title">Ausgangssituation (Beispiel)</div>
+    <div class="info-block block-green">
+      <p>Rotpunkt-Maximum: <strong class="mono">7</strong> &nbsp;→&nbsp; Startgrad: <strong class="mono">5</strong> &nbsp;(2 Grade darunter)</p>
+      <p style="margin-top:4px; color:var(--gray-400);">Routen in der Halle: 10× Grad 5 · 12× Grad 6 · 8× Grad 7</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Trainingsschritte</div>
+    <div class="steps">
+
+      <div class="step-row">
+        <div class="step-line"></div>
+        <div class="step-dot"><div class="step-circle">1</div></div>
+        <div class="step-body">
+          <div class="step-label">Training 1 – Grad 5 starten</div>
+          <p>Alle 10 Fünfer (Vorstieg) werden versucht. Bei <strong>2 Routen</strong> gelingt kein Durchstieg → als <em>„Hänger"</em> notieren und für das nächste Training vormerken.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-line"></div>
+        <div class="step-dot"><div class="step-circle">2</div></div>
+        <div class="step-body">
+          <div class="step-label">Training 2 – Grad 5 abschließen / Grad 6 beginnen</div>
+          <p>Die 2 offenen Fünfer werden im Rotpunkt durchgestiegen → <strong>Grad 5 abgeschlossen</strong>. Im gleichen Training: ca. <strong>⅓ aller Sechser</strong> klettern, 1 Hänger notieren.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-line"></div>
+        <div class="step-dot"><div class="step-circle">3</div></div>
+        <div class="step-body">
+          <div class="step-label">Training 3 – Aufwärmen mit Fünfern / Grad 6 fortsetzen</div>
+          <p>Warm-up mit bekannten Fünfern (locker, Technik). Dann den Hänger-Sechser durchsteigen + weiteres <strong>⅓ der Sechser</strong>, diesmal 2 Hänger erlaubt.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-line"></div>
+        <div class="step-dot"><div class="step-circle">4</div></div>
+        <div class="step-body">
+          <div class="step-label">Training 4+ – Fortführung</div>
+          <p>Schema wiederholen bis alle Sechser RP sind → <strong>Grad 7 wird freigeschaltet</strong>. Schwierige Projekte zweimal pro Einheit probieren; mindestens <strong>4–6 ernste Versuche</strong> pro Route einplanen.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-dot"><div class="step-circle" style="background:var(--yellow); color:var(--gray-800);">!</div></div>
+        <div class="step-body">
+          <div class="step-label">Sonderregel: 2 fehlende Routen</div>
+          <p>Fehlen nur noch <strong>2 Routen</strong> zum Abschließen eines Grades → nächsten Grad bereits beginnen. Die fehlenden Routen werden parallel weiter versucht.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════ TAB 5: STURZTRAINING ═══════════ -->
+<div id="tab-sturztraining" class="tab-panel">
+
+  <div class="section">
+    <div class="section-title">Ziel der Zusatzaufgabe</div>
+    <div class="info-block block-green">
+      <div class="block-title">Sturzangst gezielt abbauen</div>
+      <p>
+        Sturzangst ist eine der häufigsten Leistungsbarrieren im Klettern – besonders im Vorstieg. Diese Zusatzaufgabe trainiert den kontrollierten, bewussten Sturz und macht ihn zur <strong>normalen Trainingsroutine</strong>.
+      </p>
+      <p style="margin-top:8px;">
+        Wer regelmäßig und kontrolliert stürzt, verliert die Scheu vor dem Seil und lernt, im Vorstieg <strong>mutig und technisch sauber</strong> zu klettern – statt krampfhaft zu sichern oder frühzeitig aufzugeben.
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Übung: Reinspringen ohne Top zu clippen</div>
+    <div class="info-block block-green">
+      <div class="block-title">✓ Fester Bestandteil jedes Trainings</div>
+      <p>Das Reinspringen ohne den Umlenker zu clippen ist <strong>kein Sonderfall</strong>, sondern die <em>erwünschte Standardform</em> am Ende jeder Route. Sturztraining wird dadurch automatisch in jede Einheit integriert – ohne zusätzlichen Aufwand.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Durchführung</div>
+    <div class="steps">
+
+      <div class="step-row">
+        <div class="step-line"></div>
+        <div class="step-dot"><div class="step-circle">1</div></div>
+        <div class="step-body">
+          <div class="step-label">Vorbereitung</div>
+          <p>Ihr klettert eine bekannte Route (<strong>2–3 Grade unter eurem Maximum</strong>) bis kurz vor den obersten Haken. Das Seil hängt korrekt im vorletzten Haken.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-line"></div>
+        <div class="step-dot"><div class="step-circle">2</div></div>
+        <div class="step-body">
+          <div class="step-label">Top bewusst nicht clippen</div>
+          <p>Der oberste Haken wird <strong>nicht</strong> eingeclippt. Ihr steigt noch einige Züge über den letzten Haken hinaus – oder stoppt direkt auf Höhe des Tops.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-line"></div>
+        <div class="step-dot"><div class="step-circle">3</div></div>
+        <div class="step-body">
+          <div class="step-label">Kontrolliert reinspringen</div>
+          <p>Ihr springt <strong>bewusst und kontrolliert</strong> ins Seil – Beine leicht gebeugt, Hände vom Fels lösen, Blick nach oben oder geradeaus. Kein Festkrallen, kein zögerndes Loslassen.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-dot"><div class="step-circle" style="background:var(--blue);">↺</div></div>
+        <div class="step-body">
+          <div class="step-label">Wiederholung &amp; Steigerung</div>
+          <p>Übung mehrfach wiederholen. Steigerung möglich: aus größerer Höhe über dem letzten Haken springen oder in unbekannteren Positionen am Fels (Überhang, Wandneigung wechseln).</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Kontext im Trainingsalltag</div>
+    <div class="two-col">
+      <div class="info-block">
+        <div class="block-title">Wann?</div>
+        <p>Bei <strong>jeder Route</strong> – der Umlenker wird grundsätzlich nicht geclippt. Das Reinspringen ist der normale Abschluss jedes Vorstiegsversuchs.</p>
+      </div>
+      <div class="info-block">
+        <div class="block-title">Sturztraining als Standard</div>
+        <p>Nicht Clippen und Reinspringen ist die <strong>Regel, nicht die Ausnahme</strong>. Wer jede Route so beendet, trainiert Sturzkompetenz ohne Extra-Aufwand und baut Angst langfristig ab.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════ TAB 5: ERLÄUTERUNGEN ════════════ -->
+<div id="tab-erlaeuterungen" class="tab-panel">
+
+  <div class="section">
+    <div class="section-title">Klettertechnische Begriffe</div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Rotpunkt <span class="gloss-en">Redpoint</span></div>
+      <div class="gloss-def">
+        Freies Durchsteigen einer Kletterroute im <strong>Vorstieg</strong> ohne Sturz, ohne Pause im Seil und ohne Haken zur Fortbewegung zu nutzen. Die Route darf vor dem Durchstieg beliebig oft geübt werden (im Gegensatz zum Onsight).
+      </div>
+      <div class="gloss-note">→ Im Kontext dieses Konzepts: Das Ziel jeder Route. Erst wenn eine Route Rotpunkt geklettert wurde, gilt sie als „abgehakt".</div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Vorstieg <span class="gloss-en">Lead Climbing</span></div>
+      <div class="gloss-def">
+        Der Kletternde steigt vor dem Sicherungspunkt (Standplatz) nach oben. Das Seil wird selbst in die Zwischenhaken eingehängt. Im Sturzfall hängt man unterhalb des zuletzt geklippten Hakens auf – die Sturzhöhe ist größer als im Toprope.
+      </div>
+      <div class="gloss-note">→ Im Vorstieg klettern trainiert Routenlesekompetenz, mentale Stärke und sicheres Einschätzen der eigenen Grenzen.</div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Toprope <span class="gloss-en">Top Rope</span></div>
+      <div class="gloss-def">
+        Das Sicherungsseil läuft bereits durch den Umlenker oben – man klettert „von oben gesichert". Bei einem Sturz wird man sofort aufgefangen, die Sturzhöhe ist minimal.
+      </div>
+      <div class="gloss-note">→ U15/U17: Maximal 2 Routen pro Grad dürfen so abgehakt werden. U13 und jünger: unbegrenzt erlaubt.</div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Onsight <span class="gloss-en">On Sight</span></div>
+      <div class="gloss-def">
+        Eine Route wird im ersten Versuch, ohne jegliche Vorinformation, ohne Beobachten anderer Kletterer und ohne vorherigen Versuch rotpunkt geklettert. Die schwierigste Begehungsform.
+      </div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Hänger</div>
+      <div class="gloss-def">
+        Umgangssprachlich: Man ruht kurz im Seil, weil eine Stelle noch nicht gelingt. Ein Hänger bedeutet, dass die Route noch <strong>nicht</strong> im Rotpunkt geklettert wurde. Die Route bleibt offen und wird beim nächsten Training erneut versucht.
+      </div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Top / Umlenker nicht clippen</div>
+      <div class="gloss-def">
+        Am Ende einer Route wird der oberste Haken (Umlenker) <strong>bewusst nicht</strong> eingeclippt. Stattdessen wird kontrolliert ins Seil gesprungen. Dadurch enthält jeder Vorstiegsversuch automatisch ein Sturzerlebnis, was langfristig Sturzangst abbaut.
+      </div>
+      <div class="gloss-note">→ Gilt als feste Regel in jedem Training – der bewusste Sturz ohne Top-Clippen ist der erwünschte Standardabschluss jeder Route.</div>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-title">Trainingsplanerische Begriffe</div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Mesozyklus</div>
+      <div class="gloss-def">
+        Ein Trainingsblock mittlerer Dauer, typischerweise <strong>4–8 Wochen</strong>. Im Mesozyklus wird ein klarer Schwerpunkt verfolgt (z. B. Kraftausdauer, Technik, Rotpunkt-Sammeln). Danach folgt eine Auswertung und ggf. ein Wechsel des Schwerpunkts.
+      </div>
+      <div class="gloss-note">→ Dieses Konzept ist als Mesozyklus gedacht: Start mit leichten Graden, systematische Steigerung über mehrere Wochen.</div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Mikrozyklus</div>
+      <div class="gloss-def">
+        Ein einzelner Trainingsblock, in der Regel <strong>eine Woche</strong>. Enthält die konkreten Trainingseinheiten mit Inhalten, Intensitäten und Erholungsphasen.
+      </div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Sturztraining <span class="gloss-en">Fall Training</span></div>
+      <div class="gloss-def">
+        Gezieltes Üben des kontrollierten Sturzes im Vorstieg. Ziel ist es, die <strong>Sturzangst schrittweise abzubauen</strong> und den Sturz als normalen Bestandteil des Kletterns zu erleben. Im Gegensatz zum ungewollten Sturz wird beim Sturztraining bewusst und aus einer sicheren Position losgelassen.
+      </div>
+      <div class="gloss-note">→ Kein Sonderblock, sondern fester Bestandteil jeder Einheit: Der Umlenker wird nicht geclippt – jede Route endet mit einem bewussten Sprung ins Seil.</div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Rotpunkt-Maximum</div>
+      <div class="gloss-def">
+        Der <strong>schwerste Grad</strong>, den du in einer Route bereits sauber (Rotpunkt) durchgestiegen bist. Dieser Wert ist die Grundlage für den Startpunkt dieses Konzepts: 2–3 Grade darunter beginnen.
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>Sektion Aachen · DAV Leistungsgruppe</span>
+  <span>Konzept: Andi &nbsp;·&nbsp; Dashboard: Lukas &nbsp;·&nbsp; Aufbereitung für Athlet*innen</span>
+</div>
+
+<script src="tivoli-routes-data.js"></script>
+<script>
+  const STORAGE_KEY = 'jdavRotpunktRouteLog.v3.flash.defaultOpen';
+  const FIRST_OPEN_KEY = STORAGE_KEY + '.initialized';
+  const routeLogForm = document.getElementById('route-log-form');
+  const formFeedback = document.getElementById('form-feedback');
+  const gradeSummary = document.getElementById('grade-summary');
+  const gradeProgressBoard = document.getElementById('grade-progress-board');
+  const routeBoard = document.getElementById('route-board');
+  const routeSearch = document.getElementById('route-search');
+  const routeGradeFilter = document.getElementById('route-grade-filter');
+  const routeStatusFilter = document.getElementById('route-status-filter');
+  const clearAllRoutesButton = document.getElementById('clear-all-routes');
+
+  const totalRoutesMetric = document.getElementById('metric-total-routes');
+  const completedRoutesMetric = document.getElementById('metric-completed-routes');
+  const openRoutesMetric = document.getElementById('metric-open-routes');
+  const currentGradeMetric = document.getElementById('metric-current-grade');
+  const currentGradeMetricNote = document.getElementById('metric-current-grade-note');
+  const overallProgressLabel = document.getElementById('overall-progress-label');
+  const overallProgressHint = document.getElementById('overall-progress-hint');
+  const overallProgressFill = document.getElementById('overall-progress-fill');
+  const focusGradeValue = document.getElementById('focus-grade-value');
+  const unlockMessage = document.getElementById('unlock-message');
+  const DEFAULT_HIDDEN_GRADES = new Set(['3', '4']);
+  const HALL_ROUTE_CSV = typeof window.TIVOLI_ROUTE_CSV === 'string' ? window.TIVOLI_ROUTE_CSV : '';
+  const HALL_ROUTE_ENTRIES = parseHallRouteData(HALL_ROUTE_CSV);
+
+  let routeEntries = loadRouteEntries();
+
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(button => button.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function getTodayValue() {
+    const now = new Date();
+    const timezoneOffset = now.getTimezoneOffset() * 60000;
+    return new Date(now.getTime() - timezoneOffset).toISOString().slice(0, 10);
+  }
+
+  function createEntryId() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      return window.crypto.randomUUID();
+    }
+
+    return String(Date.now()) + Math.random().toString(16).slice(2);
+  }
+
+  function normalizeColor(value) {
+    const color = String(value || '').trim();
+    return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(color) ? color.toLowerCase() : '';
+  }
+
+  function parseCsvLine(line) {
+    const values = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let index = 0; index < line.length; index += 1) {
+      const character = line[index];
+      const nextCharacter = line[index + 1];
+
+      if (character === '"') {
+        if (inQuotes && nextCharacter === '"') {
+          current += '"';
+          index += 1;
+        } else {
+          inQuotes = !inQuotes;
+        }
+        continue;
+      }
+
+      if (character === ',' && !inQuotes) {
+        values.push(current);
+        current = '';
+        continue;
+      }
+
+      current += character;
+    }
+
+    values.push(current);
+    return values;
+  }
+
+  function extractHallDate(value) {
+    const match = String(value || '').match(/^(\d{4}-\d{2}-\d{2})/);
+    return match ? match[1] : '';
+  }
+
+  function normalizeHallGrade(value) {
+    const match = String(value || '').match(/\d+/);
+    return match ? match[0] : '';
+  }
+
+  function buildHallRouteId(row, index) {
+    const link = String(row.link || '').trim();
+    const linkId = link.split('/').filter(Boolean).pop();
+    if (linkId) return 'hall-' + linkId;
+
+    return 'hall-' + index + '-' + String(row.name || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  function buildHallRouteNotes(row) {
+    const parts = [];
+    const notes = String(row.notes || '').trim();
+    const routesetter = String(row.routesetter || '').trim();
+
+    if (notes) parts.push(notes);
+    if (routesetter && routesetter.toUpperCase() !== 'N/A') {
+      parts.push('Schrauber: ' + routesetter);
+    }
+
+    return parts.join(' · ');
+  }
+
+  function parseHallRouteData(rawCsv) {
+    const trimmed = String(rawCsv || '').trim();
+    if (!trimmed) return [];
+
+    const lines = trimmed
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .filter(Boolean);
+
+    const headerIndex = lines.findIndex(line => line.startsWith('location,difficulty,'));
+    if (headerIndex === -1) return [];
+
+    const headers = parseCsvLine(lines[headerIndex]);
+
+    return lines.slice(headerIndex + 1)
+      .map((line, index) => {
+        const values = parseCsvLine(line);
+        const row = headers.reduce((accumulator, header, columnIndex) => {
+          accumulator[header] = values[columnIndex] || '';
+          return accumulator;
+        }, {});
+
+        const grade = normalizeHallGrade(row.difficulty);
+        const name = String(row.name || '').trim();
+        if (!grade || !name) return null;
+
+        const timestamp = Date.parse(String(row.set_at || '').trim()) || Date.now() + index;
+
+        return normalizeEntry({
+          id: buildHallRouteId(row, index),
+          createdAt: timestamp,
+          updatedAt: timestamp,
+          date: '',
+          setDate: extractHallDate(row.set_at),
+          grade,
+          rawDifficulty: String(row.difficulty || '').trim(),
+          routeCode: String(row.location || '').trim(),
+          name,
+          location: [
+            String(row.area || '').trim(),
+            String(row.sector || '').trim(),
+            row.location ? 'Linie ' + String(row.location).trim() : ''
+          ].filter(Boolean).join(' · '),
+          notes: buildHallRouteNotes(row),
+          link: String(row.link || '').trim(),
+          primaryColor: normalizeColor(row.color_1),
+          secondaryColor: normalizeColor(row.color_2),
+          source: 'hall'
+        });
+      })
+      .filter(Boolean);
+  }
+
+  function createEntryKey(entry) {
+    return [
+      String(entry.grade || '').trim(),
+      String(entry.name || '').trim().toLowerCase(),
+      String(entry.location || '').trim().toLowerCase()
+    ].join('||');
+  }
+
+  function isTrackedGrade(grade) {
+    return !DEFAULT_HIDDEN_GRADES.has(String(grade || '').trim());
+  }
+
+  function getTrackedEntries() {
+    return routeEntries.filter(entry => isTrackedGrade(entry.grade));
+  }
+
+  function mergeRouteEntries(storedEntries) {
+    const hallEntries = HALL_ROUTE_ENTRIES.map(entry => ({ ...entry }));
+    const byKey = new Map(hallEntries.map(entry => [createEntryKey(entry), entry]));
+    const customEntries = [];
+
+    storedEntries.forEach(entry => {
+      const key = createEntryKey(entry);
+
+      if (byKey.has(key)) {
+        const hallEntry = byKey.get(key);
+        byKey.set(key, {
+          ...hallEntry,
+          status: entry.status,
+          ascentType: entry.ascentType,
+          date: entry.status === 'done' ? entry.date : '',
+          updatedAt: entry.updatedAt || hallEntry.updatedAt
+        });
+        return;
+      }
+
+      customEntries.push({
+        ...entry,
+        source: 'custom'
+      });
+    });
+
+    return [...byKey.values(), ...customEntries];
+  }
+
+  function serializeEntry(entry) {
+    return {
+      id: entry.id,
+      createdAt: entry.createdAt,
+      updatedAt: entry.updatedAt,
+      date: entry.date,
+      setDate: entry.setDate,
+      grade: entry.grade,
+      rawDifficulty: entry.rawDifficulty,
+      routeCode: entry.routeCode,
+      name: entry.name,
+      location: entry.location,
+      notes: entry.notes,
+      link: entry.link,
+      primaryColor: entry.primaryColor,
+      secondaryColor: entry.secondaryColor,
+      status: entry.status,
+      ascentType: entry.ascentType,
+      source: entry.source
+    };
+  }
+
+  function shouldPersistEntry(entry) {
+    if (entry.source === 'custom') return true;
+    return entry.status !== 'open' || Boolean(entry.date);
+  }
+
+  function normalizeEntry(entry) {
+    if (!entry || typeof entry !== 'object') return null;
+
+    const grade = String(entry.grade || '').trim();
+    const name = String(entry.name || '').trim();
+
+    if (!grade || !name) return null;
+
+    const legacyStyle = typeof entry.style === 'string' ? entry.style : '';
+    const nextStatus = typeof entry.status === 'string'
+      ? entry.status
+      : (legacyStyle === 'projekt' ? 'open' : 'done');
+
+    const nextAscentType = typeof entry.ascentType === 'string'
+      ? entry.ascentType
+      : (legacyStyle === 'toprope'
+        ? 'toprope'
+        : (legacyStyle === 'flash'
+          ? 'flash'
+          : (legacyStyle === 'rotpunkt' ? 'rotpunkt' : '')));
+
+    const normalizedStatus = nextStatus === 'done' ? 'done' : 'open';
+    const normalizedAscentType = normalizedStatus === 'done'
+      ? (nextAscentType === 'toprope'
+        ? 'toprope'
+        : (nextAscentType === 'flash' ? 'flash' : 'rotpunkt'))
+      : '';
+
+    return {
+      id: String(entry.id || createEntryId()),
+      createdAt: Number(entry.createdAt) || Date.now(),
+      updatedAt: Number(entry.updatedAt) || Number(entry.createdAt) || Date.now(),
+      date: String(entry.date || ''),
+      setDate: String(entry.setDate || ''),
+      grade,
+      rawDifficulty: String(entry.rawDifficulty || '').trim(),
+      routeCode: String(entry.routeCode || '').trim(),
+      name,
+      location: String(entry.location || '').trim(),
+      notes: String(entry.notes || '').trim(),
+      link: String(entry.link || '').trim(),
+      primaryColor: normalizeColor(entry.primaryColor),
+      secondaryColor: normalizeColor(entry.secondaryColor),
+      status: normalizedStatus,
+      ascentType: normalizedAscentType,
+      source: entry.source === 'hall' ? 'hall' : 'custom'
+    };
+  }
+
+  function loadRouteEntries() {
+    try {
+      if (!localStorage.getItem(FIRST_OPEN_KEY)) {
+        localStorage.setItem(FIRST_OPEN_KEY, '1');
+        localStorage.removeItem(STORAGE_KEY);
+        return mergeRouteEntries([]);
+      }
+
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      const storedEntries = Array.isArray(parsed) ? parsed.map(normalizeEntry).filter(Boolean) : [];
+      return mergeRouteEntries(storedEntries);
+    } catch (error) {
+      return mergeRouteEntries([]);
+    }
+  }
+
+  function saveRouteEntries() {
+    const persistedEntries = routeEntries.filter(shouldPersistEntry).map(serializeEntry);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(persistedEntries));
+  }
+
+  function formatDate(dateString) {
+    if (!dateString) return 'Ohne Datum';
+    const parsedDate = new Date(dateString + 'T00:00:00');
+    if (Number.isNaN(parsedDate.getTime())) return dateString;
+    return new Intl.DateTimeFormat('de-DE', { dateStyle: 'medium' }).format(parsedDate);
+  }
+
+  function statusFromSelection(value) {
+    if (value === 'toprope') {
+      return { status: 'done', ascentType: 'toprope' };
+    }
+
+    if (value === 'flash') {
+      return { status: 'done', ascentType: 'flash' };
+    }
+
+    if (value === 'rotpunkt') {
+      return { status: 'done', ascentType: 'rotpunkt' };
+    }
+
+    return { status: 'open', ascentType: '' };
+  }
+
+  function selectionFromEntry(entry) {
+    if (entry.status === 'done' && entry.ascentType === 'toprope') return 'toprope';
+    if (entry.status === 'done' && entry.ascentType === 'flash') return 'flash';
+    if (entry.status === 'done') return 'rotpunkt';
+    return 'open';
+  }
+
+  function getRouteStatusMeta(entry) {
+    const selection = selectionFromEntry(entry);
+
+    if (selection === 'toprope') {
+      return {
+        label: 'Toprope',
+        pillClass: 'pill-toprope',
+        cardClass: 'route-card-toprope'
+      };
+    }
+
+    if (selection === 'flash') {
+      return {
+        label: 'Flash',
+        pillClass: 'pill-flash',
+        cardClass: 'route-card-flash'
+      };
+    }
+
+    if (selection === 'rotpunkt') {
+      return {
+        label: 'Rotpunkt',
+        pillClass: 'pill-rotpunkt',
+        cardClass: 'route-card-rotpunkt'
+      };
+    }
+
+    return {
+      label: 'Noch offen',
+      pillClass: 'pill-projekt',
+      cardClass: 'route-card-open'
+    };
+  }
+
+  function getRouteDateLabel(entry) {
+    if (entry.status === 'done' && entry.date) {
+      return 'Abgehakt am ' + formatDate(entry.date);
+    }
+
+    if (entry.setDate) {
+      return 'Geschraubt am ' + formatDate(entry.setDate);
+    }
+
+    if (entry.date) {
+      return 'Eingetragen am ' + formatDate(entry.date);
+    }
+
+    return 'Ohne Datum';
+  }
+
+  function isEntryLocked(entry, progressState) {
+    if (!progressState || !progressState.current) return false;
+    return Number(entry.grade) > Number(progressState.current.grade);
+  }
+
+  function updateEntryStatus(entryId, selection) {
+    const entry = routeEntries.find(candidate => candidate.id === entryId);
+    if (!entry) return false;
+
+    const progressState = getProgressState(getGradeSummaries());
+    if (isEntryLocked(entry, progressState)) {
+      renderDashboard();
+      return false;
+    }
+
+    const nextStatus = statusFromSelection(selection);
+
+    routeEntries = routeEntries.map(entry => {
+      if (entry.id !== entryId) return entry;
+
+      return {
+        ...entry,
+        status: nextStatus.status,
+        ascentType: nextStatus.ascentType,
+        updatedAt: Date.now(),
+        date: nextStatus.status === 'done'
+          ? (entry.date || getTodayValue())
+          : (entry.source === 'hall' ? '' : entry.date)
+      };
+    });
+
+    saveRouteEntries();
+    renderDashboard();
+    return true;
+  }
+
+  function showFeedback(message, type) {
+    formFeedback.textContent = message;
+    formFeedback.className = 'form-feedback show ' + (type === 'error' ? 'feedback-error' : 'feedback-success');
+  }
+
+  function clearFeedback() {
+    formFeedback.textContent = '';
+    formFeedback.className = 'form-feedback';
+  }
+
+  function sameRoute(left, right) {
+    return left.grade === right.grade &&
+      left.name.trim().toLowerCase() === right.name.trim().toLowerCase() &&
+      left.location.trim().toLowerCase() === right.location.trim().toLowerCase();
+  }
+
+  function getStatusPriority(entry) {
+    const selection = selectionFromEntry(entry);
+    if (selection === 'open') return 0;
+    if (selection === 'toprope') return 1;
+    if (selection === 'flash') return 2;
+    return 3;
+  }
+
+  function sortEntries(entries) {
+    return [...entries].sort((left, right) => {
+      const byGrade = Number(left.grade) - Number(right.grade);
+      if (byGrade !== 0) return byGrade;
+
+      const byStatus = getStatusPriority(left) - getStatusPriority(right);
+      if (byStatus !== 0) return byStatus;
+
+      return left.name.localeCompare(right.name, 'de', { sensitivity: 'base' });
+    });
+  }
+
+  function getGradeSummaries() {
+    const grouped = getTrackedEntries().reduce((accumulator, entry) => {
+      if (!accumulator[entry.grade]) {
+        accumulator[entry.grade] = {
+          grade: entry.grade,
+          total: 0,
+          done: 0,
+          rotpunkt: 0,
+          flash: 0,
+          toprope: 0,
+          open: 0
+        };
+      }
+
+      accumulator[entry.grade].total += 1;
+
+      if (entry.status === 'done') {
+        accumulator[entry.grade].done += 1;
+
+        if (entry.ascentType === 'toprope') {
+          accumulator[entry.grade].toprope += 1;
+        } else if (entry.ascentType === 'flash') {
+          accumulator[entry.grade].flash += 1;
+        } else {
+          accumulator[entry.grade].rotpunkt += 1;
+        }
+      } else {
+        accumulator[entry.grade].open += 1;
+      }
+
+      return accumulator;
+    }, {});
+
+    return Object.values(grouped).sort((left, right) => Number(left.grade) - Number(right.grade));
+  }
+
+  function getProgressState(summaries) {
+    if (!summaries.length) {
+      return {
+        firstIncompleteIndex: -1,
+        current: null,
+        next: null,
+        canStartNext: false,
+        focusText: 'Noch kein Grad aktiv',
+        unlockText: 'Die Hallenliste ist geladen. Starte mit den offenen Routen deines Trainingsgrades.',
+        progressHint: 'Starte mit dem ersten Grad deiner aktuellen Trainingsphase.'
+      };
+    }
+
+    const firstIncompleteIndex = summaries.findIndex(summary => summary.done < summary.total);
+
+    if (firstIncompleteIndex === -1) {
+      return {
+        firstIncompleteIndex: -1,
+        current: null,
+        next: null,
+        canStartNext: false,
+        focusText: 'Alle Grade abgeschlossen',
+        unlockText: 'Alle angelegten Grade sind bereits komplett abgehakt.',
+        progressHint: 'Stark: Alle angelegten Routen sind erledigt.'
+      };
+    }
+
+    const current = summaries[firstIncompleteIndex];
+    const next = summaries[firstIncompleteIndex + 1] || null;
+    const canStartNext = current.open <= 2 && next !== null;
+
+    let unlockText = 'In Grad ' + current.grade + ' sind noch ' + current.open + ' Route(n) offen.';
+    if (next && canStartNext) {
+      unlockText = 'In Grad ' + current.grade + ' sind nur noch ' + current.open + ' Route(n) offen. Grad ' + next.grade + ' darf schon begonnen werden.';
+    } else if (next && !canStartNext) {
+      unlockText = 'Noch ' + (current.open - 2) + ' weitere Route(n) in Grad ' + current.grade + ', dann wird Grad ' + next.grade + ' freigeschaltet.';
+    }
+
+    return {
+      firstIncompleteIndex,
+      current,
+      next,
+      canStartNext,
+      focusText: 'Grad ' + current.grade,
+      unlockText,
+      progressHint: current.open === 0
+        ? 'Grad ' + current.grade + ' ist abgeschlossen.'
+        : current.open + ' Route(n) in Grad ' + current.grade + ' fehlen noch.'
+    };
+  }
+
+  function getGradeState(summary, index, progressState) {
+    if (summary.done === summary.total) {
+      return {
+        label: 'Abgeschlossen',
+        badgeClass: 'badge-done',
+        hint: 'Alle Routen dieses Grades sind erledigt.'
+      };
+    }
+
+    if (progressState.firstIncompleteIndex === index) {
+      return {
+        label: 'Aktueller Grad',
+        badgeClass: 'badge-current',
+        hint: progressState.canStartNext
+          ? 'Nur noch wenige Routen offen. Der nächste Grad darf parallel begonnen werden.'
+          : 'Dieser Grad ist gerade dein Hauptfokus.'
+      };
+    }
+
+    if (index > progressState.firstIncompleteIndex && summary.done > 0) {
+      return {
+        label: 'Schon begonnen',
+        badgeClass: 'badge-open',
+        hint: 'Du hast in diesem Grad bereits erste Routen markiert.'
+      };
+    }
+
+    if (index === progressState.firstIncompleteIndex + 1 && progressState.canStartNext) {
+      return {
+        label: 'Freigeschaltet',
+        badgeClass: 'badge-open',
+        hint: 'Diesen Grad darfst du parallel schon angehen.'
+      };
+    }
+
+    return {
+      label: 'Gesperrt',
+      badgeClass: 'badge-locked',
+      hint: 'Arbeite zuerst den aktuellen Grad weiter ab.'
+    };
+  }
+
+  function getDefaultRouteGradeFilterValue(summaries, progressState) {
+    if (progressState.current && summaries.some(summary => summary.grade === progressState.current.grade)) {
+      return progressState.current.grade;
+    }
+
+    return 'all';
+  }
+
+  function updateGradeFilterOptions(summaries, progressState) {
+    routeGradeFilter.innerHTML = '<option value="all">Alle Grade</option>';
+
+    summaries.forEach(summary => {
+      const option = document.createElement('option');
+      option.value = summary.grade;
+      option.textContent = 'Grad ' + summary.grade;
+      routeGradeFilter.appendChild(option);
+    });
+
+    routeGradeFilter.value = getDefaultRouteGradeFilterValue(summaries, progressState);
+  }
+
+  function renderGradeSummary(summaries) {
+    gradeSummary.innerHTML = '';
+
+    if (!summaries.length) {
+      const empty = document.createElement('div');
+      empty.className = 'tracker-empty';
+      empty.textContent = 'Noch keine Routen im Board.';
+      gradeSummary.appendChild(empty);
+      return;
+    }
+
+    summaries.forEach(summary => {
+      const chip = document.createElement('div');
+      chip.className = 'grade-chip';
+      chip.textContent = 'Grad ' + summary.grade + ': ' + summary.done + '/' + summary.total + ' erledigt · ' +
+        summary.rotpunkt + ' RP · ' + summary.flash + ' FL · ' + summary.toprope + ' TR';
+
+      if (summary.open > 0) {
+        chip.textContent += ' · ' + summary.open + ' offen';
+      }
+
+      gradeSummary.appendChild(chip);
+    });
+  }
+
+  function renderMetrics(summaries, progressState) {
+    const trackedEntries = getTrackedEntries();
+    const totalRoutes = trackedEntries.length;
+    const completedRoutes = trackedEntries.filter(entry => entry.status === 'done').length;
+    const openRoutes = totalRoutes - completedRoutes;
+    const progressPercent = totalRoutes ? Math.round((completedRoutes / totalRoutes) * 100) : 0;
+
+    totalRoutesMetric.textContent = String(totalRoutes);
+    completedRoutesMetric.textContent = String(completedRoutes);
+    openRoutesMetric.textContent = String(openRoutes);
+    currentGradeMetric.textContent = progressState.current ? progressState.current.grade : (summaries.length ? '✓' : '-');
+    currentGradeMetricNote.textContent = progressState.unlockText;
+
+    if (!totalRoutes) {
+      overallProgressLabel.textContent = 'Noch keine Routen im Board';
+    } else {
+      overallProgressLabel.textContent = completedRoutes + ' von ' + totalRoutes + ' Routen abgeschlossen';
+    }
+
+    overallProgressHint.textContent = progressState.progressHint;
+    overallProgressFill.style.width = progressPercent + '%';
+    focusGradeValue.textContent = progressState.focusText;
+    unlockMessage.textContent = progressState.unlockText;
+  }
+
+  function renderGradeBoard(summaries, progressState) {
+    gradeProgressBoard.innerHTML = '';
+
+    if (!summaries.length) {
+      const empty = document.createElement('div');
+      empty.className = 'tracker-empty';
+      empty.textContent = 'Sobald Routen im Board sind, erscheint hier dein Fortschritt pro Grad.';
+      gradeProgressBoard.appendChild(empty);
+      return;
+    }
+
+    summaries.forEach((summary, index) => {
+      const gradeState = getGradeState(summary, index, progressState);
+      const completion = summary.total ? Math.round((summary.done / summary.total) * 100) : 0;
+
+      const card = document.createElement('article');
+      card.className = 'grade-card';
+
+      const header = document.createElement('div');
+      header.className = 'grade-card-head';
+
+      const title = document.createElement('h3');
+      title.textContent = 'Grad ' + summary.grade;
+
+      const badge = document.createElement('span');
+      badge.className = 'grade-badge ' + gradeState.badgeClass;
+      badge.textContent = gradeState.label;
+
+      header.appendChild(title);
+      header.appendChild(badge);
+      card.appendChild(header);
+
+      const progressTrack = document.createElement('div');
+      progressTrack.className = 'grade-progress-track';
+
+      const progressFill = document.createElement('div');
+      progressFill.className = 'grade-progress-fill';
+      progressFill.style.width = completion + '%';
+      progressTrack.appendChild(progressFill);
+      card.appendChild(progressTrack);
+
+      const stats = document.createElement('div');
+      stats.className = 'grade-stats';
+      stats.innerHTML =
+        '<span>' + summary.done + '/' + summary.total + ' erledigt</span>' +
+        '<span>' + summary.rotpunkt + ' RP</span>' +
+        '<span>' + summary.flash + ' FL</span>' +
+        '<span>' + summary.toprope + ' TR</span>' +
+        '<span>' + summary.open + ' offen</span>';
+      card.appendChild(stats);
+
+      const hint = document.createElement('div');
+      hint.className = 'grade-hint';
+      hint.textContent = gradeState.hint;
+      card.appendChild(hint);
+
+      gradeProgressBoard.appendChild(card);
+    });
+  }
+
+  function getFilteredEntries() {
+    const searchTerm = routeSearch.value.trim().toLowerCase();
+    const gradeFilter = routeGradeFilter.value;
+    const statusFilter = routeStatusFilter.value;
+
+    return sortEntries(getTrackedEntries()).filter(entry => {
+      const matchesSearch = !searchTerm ||
+        entry.name.toLowerCase().includes(searchTerm) ||
+        entry.location.toLowerCase().includes(searchTerm) ||
+        entry.routeCode.toLowerCase().includes(searchTerm) ||
+        entry.rawDifficulty.toLowerCase().includes(searchTerm) ||
+        entry.notes.toLowerCase().includes(searchTerm);
+
+      const matchesGrade = gradeFilter === 'all' || entry.grade === gradeFilter;
+      const selection = selectionFromEntry(entry);
+      const matchesStatus = statusFilter === 'all' || selection === statusFilter;
+
+      return matchesSearch && matchesGrade && matchesStatus;
+    });
+  }
+
+  function renderRouteBoard(summaries, progressState) {
+    routeBoard.innerHTML = '';
+
+    const trackedEntries = getTrackedEntries();
+
+    if (!trackedEntries.length) {
+      const empty = document.createElement('div');
+      empty.className = 'tracker-empty';
+      empty.textContent = 'Aktuell sind keine berücksichtigten Routen im Board.';
+      routeBoard.appendChild(empty);
+      return;
+    }
+
+    const filteredEntries = getFilteredEntries();
+    if (!filteredEntries.length) {
+      const empty = document.createElement('div');
+      empty.className = 'tracker-empty';
+      empty.textContent = 'Keine Route passt aktuell zu deinem Filter.';
+      routeBoard.appendChild(empty);
+      return;
+    }
+
+    const shell = document.createElement('section');
+    shell.className = 'route-table-shell';
+
+    const tableHead = document.createElement('div');
+    tableHead.className = 'route-table-head';
+
+    const title = document.createElement('div');
+    title.className = 'route-table-title';
+    title.textContent = 'Routenübersicht';
+
+    const meta = document.createElement('div');
+    meta.className = 'route-table-meta';
+    meta.textContent = filteredEntries.length + ' von ' + trackedEntries.length + ' Routen sichtbar';
+
+    tableHead.appendChild(title);
+    tableHead.appendChild(meta);
+    shell.appendChild(tableHead);
+
+    const tableWrap = document.createElement('div');
+    tableWrap.className = 'route-table-wrap';
+
+    const table = document.createElement('table');
+    table.className = 'route-table';
+
+    const thead = document.createElement('thead');
+    const headRow = document.createElement('tr');
+    [
+      'Check',
+      'Grad',
+      'Route',
+      'Infos',
+      'Bereich',
+      'Status',
+      'Aktionen'
+    ].forEach(label => {
+      const th = document.createElement('th');
+      th.scope = 'col';
+      th.textContent = label;
+      headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+
+    filteredEntries.forEach(entry => {
+      const statusMeta = getRouteStatusMeta(entry);
+      const isLocked = isEntryLocked(entry, progressState);
+      const row = document.createElement('tr');
+      row.className = 'route-row-' + selectionFromEntry(entry);
+
+      const checkCell = document.createElement('td');
+      checkCell.className = 'route-cell-check';
+      const quickToggle = document.createElement('label');
+      quickToggle.className = 'route-quick-toggle' +
+        (entry.status === 'done' ? ' checked' : '') +
+        (isLocked ? ' locked' : '');
+      const quickToggleInput = document.createElement('input');
+      quickToggleInput.type = 'checkbox';
+      quickToggleInput.checked = entry.status === 'done';
+      quickToggleInput.disabled = isLocked;
+      quickToggleInput.dataset.action = 'toggle-done';
+      quickToggleInput.dataset.entryId = entry.id;
+      const quickToggleText = document.createElement('span');
+      quickToggleText.textContent = entry.status === 'done' ? 'Ja' : 'Nein';
+      quickToggle.appendChild(quickToggleInput);
+      quickToggle.appendChild(quickToggleText);
+      checkCell.appendChild(quickToggle);
+      row.appendChild(checkCell);
+
+      const gradeCell = document.createElement('td');
+      gradeCell.className = 'route-cell-grade';
+      const gradeBadge = document.createElement('span');
+      gradeBadge.className = 'route-grade-badge';
+      gradeBadge.textContent = entry.grade;
+      gradeCell.appendChild(gradeBadge);
+      row.appendChild(gradeCell);
+
+      const routeCell = document.createElement('td');
+      const routeName = document.createElement('div');
+      routeName.className = 'route-name-main';
+      routeName.textContent = entry.name;
+      routeCell.appendChild(routeName);
+
+      const routeDate = document.createElement('div');
+      routeDate.className = 'route-name-sub';
+      routeDate.textContent = getRouteDateLabel(entry);
+      routeCell.appendChild(routeDate);
+
+      if (entry.notes) {
+        const routeNotes = document.createElement('div');
+        routeNotes.className = 'route-notes-text';
+        routeNotes.textContent = entry.notes;
+        routeCell.appendChild(routeNotes);
+      }
+
+      row.appendChild(routeCell);
+
+      const infoCell = document.createElement('td');
+      const infoStack = document.createElement('div');
+      infoStack.className = 'route-info-stack';
+
+      if (entry.rawDifficulty) {
+        const difficulty = document.createElement('span');
+        difficulty.className = 'route-mini-badge';
+        difficulty.textContent = 'VL ' + entry.rawDifficulty;
+        infoStack.appendChild(difficulty);
+      }
+
+      if (entry.routeCode) {
+        const routeCode = document.createElement('span');
+        routeCode.className = 'route-mini-badge';
+        routeCode.textContent = 'Linie ' + entry.routeCode;
+        infoStack.appendChild(routeCode);
+      }
+
+      if (entry.primaryColor || entry.secondaryColor) {
+        const colors = document.createElement('div');
+        colors.className = 'route-colors';
+        [entry.primaryColor, entry.secondaryColor]
+          .filter(Boolean)
+          .forEach(colorValue => {
+            const dot = document.createElement('span');
+            dot.className = 'route-color-dot';
+            dot.style.backgroundColor = colorValue;
+            colors.appendChild(dot);
+          });
+        infoStack.appendChild(colors);
+      }
+
+      if (entry.link) {
+        const link = document.createElement('a');
+        link.className = 'route-meta-link';
+        link.href = entry.link;
+        link.target = '_blank';
+        link.rel = 'noreferrer';
+        link.textContent = 'Vertical-Life';
+        infoStack.appendChild(link);
+      }
+
+      infoCell.appendChild(infoStack);
+      row.appendChild(infoCell);
+
+      const locationCell = document.createElement('td');
+      const locationText = document.createElement('div');
+      locationText.className = 'route-location-text';
+      locationText.textContent = entry.location || '—';
+      locationCell.appendChild(locationText);
+      row.appendChild(locationCell);
+
+      const statusCell = document.createElement('td');
+      statusCell.className = 'route-cell-status';
+      const pill = document.createElement('span');
+      pill.className = 'tracker-pill ' + statusMeta.pillClass;
+      pill.textContent = statusMeta.label;
+      statusCell.appendChild(pill);
+      if (isLocked) {
+        const lockNote = document.createElement('div');
+        lockNote.className = 'route-lock-note';
+        lockNote.textContent = 'Gesperrt oberhalb des aktuellen Grades';
+        statusCell.appendChild(lockNote);
+      }
+      row.appendChild(statusCell);
+
+      const actionsCell = document.createElement('td');
+      actionsCell.className = 'route-cell-actions';
+      const actions = document.createElement('div');
+      actions.className = 'route-status-actions';
+
+      [
+        { value: 'open', label: 'Offen' },
+        { value: 'toprope', label: 'Toprope' },
+        { value: 'flash', label: 'Flash' },
+        { value: 'rotpunkt', label: 'Rotpunkt' }
+      ].forEach(option => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'status-btn status-' + option.value;
+        button.disabled = isLocked;
+        if (selectionFromEntry(entry) === option.value) {
+          button.classList.add('active');
+        }
+        button.dataset.action = 'set-status';
+        button.dataset.entryId = entry.id;
+        button.dataset.status = option.value;
+        button.textContent = option.label;
+        actions.appendChild(button);
+      });
+
+      if (entry.source === 'custom') {
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'status-btn delete-btn';
+        deleteButton.dataset.action = 'delete-entry';
+        deleteButton.dataset.entryId = entry.id;
+        deleteButton.textContent = 'Löschen';
+        actions.appendChild(deleteButton);
+      }
+
+      actionsCell.appendChild(actions);
+      row.appendChild(actionsCell);
+
+      tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    tableWrap.appendChild(table);
+    shell.appendChild(tableWrap);
+    routeBoard.appendChild(shell);
+  }
+
+  function renderDashboard() {
+    const summaries = getGradeSummaries();
+    const progressState = getProgressState(summaries);
+
+    updateGradeFilterOptions(summaries, progressState);
+    renderMetrics(summaries, progressState);
+    renderGradeSummary(summaries);
+    renderGradeBoard(summaries, progressState);
+    renderRouteBoard(summaries, progressState);
+  }
+
+  function resetRouteForm() {
+    routeLogForm.reset();
+    document.getElementById('route-date').value = getTodayValue();
+    document.getElementById('route-status').value = 'open';
+    clearFeedback();
+  }
+
+  routeLogForm.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const formData = new FormData(routeLogForm);
+    const selection = String(formData.get('status') || 'open');
+    const statusInfo = statusFromSelection(selection);
+
+    const entry = {
+      id: createEntryId(),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      date: String(formData.get('date') || ''),
+      setDate: '',
+      grade: String(formData.get('grade') || '').trim(),
+      rawDifficulty: '',
+      routeCode: '',
+      name: String(formData.get('name') || '').trim(),
+      location: String(formData.get('location') || '').trim(),
+      notes: String(formData.get('notes') || '').trim(),
+      link: '',
+      primaryColor: '',
+      secondaryColor: '',
+      source: 'custom',
+      status: statusInfo.status,
+      ascentType: statusInfo.ascentType
+    };
+
+    if (!entry.date || !entry.grade || !entry.name) {
+      showFeedback('Bitte fülle mindestens Datum, Grad und Routenname aus.', 'error');
+      return;
+    }
+
+    if (routeEntries.some(existingEntry => sameRoute(existingEntry, entry))) {
+      showFeedback('Diese Route ist schon im Dashboard angelegt. Nutze unten die Abhak- und Statusfunktionen.', 'error');
+      return;
+    }
+
+    routeEntries.push(entry);
+    saveRouteEntries();
+    renderDashboard();
+    showFeedback('Zusatzroute gespeichert. Du kannst sie unten direkt abhaken oder den Status anpassen.', 'success');
+
+    routeLogForm.reset();
+    document.getElementById('route-date').value = getTodayValue();
+    document.getElementById('route-status').value = selection;
+    document.getElementById('route-name').focus();
+  });
+
+  routeLogForm.addEventListener('reset', () => {
+    requestAnimationFrame(resetRouteForm);
+  });
+
+  routeBoard.addEventListener('change', event => {
+    const checkbox = event.target.closest('input[data-action="toggle-done"]');
+    if (!checkbox) return;
+
+    updateEntryStatus(
+      checkbox.dataset.entryId,
+      checkbox.checked ? 'rotpunkt' : 'open'
+    );
+  });
+
+  routeBoard.addEventListener('click', event => {
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+
+    const entryId = button.dataset.entryId;
+    if (!entryId) return;
+
+    if (button.dataset.action === 'delete-entry') {
+      if (!window.confirm('Diese Route wirklich aus dem Dashboard löschen?')) return;
+      routeEntries = routeEntries.filter(entry => entry.id !== entryId);
+      saveRouteEntries();
+      renderDashboard();
+      return;
+    }
+
+    if (button.dataset.action === 'set-status') {
+      updateEntryStatus(entryId, button.dataset.status);
+    }
+  });
+
+  clearAllRoutesButton.addEventListener('click', () => {
+    if (!getTrackedEntries().length) return;
+    if (!window.confirm('Den gespeicherten Fortschritt wirklich zurücksetzen? Alle Routen bleiben erhalten und werden wieder auf Nein gesetzt.')) return;
+
+    routeEntries = routeEntries.map(entry => ({
+      ...entry,
+      status: 'open',
+      ascentType: '',
+      date: '',
+      updatedAt: Date.now()
+    }));
+    saveRouteEntries();
+    renderDashboard();
+    resetRouteForm();
+  });
+
+  routeSearch.addEventListener('input', renderDashboard);
+  routeGradeFilter.addEventListener('change', renderDashboard);
+  routeStatusFilter.addEventListener('change', renderDashboard);
+
+  resetRouteForm();
+  renderDashboard();
+</script>
+
+</body>
+</html>
