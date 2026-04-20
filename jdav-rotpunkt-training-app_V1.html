@@ -1848,11 +1848,13 @@
   let db = null, auth = null, currentUser = null;
   try {
     if (window.firebase && FIREBASE_CONFIG.apiKey !== 'DEINE_API_KEY') {
-      firebase.initializeApp(FIREBASE_CONFIG);
+      if (!firebase.apps.length) {
+        firebase.initializeApp(FIREBASE_CONFIG);
+      }
       auth = firebase.auth();
       db   = firebase.firestore();
     }
-  } catch (e) { console.warn('Firebase init:', e); }
+  } catch (e) { console.warn('Firebase init error:', e); }
   // ─────────────────────────────────────────────────────────────────────────
   const routeLogForm = document.getElementById('route-log-form');
   const formFeedback = document.getElementById('form-feedback');
@@ -3080,7 +3082,7 @@
     localStorage.setItem(PROFILE_KEY, JSON.stringify(userProfile));
     if (db && currentUser) {
       db.collection('users').doc(currentUser.uid).collection('data').doc('routes')
-        .update({ profile: userProfile }).catch(() => {});
+        .set({ profile: userProfile }, { merge: true }).catch(() => {});
     }
   }
 
