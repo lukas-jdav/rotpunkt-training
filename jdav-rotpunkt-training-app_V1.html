@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -6,9 +7,12 @@
 <title>JDAV Aachen – Rotpunkt-Trainingskonzept</title>
 <script>
 (function () {
-  const t = localStorage.getItem('theme') ||
-    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  try {
+    const storedTheme = localStorage.getItem('jdavRotpunkt.theme');
+    const fallbackTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const theme = storedTheme || fallbackTheme;
+    if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  } catch (error) {}
 })();
 </script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,26 +22,24 @@
 <style>
   :root {
     --dav-green: #006633;
-    --dav-green-strong: #0a7f42;
-    --dav-green-light: #e8f4ec;
-    --dav-green-border: #b3d9c2;
-    --accent: #e8401a;
-    --accent-light: #fdf0ec;
-    --accent-border: #f4b8a8;
-    --yellow: #f5a623;
-    --yellow-light: #fef8ec;
-    --yellow-border: #f5dda5;
-    --blue: #1a6ebf;
-    --blue-light: #eef4fb;
-    --blue-border: #b3cfed;
-    --gray-25: #fbfcfd;
-    --gray-50: #f7f8f9;
-    --gray-100: #eceef0;
-    --gray-200: #d5d9de;
-    --gray-300: #b8bec6;
-    --gray-400: #8a9199;
-    --gray-600: #4a5260;
-    --gray-800: #1e2530;
+    --dav-green-light: #E8F4EC;
+    --dav-green-border: #B3D9C2;
+    --accent: #E8401A;
+    --accent-light: #FDF0EC;
+    --accent-border: #F4B8A8;
+    --yellow: #F5A623;
+    --yellow-light: #FEF8EC;
+    --blue: #1A6EBF;
+    --blue-light: #EEF4FB;
+    --gray-50: #F7F8F9;
+    --gray-100: #ECEEF0;
+    --gray-200: #D5D9DE;
+    --gray-300: #B8BEC6;
+    --gray-400: #8A9199;
+    --gray-600: #4A5260;
+    --gray-800: #1E2530;
+    --shadow-soft: 0 10px 30px rgba(9, 18, 28, 0.08);
+
     --font-family-base: 'IBM Plex Sans', sans-serif;
     --font-size-body: 14px;
     --font-size-small: 12px;
@@ -47,15 +49,20 @@
     --line-height-base: 1.6;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
 
   body {
     font-family: var(--font-family-base);
     background: var(--gray-50);
     color: var(--gray-800);
-    max-width: 1040px;
+    max-width: 1080px;
     margin: 0 auto;
-    padding: 24px 20px 40px;
+    padding: 24px 20px 44px;
     font-size: var(--font-size-body);
     line-height: var(--line-height-base);
   }
@@ -65,15 +72,20 @@
     font-size: var(--font-size-body);
   }
 
+  button {
+    cursor: pointer;
+  }
+
   .header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 16px;
+    gap: 18px;
     border-bottom: 3px solid var(--dav-green);
     padding-bottom: 16px;
     margin-bottom: 24px;
   }
+
   .org-tag {
     font-size: var(--font-size-small);
     font-weight: 600;
@@ -82,22 +94,116 @@
     color: var(--dav-green);
     margin-bottom: 4px;
   }
+
   .header h1 {
+    margin: 0;
     font-size: var(--font-size-title);
     font-weight: 700;
     line-height: 1.2;
   }
+
   .header-meta {
-    font-size: var(--font-size-label);
-    color: var(--gray-400);
     margin-top: 5px;
+    color: var(--gray-400);
+    font-size: var(--font-size-label);
   }
+
   .header-right {
-    align-self: center;
     display: flex;
     align-items: center;
     gap: 10px;
+    align-self: center;
   }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--gray-200);
+    background: white;
+    color: var(--gray-600);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+
+  .icon-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--gray-300);
+  }
+
+  #auth-ui {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+  }
+
+  .auth-signin-btn,
+  .auth-signout-btn,
+  .secondary-btn,
+  .primary-btn,
+  .danger-btn,
+  .ghost-btn {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 10px 14px;
+    border: 1px solid var(--gray-200);
+    background: white;
+    color: var(--gray-800);
+  }
+
+  .auth-signin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .auth-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .auth-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--dav-green);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-label);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .auth-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .auth-name {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--font-size-label);
+  }
+
+  .auth-sync {
+    font-size: var(--font-size-small);
+    color: var(--dav-green);
+    min-width: 90px;
+    text-align: right;
+  }
+
+  .auth-sync.error { color: var(--accent); }
 
   .tab-nav {
     display: flex;
@@ -106,325 +212,317 @@
     margin-bottom: 24px;
     overflow-x: auto;
   }
+
   .tab-btn {
     padding: 10px 18px;
-    font-family: var(--font-family-base);
-    font-size: var(--font-size-label);
-    font-weight: 600;
-    background: none;
     border: none;
     border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
+    background: none;
     color: var(--gray-400);
-    cursor: pointer;
+    font-size: var(--font-size-label);
+    font-weight: 600;
     white-space: nowrap;
+    margin-bottom: -2px;
   }
+
   .tab-btn.active {
     color: var(--dav-green);
     border-bottom-color: var(--dav-green);
   }
+
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
 
-  .section { margin-bottom: 22px; }
+  .section {
+    margin-bottom: 22px;
+  }
+
   .section-title {
+    margin: 0 0 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--dav-green-border);
+    color: var(--dav-green);
     font-size: var(--font-size-section);
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--dav-green);
-    margin-bottom: 10px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid var(--dav-green-border);
   }
 
   .card,
   .info-block,
+  .gloss-item,
   .route-table-shell,
   .settings-card,
-  .collapsible-section,
-  .gloss-item,
-  .summary-card,
-  .grade-track-card,
-  .progress-card {
+  .modal-card {
     background: white;
     border: 1px solid var(--gray-200);
     border-radius: 14px;
-    box-shadow: 0 1px 2px rgba(30, 37, 48, 0.04);
+    box-shadow: var(--shadow-soft);
   }
 
-  .settings-card,
+  .card,
   .info-block,
   .gloss-item,
-  .summary-card,
-  .grade-track-card,
-  .progress-card {
-    padding: 16px 18px;
+  .settings-card {
+    padding: 18px;
   }
 
-  .info-block,
-  .info-block p,
-  .gloss-def,
-  .route-location-text,
-  .route-notes-text,
-  .field-help,
-  .header-meta,
-  .footer,
-  .route-name-sub,
-  .route-table-meta,
-  .form-feedback,
-  .dashboard-copy,
-  .summary-note,
-  .progress-note,
-  .settings-inline span,
-  .grade-step-note,
-  .grade-track-copy {
-    font-size: var(--font-size-body);
-    line-height: var(--line-height-base);
+  .dashboard-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 16px;
   }
 
-  .dashboard-shell {
-    display: grid;
-    gap: 14px;
-  }
-  .dashboard-top {
-    display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 14px;
-  }
-  .dashboard-intro {
-    padding: 18px 20px;
-    border-radius: 14px;
-    background: linear-gradient(180deg, #ffffff 0%, #f7fbf8 100%);
+  .status-card {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbf9 100%);
     border: 1px solid var(--dav-green-border);
   }
-  .dashboard-kicker {
-    display: inline-block;
-    margin-bottom: 8px;
-    color: var(--dav-green);
-    font-size: var(--font-size-small);
+
+  .status-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+    color: var(--dav-green);
+    margin-bottom: 6px;
   }
-  .dashboard-intro h2 {
-    font-size: 30px;
-    line-height: 1.12;
-    margin-bottom: 8px;
-    font-weight: 700;
-    color: var(--gray-800);
-  }
-  .dashboard-copy { color: var(--gray-600); }
 
-  .summary-grid {
+  .status-title {
+    margin: 0;
+    font-size: 26px;
+    line-height: 1.1;
+  }
+
+  .status-subtitle {
+    margin-top: 6px;
+    color: var(--gray-600);
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--dav-green-light);
+    color: var(--dav-green);
+    border: 1px solid var(--dav-green-border);
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .metric-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
-  }
-  .summary-card {
-    min-height: 120px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .summary-label {
-    font-size: var(--font-size-small);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--gray-400);
-  }
-  .summary-value {
-    margin-top: 6px;
-    font-size: 28px;
-    line-height: 1.15;
-    font-weight: 700;
-    color: var(--gray-800);
-  }
-  .summary-note {
-    margin-top: 8px;
-    color: var(--gray-600);
-  }
-  .summary-card.current {
-    border-color: var(--dav-green-border);
-    background: linear-gradient(180deg, #ffffff 0%, #f7fbf8 100%);
-  }
-  .summary-card.open {
-    border-color: var(--yellow-border);
-    background: linear-gradient(180deg, #ffffff 0%, #fffdfa 100%);
-  }
-  .summary-card.next {
-    border-color: var(--blue-border);
-    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+    margin-top: 14px;
   }
 
-  .progress-card { padding: 14px 16px; }
-  .progress-head {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    align-items: baseline;
-    flex-wrap: wrap;
+  .metric-box {
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
   }
-  .progress-title {
-    font-size: var(--font-size-label);
+
+  .metric-label {
+    color: var(--gray-400);
+    font-size: 11px;
     font-weight: 700;
-    color: var(--gray-800);
+    letter-spacing: .08em;
+    text-transform: uppercase;
   }
-  .progress-note { color: var(--gray-400); }
+
+  .metric-value {
+    margin-top: 6px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  .metric-text {
+    margin-top: 6px;
+    color: var(--gray-600);
+    font-size: 13px;
+  }
+
+  .progress-card-title {
+    margin: 0 0 8px;
+    font-size: 16px;
+  }
+
   .progress-track {
     width: 100%;
     height: 12px;
     border-radius: 999px;
     background: var(--gray-100);
     overflow: hidden;
-    margin-top: 10px;
+    margin: 10px 0 8px;
   }
+
   .progress-fill {
-    height: 100%;
     width: 0;
+    height: 100%;
     border-radius: inherit;
-    background: linear-gradient(90deg, var(--dav-green) 0%, #2ab267 100%);
+    background: linear-gradient(90deg, #0E8B4C 0%, #7AC69D 100%);
     transition: width .18s ease-out;
   }
 
-  .grade-track-card-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
+  .progress-meta,
+  .roadmap-meta {
+    color: var(--gray-600);
+    font-size: 13px;
   }
-  .grade-track-title {
-    font-size: var(--font-size-label);
-    font-weight: 700;
-    color: var(--gray-800);
-  }
-  .grade-track-copy { color: var(--gray-400); }
-  .grade-track {
+
+  .roadmap-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 10px;
-    align-items: stretch;
   }
-  .grade-step {
+
+  .roadmap-card {
+    padding: 14px;
     border-radius: 12px;
-    padding: 14px 12px;
     border: 1px solid var(--gray-200);
     background: white;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-height: 108px;
+    min-height: 120px;
   }
-  .grade-step-label {
-    font-size: var(--font-size-small);
+
+  .roadmap-grade {
+    font-size: 22px;
     font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--gray-400);
+    line-height: 1;
+    margin-bottom: 8px;
   }
-  .grade-step-value {
-    font-size: 24px;
-    line-height: 1.1;
+
+  .roadmap-state {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
     font-weight: 700;
-    color: var(--gray-800);
-  }
-  .grade-step-note {
+    margin-bottom: 10px;
+    border: 1px solid var(--gray-200);
+    background: var(--gray-50);
     color: var(--gray-600);
-    line-height: 1.4;
   }
-  .grade-step.done {
-    background: linear-gradient(180deg, #ffffff 0%, #f5fbf7 100%);
+
+  .roadmap-card.done {
+    border-color: var(--dav-green-border);
+    background: var(--dav-green-light);
+  }
+
+  .roadmap-card.done .roadmap-state {
+    background: rgba(255,255,255,.75);
+    color: var(--dav-green);
     border-color: var(--dav-green-border);
   }
-  .grade-step.done .grade-step-value,
-  .grade-step.done .grade-step-label { color: var(--dav-green); }
-  .grade-step.current {
-    background: linear-gradient(180deg, #f5fbf7 0%, #e8f4ec 100%);
-    border-color: var(--dav-green);
-    box-shadow: inset 0 0 0 1px rgba(0, 102, 51, 0.08);
-  }
-  .grade-step.current .grade-step-value,
-  .grade-step.current .grade-step-label { color: var(--dav-green); }
-  .grade-step.next {
-    background: linear-gradient(180deg, #f7fbff 0%, #eef4fb 100%);
-    border-color: var(--blue-border);
-  }
-  .grade-step.next .grade-step-value,
-  .grade-step.next .grade-step-label { color: var(--blue); }
-  .grade-step.locked { background: linear-gradient(180deg, #ffffff 0%, #fbfcfd 100%); }
 
-  .settings-grid {
-    display: grid;
-    grid-template-columns: minmax(180px, 240px) 1fr;
-    gap: 14px;
-    align-items: end;
+  .roadmap-card.current {
+    border-color: #F5DDA5;
+    background: var(--yellow-light);
   }
-  .field-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-size: var(--font-size-label);
-    font-weight: 600;
+
+  .roadmap-card.current .roadmap-state {
+    background: rgba(255,255,255,.72);
+    color: #A36A08;
+    border-color: #F5DDA5;
+  }
+
+  .roadmap-card.unlocked {
+    border-color: #B3CFED;
+    background: var(--blue-light);
+  }
+
+  .roadmap-card.unlocked .roadmap-state {
+    background: rgba(255,255,255,.74);
+    color: var(--blue);
+    border-color: #B3CFED;
+  }
+
+  .roadmap-card.locked {
+    opacity: .88;
+  }
+
+  .roadmap-card p {
+    margin: 0;
+    font-size: 13px;
     color: var(--gray-600);
   }
+
+  .roadmap-bar {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--gray-100);
+    overflow: hidden;
+    margin: 10px 0 8px;
+  }
+
+  .roadmap-bar > span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--dav-green);
+  }
+
+  .route-toolbar {
+    display: grid;
+    grid-template-columns: minmax(240px,1.4fr) 160px 180px;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .field-group label,
+  .settings-field label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--gray-600);
+    font-size: var(--font-size-label);
+    font-weight: 600;
+  }
+
   .field-group input,
   .field-group select,
   .field-group textarea,
   .route-toolbar input,
-  .route-toolbar select {
+  .route-toolbar select,
+  .settings-field select {
     width: 100%;
-    border: 1px solid var(--gray-200);
-    border-radius: 10px;
     padding: 10px 12px;
-    color: var(--gray-800);
+    border-radius: 10px;
+    border: 1px solid var(--gray-200);
     background: white;
-    font-family: var(--font-family-base);
-    font-size: var(--font-size-body);
+    color: var(--gray-800);
   }
-  .field-group textarea {
-    min-height: 92px;
-    resize: vertical;
-  }
+
   .field-group input:focus,
   .field-group select:focus,
   .field-group textarea:focus,
   .route-toolbar input:focus,
-  .route-toolbar select:focus {
+  .route-toolbar select:focus,
+  .settings-field select:focus {
     outline: none;
     border-color: var(--dav-green);
-    box-shadow: 0 0 0 3px rgba(0, 102, 51, 0.12);
+    box-shadow: 0 0 0 3px rgba(0,102,51,.12);
   }
-  .settings-inline {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 12px 14px;
-    border-radius: 10px;
-    background: var(--gray-50);
-    border: 1px solid var(--gray-200);
-  }
-  .settings-inline input {
-    width: 16px;
-    height: 16px;
-    margin-top: 2px;
-    accent-color: var(--dav-green);
-  }
-  .settings-inline strong {
-    display: block;
-    font-size: var(--font-size-label);
-    margin-bottom: 2px;
-  }
-  .settings-inline span { color: var(--gray-400); }
 
-  .route-toolbar {
-    display: grid;
-    grid-template-columns: minmax(220px,1.5fr) 160px 180px;
-    gap: 10px;
-    margin-bottom: 14px;
+  .route-table-shell {
+    overflow: hidden;
   }
-  .route-table-shell { overflow: hidden; }
+
   .route-table-head {
     display: flex;
     justify-content: space-between;
@@ -433,111 +531,152 @@
     flex-wrap: wrap;
     padding: 14px 16px;
     border-bottom: 1px solid var(--gray-100);
-    background: linear-gradient(180deg, #fbfcfc 0%, #f4f7f5 100%);
+    background: linear-gradient(180deg,#fbfcfc 0%, #f4f7f5 100%);
   }
+
   .route-table-title {
-    font-size: var(--font-size-label);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--dav-green);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
   }
-  .route-table-meta { color: var(--gray-400); }
-  .route-table-wrap { overflow-x: auto; }
+
+  .route-table-meta {
+    color: var(--gray-400);
+    font-size: 13px;
+  }
+
+  .route-table-wrap {
+    overflow-x: auto;
+  }
+
   .route-table {
     width: 100%;
-    min-width: 980px;
+    min-width: 960px;
     border-collapse: separate;
     border-spacing: 0;
   }
+
   .route-table thead th {
     position: sticky;
     top: 0;
     z-index: 1;
-    padding: 11px 12px;
     background: var(--gray-50);
-    border-bottom: 1px solid var(--gray-200);
-    font-size: var(--font-size-small);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--gray-400);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
     text-align: left;
     white-space: nowrap;
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--gray-200);
   }
+
   .route-table tbody td {
     padding: 12px;
     border-bottom: 1px solid var(--gray-100);
     vertical-align: top;
-    font-size: var(--font-size-body);
   }
+
   .route-table tbody tr:last-child td { border-bottom: none; }
+
   .route-row-open { background: #fffdfa; }
   .route-row-toprope { background: #fafdff; }
   .route-row-flash { background: #fff8f1; }
   .route-row-rotpunkt { background: #fbfefb; }
-  .route-cell-check { width: 70px; }
-  .route-cell-grade { width: 78px; }
-  .route-cell-status { width: 120px; }
-  .route-cell-actions { width: 280px; }
-  .route-name-main { font-size: var(--font-size-body); font-weight: 700; }
-  .route-name-sub { margin-top: 4px; color: var(--gray-400); }
-  .route-notes-text { margin-top: 6px; color: var(--gray-400); }
-  .route-info-stack { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .route-name-main {
+    font-weight: 700;
+  }
+
+  .route-name-sub,
+  .route-notes-text,
+  .route-location-text,
+  .route-lock-note {
+    color: var(--gray-600);
+    font-size: 13px;
+  }
+
+  .route-name-sub { margin-top: 4px; }
+  .route-notes-text { margin-top: 6px; }
+  .route-lock-note { margin-top: 6px; }
+
+  .route-info-stack,
+  .route-status-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
   .route-mini-badge,
   .route-grade-badge,
   .tracker-pill,
   .route-optional-badge {
-    font-family: var(--font-family-base);
-  }
-  .route-mini-badge {
     display: inline-flex;
     align-items: center;
     border-radius: 999px;
-    padding: 3px 8px;
-    font-size: var(--font-size-small);
+    font-size: 11px;
     font-weight: 700;
+  }
+
+  .route-mini-badge {
+    padding: 4px 8px;
     background: var(--gray-100);
     color: var(--gray-600);
   }
-  .route-colors { display: inline-flex; align-items: center; gap: 6px; }
+
+  .route-grade-badge {
+    justify-content: center;
+    min-width: 40px;
+    padding: 6px 10px;
+    background: var(--dav-green-light);
+    color: var(--dav-green);
+    border: 1px solid var(--dav-green-border);
+  }
+
+  .tracker-pill {
+    gap: 6px;
+    padding: 4px 8px;
+  }
+
+  .pill-rotpunkt { background: var(--dav-green-light); color: var(--dav-green); border: 1px solid var(--dav-green-border); }
+  .pill-toprope { background: var(--blue-light); color: var(--blue); border: 1px solid #B3CFED; }
+  .pill-flash { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); }
+  .pill-projekt { background: var(--yellow-light); color: #A36A08; border: 1px solid #F5DDA5; }
+
+  .route-optional-badge {
+    margin-left: 6px;
+    padding: 2px 6px;
+    background: var(--blue-light);
+    color: var(--blue);
+    border: 1px solid #B3CFED;
+  }
+
   .route-color-dot {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    border: 1px solid rgba(30, 37, 48, 0.16);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+    border: 1px solid rgba(30,37,48,.16);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
   }
-  .route-location-text { color: var(--gray-600); }
-  .route-meta-link { font-size: var(--font-size-small); font-weight: 600; color: var(--blue); text-decoration: none; }
-  .route-meta-link:hover { text-decoration: underline; }
-  .route-grade-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 40px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    background: var(--dav-green-light);
-    color: var(--dav-green);
-    border: 1px solid var(--dav-green-border);
-    font-size: var(--font-size-small);
-    font-weight: 700;
-  }
-  .tracker-pill {
+
+  .route-colors {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    border-radius: 999px;
-    padding: 4px 8px;
-    font-size: var(--font-size-small);
-    font-weight: 700;
   }
-  .pill-rotpunkt { background: var(--dav-green-light); color: var(--dav-green); border: 1px solid var(--dav-green-border); }
-  .pill-toprope { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border); }
-  .pill-flash { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); }
-  .pill-projekt { background: var(--yellow-light); color: #a36a08; border: 1px solid var(--yellow-border); }
-  .route-status-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+  .route-meta-link {
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .route-meta-link:hover { text-decoration: underline; }
+
   .route-quick-toggle {
     display: inline-flex;
     align-items: center;
@@ -547,170 +686,169 @@
     border: 1px solid var(--gray-200);
     background: var(--gray-50);
     color: var(--gray-600);
-    font-size: var(--font-size-small);
+    font-size: 12px;
     font-weight: 600;
-    cursor: pointer;
   }
-  .route-quick-toggle input { width: 15px; height: 15px; accent-color: var(--dav-green); cursor: pointer; }
-  .route-quick-toggle.checked { background: var(--dav-green-light); border-color: var(--dav-green-border); color: var(--dav-green); }
-  .route-quick-toggle.locked { background: var(--gray-100); border-color: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
-  .route-quick-toggle.locked input { cursor: not-allowed; }
+
+  .route-quick-toggle.checked {
+    background: var(--dav-green-light);
+    border-color: var(--dav-green-border);
+    color: var(--dav-green);
+  }
+
+  .route-quick-toggle.locked {
+    background: var(--gray-100);
+    color: var(--gray-400);
+  }
+
+  .route-quick-toggle input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    accent-color: var(--dav-green);
+  }
+
   .status-btn {
+    border-radius: 999px;
     border: 1px solid var(--gray-200);
     background: white;
     color: var(--gray-600);
     padding: 7px 10px;
-    border-radius: 999px;
-    font-size: var(--font-size-small);
+    font-size: 12px;
     font-weight: 600;
-    cursor: pointer;
   }
-  .status-btn.active.status-open { background: var(--yellow-light); border-color: var(--yellow-border); color: #a36a08; }
-  .status-btn.active.status-toprope { background: var(--blue-light); border-color: var(--blue-border); color: var(--blue); }
+
+  .status-btn.active.status-open { background: var(--yellow-light); border-color: #F5DDA5; color: #A36A08; }
+  .status-btn.active.status-toprope { background: var(--blue-light); border-color: #B3CFED; color: var(--blue); }
   .status-btn.active.status-flash { background: var(--accent-light); border-color: var(--accent-border); color: var(--accent); }
   .status-btn.active.status-rotpunkt { background: var(--dav-green-light); border-color: var(--dav-green-border); color: var(--dav-green); }
-  .status-btn.delete-btn { border-radius: 7px; margin-left: auto; color: var(--accent); border-color: var(--accent-border); }
-  .status-btn:disabled { background: var(--gray-100); border-color: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
-  .route-lock-note { margin-top: 6px; font-size: var(--font-size-small); color: var(--gray-400); }
+  .status-btn.delete-btn { color: var(--accent); border-color: var(--accent-border); }
+
   .tracker-empty {
-    background: white;
-    border: 1px dashed var(--gray-200);
-    border-radius: 12px;
     padding: 20px;
-    text-align: center;
+    border-radius: 14px;
+    border: 1px dashed var(--gray-200);
     color: var(--gray-400);
-    font-size: var(--font-size-body);
+    text-align: center;
+    background: white;
   }
+
+  .tracker-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .primary-btn {
+    background: var(--dav-green);
+    color: white;
+    border-color: var(--dav-green);
+  }
+
+  .secondary-btn {
+    background: var(--gray-100);
+    color: var(--gray-600);
+  }
+
+  .danger-btn {
+    background: transparent;
+    color: var(--accent);
+    border-color: var(--accent-border);
+  }
+
+  details.collapsible-section > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 16px 18px;
+  }
+
+  details.collapsible-section > summary::-webkit-details-marker { display: none; }
 
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
-  .form-grid .full-width { grid-column: 1 / -1; }
+
+  .form-grid .full-width {
+    grid-column: 1 / -1;
+  }
+
+  .field-group textarea {
+    min-height: 92px;
+    resize: vertical;
+  }
+
+  .field-help {
+    margin-top: 6px;
+    color: var(--gray-400);
+    font-size: 13px;
+  }
+
   .form-feedback {
     display: none;
     margin-top: 12px;
     padding: 10px 12px;
-    border-radius: 8px;
+    border-radius: 10px;
+    font-size: 13px;
   }
+
   .form-feedback.show { display: block; }
   .feedback-success { background: var(--dav-green-light); border: 1px solid var(--dav-green-border); color: var(--dav-green); }
   .feedback-error { background: var(--accent-light); border: 1px solid var(--accent-border); color: var(--accent); }
-  .tracker-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-  .tracker-btn {
-    border: none;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: var(--font-size-label);
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .tracker-btn-primary { background: var(--dav-green); color: white; }
-  .tracker-btn-secondary { background: var(--gray-100); color: var(--gray-600); border: 1px solid var(--gray-200); }
-  .tracker-btn-danger { background: transparent; color: var(--accent); border: 1px solid var(--accent-border); }
 
   .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
-  .info-block p + p { margin-top: 8px; }
-  .info-block ul { padding-left: 18px; margin-top: 8px; }
-  .info-block ul li { margin-bottom: 4px; }
-  .block-green { background: var(--dav-green-light); border-color: var(--dav-green-border); }
-  .block-red { background: var(--accent-light); border-color: var(--accent-border); }
-  .block-yellow { background: var(--yellow-light); border-color: var(--yellow-border); }
-  .block-blue { background: var(--blue-light); border-color: var(--blue-border); }
 
-  .gloss-item + .gloss-item { margin-top: 10px; }
+  .info-block p,
+  .info-block ul,
+  .gloss-def,
+  .gloss-note {
+    margin: 0;
+    color: var(--gray-600);
+  }
+
+  .info-block p + p { margin-top: 8px; }
+  .info-block ul {
+    margin-top: 8px;
+    padding-left: 18px;
+  }
+
+  .block-green { background: var(--dav-green-light); border-color: var(--dav-green-border); }
+  .block-yellow { background: var(--yellow-light); border-color: #F5DDA5; }
+  .block-blue { background: var(--blue-light); border-color: #B3CFED; }
+  .block-red { background: var(--accent-light); border-color: var(--accent-border); }
+
+  .gloss-item + .gloss-item {
+    margin-top: 10px;
+  }
+
   .gloss-term {
-    font-weight: 700;
-    font-size: var(--font-size-label);
-    color: var(--dav-green);
-    margin-bottom: 5px;
     display: flex;
     align-items: baseline;
     gap: 8px;
+    color: var(--dav-green);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
   }
+
   .gloss-en {
-    font-size: var(--font-size-small);
-    font-weight: 500;
     color: var(--gray-400);
+    font-size: 12px;
+    font-weight: 500;
   }
-  .gloss-def { color: var(--gray-600); }
+
   .gloss-note {
     margin-top: 7px;
     padding: 7px 11px;
+    border-radius: 8px;
     background: var(--dav-green-light);
-    border-radius: 5px;
     color: var(--dav-green);
-  }
-
-  .theme-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    flex-shrink: 0;
-    border: 1px solid var(--gray-200);
-    background: white;
-    color: var(--gray-600);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #auth-ui {
-    display: flex;
-    align-items: center;
-    min-height: 36px;
-  }
-  .auth-signin-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 16px;
-    border-radius: 8px;
-    border: 1px solid var(--gray-200);
-    background: white;
-    color: var(--gray-800);
-    font-size: var(--font-size-label);
-    font-weight: 500;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  .auth-user { display: flex; align-items: center; gap: 8px; }
-  .auth-avatar {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: var(--dav-green); color: white;
-    display: flex; align-items: center; justify-content: center;
-    font-size: var(--font-size-label); font-weight: 600; overflow: hidden; flex-shrink: 0;
-  }
-  .auth-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .auth-name {
-    font-size: var(--font-size-label);
-    font-weight: 500;
-    color: var(--gray-800);
-    max-width: 160px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .auth-sync {
-    font-size: var(--font-size-small);
-    color: var(--dav-green);
-    min-width: 90px;
-    text-align: right;
-  }
-  .auth-sync.error { color: var(--accent); }
-  .auth-signout-btn {
-    padding: 5px 10px;
-    border-radius: 6px;
-    border: 1px solid var(--gray-200);
-    background: white;
-    color: var(--gray-600);
-    font-size: var(--font-size-small);
-    cursor: pointer;
   }
 
   .footer {
@@ -720,122 +858,271 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: var(--gray-400);
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
+    color: var(--gray-400);
+    font-size: 13px;
   }
 
-  .route-optional-badge {
-    display: inline-block;
-    padding: 1px 6px;
-    border-radius: 999px;
-    font-size: var(--font-size-small);
-    font-weight: 700;
-    background: var(--blue-light);
-    color: var(--blue);
-    border: 1px solid var(--blue-border);
-    margin-left: 6px;
-    vertical-align: middle;
+  .modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 17, 23, 0.48);
+    z-index: 50;
   }
+
+  .modal.open {
+    display: flex;
+  }
+
+  .modal-card {
+    width: min(100%, 560px);
+    max-height: calc(100vh - 40px);
+    overflow: auto;
+    padding: 20px;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .modal-title {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.15;
+  }
+
+  .modal-subtitle {
+    margin-top: 5px;
+    color: var(--gray-600);
+  }
+
+  .modal-close {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    background: white;
+    color: var(--gray-600);
+  }
+
+  .settings-grid-modal {
+    display: grid;
+    gap: 16px;
+  }
+
+  .settings-card h3 {
+    margin: 0 0 12px;
+    font-size: 16px;
+  }
+
+  .settings-card p {
+    margin: 0;
+    color: var(--gray-600);
+  }
+
+  .settings-card p + p {
+    margin-top: 8px;
+  }
+
+  .settings-field + .settings-field {
+    margin-top: 12px;
+  }
+
+  .toggle-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--gray-200);
+    background: var(--gray-50);
+  }
+
+  .toggle-row input {
+    margin-top: 2px;
+    accent-color: var(--dav-green);
+  }
+
+  .toggle-row strong {
+    display: block;
+  }
+
+  .toggle-row span {
+    display: block;
+    margin-top: 4px;
+    color: var(--gray-400);
+    font-size: 13px;
+  }
+
+  .cloud-status-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .cloud-status-line:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .cloud-status-label {
+    color: var(--gray-400);
+    font-size: 13px;
+  }
+
+  .cloud-status-value {
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .danger-zone {
+    border-color: var(--accent-border);
+    background: linear-gradient(180deg, #fff 0%, #fff8f5 100%);
+  }
+
+  .danger-zone h3 {
+    color: var(--accent);
+  }
+
+  .danger-actions {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  [hidden] { display: none !important; }
 
   [data-theme="dark"] {
     color-scheme: dark;
-    --gray-25: #111521;
-    --gray-50: #0f1117;
-    --gray-100: #181c27;
-    --gray-200: #272c3c;
-    --gray-300: #373d52;
-    --gray-400: #6b7280;
-    --gray-600: #cdd0d9;
-    --gray-800: #f1f3f8;
-    --dav-green-light: #091e14;
+    --gray-50: #0F1117;
+    --gray-100: #181C27;
+    --gray-200: #272C3C;
+    --gray-300: #373D52;
+    --gray-400: #778091;
+    --gray-600: #CDD0D9;
+    --gray-800: #F1F3F8;
+    --dav-green-light: #091E14;
     --dav-green-border: #175430;
-    --accent-light: #200c06;
-    --accent-border: #5c1a0d;
-    --yellow-light: #1a1206;
-    --yellow-border: #5a3e08;
+    --accent-light: #200C06;
+    --accent-border: #5C1A0D;
+    --yellow-light: #1A1206;
     --blue-light: #081629;
-    --blue-border: #1e456d;
+    --shadow-soft: 0 10px 28px rgba(0,0,0,.28);
   }
+
   [data-theme="dark"] .card,
   [data-theme="dark"] .info-block,
+  [data-theme="dark"] .gloss-item,
   [data-theme="dark"] .route-table-shell,
   [data-theme="dark"] .settings-card,
-  [data-theme="dark"] .collapsible-section,
-  [data-theme="dark"] .gloss-item,
-  [data-theme="dark"] .summary-card,
-  [data-theme="dark"] .grade-track-card,
-  [data-theme="dark"] .progress-card {
+  [data-theme="dark"] .modal-card,
+  [data-theme="dark"] .tracker-empty {
     background: var(--gray-100);
     border-color: var(--gray-200);
   }
-  [data-theme="dark"] .dashboard-intro {
-    background: linear-gradient(180deg, #171c27 0%, #111821 100%);
-    border-color: var(--dav-green-border);
+
+  [data-theme="dark"] .status-card,
+  [data-theme="dark"] .route-row-open,
+  [data-theme="dark"] .route-row-toprope,
+  [data-theme="dark"] .route-row-flash,
+  [data-theme="dark"] .route-row-rotpunkt,
+  [data-theme="dark"] .metric-box,
+  [data-theme="dark"] .roadmap-card,
+  [data-theme="dark"] .toggle-row {
+    background: var(--gray-100);
   }
-  [data-theme="dark"] .settings-inline { background: var(--gray-25); border-color: var(--gray-200); }
+
+  [data-theme="dark"] .roadmap-card.done { background: #0D1A12; }
+  [data-theme="dark"] .roadmap-card.current { background: #1A1206; }
+  [data-theme="dark"] .roadmap-card.unlocked { background: #0A1726; }
+
   [data-theme="dark"] .field-group input,
   [data-theme="dark"] .field-group select,
   [data-theme="dark"] .field-group textarea,
   [data-theme="dark"] .route-toolbar input,
   [data-theme="dark"] .route-toolbar select,
-  [data-theme="dark"] .theme-btn,
+  [data-theme="dark"] .settings-field select,
   [data-theme="dark"] .auth-signin-btn,
   [data-theme="dark"] .auth-signout-btn,
-  [data-theme="dark"] .status-btn {
+  [data-theme="dark"] .secondary-btn,
+  [data-theme="dark"] .danger-btn,
+  [data-theme="dark"] .ghost-btn,
+  [data-theme="dark"] .icon-btn,
+  [data-theme="dark"] .modal-close,
+  [data-theme="dark"] .status-btn,
+  [data-theme="dark"] .theme-btn {
     background: var(--gray-100);
     color: var(--gray-800);
     border-color: var(--gray-200);
   }
+
+  [data-theme="dark"] .primary-btn {
+    background: var(--dav-green);
+    border-color: var(--dav-green);
+    color: white;
+  }
+
   [data-theme="dark"] .route-table-head,
-  [data-theme="dark"] .route-table thead th { background: var(--gray-100); }
-  [data-theme="dark"] .route-row-open { background: #11141b; }
-  [data-theme="dark"] .route-row-toprope { background: #0e141c; }
-  [data-theme="dark"] .route-row-flash { background: #160f08; }
-  [data-theme="dark"] .route-row-rotpunkt { background: #0c150d; }
-  [data-theme="dark"] .grade-step {
-    background: linear-gradient(180deg, #171c27 0%, #121723 100%);
-  }
-  [data-theme="dark"] .grade-step.done {
-    background: linear-gradient(180deg, #132019 0%, #101a14 100%);
-  }
-  [data-theme="dark"] .grade-step.current {
-    background: linear-gradient(180deg, #112419 0%, #0d1c14 100%);
-  }
-  [data-theme="dark"] .grade-step.next {
-    background: linear-gradient(180deg, #0d1b2a 0%, #0b1622 100%);
+  [data-theme="dark"] .route-table thead th {
+    background: var(--gray-100);
   }
 
   @media (max-width: 900px) {
-    .dashboard-top,
-    .summary-grid,
-    .grade-track,
-    .settings-grid,
-    .form-grid,
-    .info-grid {
+    .dashboard-summary,
+    .metric-grid,
+    .roadmap-grid,
+    .info-grid,
+    .form-grid {
       grid-template-columns: 1fr;
     }
-  }
-  @media (max-width: 740px) {
     .route-toolbar { grid-template-columns: 1fr; }
   }
-  @media (max-width: 600px) {
-    .auth-name, .auth-sync { display: none; }
+
+  @media (max-width: 640px) {
+    .header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .header-right {
+      justify-content: space-between;
+    }
+    .auth-name,
+    .auth-sync {
+      display: none;
+    }
   }
 </style>
 </head>
 <body>
-
 <div class="header">
   <div class="header-left">
     <div class="org-tag">Sektion Aachen · JDAV Leistungsgruppe</div>
     <h1>Rotpunkt-Trainingskonzept</h1>
-    <div class="header-meta">Kompaktes Dashboard mit Fokus auf 5–8</div>
+    <div class="header-meta">Dashboard, Grad-Roadmap und Trainingsliste mit Cloud-Sync</div>
   </div>
   <div class="header-right">
-    <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()" title="Dark Mode umschalten" aria-label="Dark Mode umschalten"></button>
+    <button id="theme-toggle" class="theme-btn" type="button" title="Darstellung umschalten" aria-label="Darstellung umschalten"></button>
+    <button id="settings-toggle" class="icon-btn" type="button" title="Einstellungen" aria-label="Einstellungen öffnen">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M10.33 3.49c.52-1.98 3.34-1.98 3.86 0a1.97 1.97 0 0 0 2.95 1.19c1.74-1.04 3.74.96 2.7 2.7a1.97 1.97 0 0 0 1.19 2.95c1.98.52 1.98 3.34 0 3.86a1.97 1.97 0 0 0-1.19 2.95c1.04 1.74-.96 3.74-2.7 2.7a1.97 1.97 0 0 0-2.95 1.19c-.52 1.98-3.34 1.98-3.86 0a1.97 1.97 0 0 0-2.95-1.19c-1.74 1.04-3.74-.96-2.7-2.7a1.97 1.97 0 0 0-1.19-2.95c-1.98-.52-1.98-3.34 0-3.86a1.97 1.97 0 0 0 1.19-2.95c-1.04-1.74.96-3.74 2.7-2.7a1.97 1.97 0 0 0 2.95-1.19Z" stroke="currentColor" stroke-width="1.7"/>
+        <circle cx="12" cy="12" r="3.3" stroke="currentColor" stroke-width="1.7"/>
+      </svg>
+    </button>
     <div id="auth-ui">
-      <button class="auth-signin-btn" onclick="signInWithGoogle()">
+      <button class="auth-signin-btn" type="button" data-auth-action="signin">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
           <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -848,92 +1135,64 @@
   </div>
 </div>
 
-<div class="tab-nav">
-  <button class="tab-btn active" onclick="switchTab('dashboard', this)">Dashboard</button>
-  <button class="tab-btn" onclick="switchTab('konzept', this)">Konzept & Regeln</button>
-  <button class="tab-btn" onclick="switchTab('begriffe', this)">Begriffe</button>
-</div>
+<nav class="tab-nav" aria-label="Navigation">
+  <button class="tab-btn active" type="button" data-tab-target="dashboard">Dashboard</button>
+  <button class="tab-btn" type="button" data-tab-target="konzept">Konzept &amp; Regeln</button>
+  <button class="tab-btn" type="button" data-tab-target="begriffe">Begriffe</button>
+</nav>
 
-<div id="tab-dashboard" class="tab-panel active">
+<section id="tab-dashboard" class="tab-panel active">
   <div class="section">
-    <div class="section-title">Einstellungen</div>
-    <div class="settings-card">
-      <div class="settings-grid">
-        <div class="field-group">
-          <label for="profile-grade">Startgrad</label>
-          <select id="profile-grade" onchange="onProfileChange()">
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-          </select>
-        </div>
-        <label class="settings-inline">
-          <input type="checkbox" id="profile-vorstieg" onchange="onProfileChange()">
+    <h2 class="section-title">Dashboard</h2>
+    <div class="dashboard-summary">
+      <div class="card status-card">
+        <div class="status-card-header">
           <div>
-            <strong>Nur Vorstieg-Routen anzeigen</strong>
-            <span>Es werden nur die relevanten Vorstiegslinien berücksichtigt. Seil 51–56 bleibt optional.</span>
+            <div class="eyebrow">Gradstatus</div>
+            <h2 id="focus-grade-value" class="status-title">Noch kein Grad aktiv</h2>
+            <div id="focus-grade-note" class="status-subtitle">Die Freischaltung richtet sich nach deinen abgehakten Hallenrouten.</div>
           </div>
-        </label>
+          <div id="unlock-pill" class="status-pill">Fokus aktiv</div>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-box">
+            <div class="metric-label">Noch offen</div>
+            <div id="metric-open-routes" class="metric-value">0</div>
+            <div class="metric-text">Routen im aktuell relevanten Bereich.</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Erledigt</div>
+            <div id="metric-done-routes" class="metric-value">0</div>
+            <div class="metric-text">Bereits abgehakte Linien.</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Nächster Schritt</div>
+            <div id="metric-next-grade" class="metric-value">–</div>
+            <div class="metric-text" id="unlock-message">Starte mit den offenen Routen deines Trainingsgrades.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">Fortschritt</div>
+        <h3 class="progress-card-title" id="overall-progress-label">Hallenliste wird geladen</h3>
+        <div class="progress-track" aria-hidden="true">
+          <div id="overall-progress-fill" class="progress-fill"></div>
+        </div>
+        <div id="overall-progress-hint" class="progress-meta">Starte mit dem ersten Grad deiner aktuellen Trainingsphase.</div>
+
+        <div style="margin-top:16px;">
+          <div class="eyebrow">Roadmap 5–8</div>
+          <div class="roadmap-meta" id="roadmap-meta">Die Übersicht zeigt aktuellen Grad und die nächsten Schritte.</div>
+          <div id="roadmap-grid" class="roadmap-grid" style="margin-top:12px;"></div>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="section">
-    <div class="section-title">Dashboard</div>
-    <div class="dashboard-shell">
-      <div class="dashboard-top">
-        <div class="dashboard-intro">
-          <span class="dashboard-kicker">Fokus</span>
-          <h2>Woran arbeitest du gerade?</h2>
-          <p class="dashboard-copy">Das Dashboard zeigt dir den aktuellen Bearbeitungsgrad, wie viele Routen noch offen sind und welcher Grad als Nächstes folgt.</p>
-        </div>
-        <div class="progress-card">
-          <div class="progress-head">
-            <div class="progress-title" id="overall-progress-label">Hallenliste wird geladen</div>
-            <div class="progress-note" id="overall-progress-hint">Starte mit deinem Startgrad.</div>
-          </div>
-          <div class="progress-track">
-            <div id="overall-progress-fill" class="progress-fill"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="summary-grid">
-        <div class="summary-card current">
-          <div>
-            <div class="summary-label">Aktueller Grad</div>
-            <div id="focus-grade-value" class="summary-value">–</div>
-          </div>
-          <div id="metric-current-grade-note" class="summary-note">Wird berechnet.</div>
-        </div>
-        <div class="summary-card open">
-          <div>
-            <div class="summary-label">Noch offen</div>
-            <div id="metric-open-routes" class="summary-value">0</div>
-          </div>
-          <div class="summary-note">Offene Routen im aktuell relevanten Bereich.</div>
-        </div>
-        <div class="summary-card next">
-          <div>
-            <div class="summary-label">Nächster Schritt</div>
-            <div id="unlock-message" class="summary-value" style="font-size: 20px;">–</div>
-          </div>
-          <div class="summary-note">Sobald nur noch 2 Routen fehlen, darf der nächste Grad begonnen werden.</div>
-        </div>
-      </div>
-
-      <div class="grade-track-card">
-        <div class="grade-track-card-head">
-          <div class="grade-track-title">Gradfolge 5–8</div>
-          <div class="grade-track-copy">Aktueller Bearbeitungsgrad und die folgenden Grade auf einen Blick.</div>
-        </div>
-        <div id="grade-track" class="grade-track"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-title">Routenliste</div>
+    <h2 class="section-title">Trainingsliste</h2>
     <div class="route-toolbar">
       <input id="route-search" type="search" placeholder="Nach Route, Grad, Linie oder Halle filtern">
       <select id="route-grade-filter">
@@ -947,22 +1206,19 @@
         <option value="rotpunkt">Rotpunkt</option>
       </select>
     </div>
-    <div id="route-board" class="route-board" aria-live="polite"></div>
-    <div class="tracker-actions">
-      <button type="button" id="clear-all-routes" class="tracker-btn tracker-btn-danger">Fortschritt zurücksetzen</button>
-    </div>
+    <div id="route-board" aria-live="polite"></div>
   </div>
 
   <div class="section">
-    <div class="section-title">Zusatzroute</div>
-    <details class="collapsible-section">
-      <summary style="padding:16px 18px; cursor:pointer; list-style:none;">
+    <h2 class="section-title">Zusatzroute</h2>
+    <details class="collapsible-section card">
+      <summary>
         <strong>Zusatzroute anlegen</strong>
         <span style="display:block; margin-top:4px; color:var(--gray-400);">Nur für neue oder spezielle Routen, die noch nicht in der Hallenliste auftauchen.</span>
       </summary>
-      <div style="padding:18px; border-top:1px solid var(--gray-100);">
-        <form id="route-log-form" class="tracker-form">
-          <div class="form-grid">
+      <div style="padding:0 18px 18px; border-top:1px solid var(--gray-100);">
+        <form id="route-log-form">
+          <div class="form-grid" style="margin-top:18px;">
             <div class="field-group">
               <label for="route-date">Datum</label>
               <input id="route-date" name="date" type="date" required>
@@ -1006,18 +1262,18 @@
           </div>
           <div id="form-feedback" class="form-feedback" aria-live="polite"></div>
           <div class="tracker-actions">
-            <button type="submit" class="tracker-btn tracker-btn-primary">Route speichern</button>
-            <button type="reset" class="tracker-btn tracker-btn-secondary">Felder leeren</button>
+            <button type="submit" class="primary-btn">Route speichern</button>
+            <button type="reset" class="secondary-btn">Felder leeren</button>
           </div>
         </form>
       </div>
     </details>
   </div>
-</div>
+</section>
 
-<div id="tab-konzept" class="tab-panel">
+<section id="tab-konzept" class="tab-panel">
   <div class="section">
-    <div class="section-title">Grundprinzip</div>
+    <h2 class="section-title">Grundprinzip</h2>
     <div class="info-grid">
       <div class="info-block block-green">
         <strong>Freischalt-Prinzip</strong>
@@ -1039,7 +1295,7 @@
   </div>
 
   <div class="section">
-    <div class="section-title">Trainingsablauf</div>
+    <h2 class="section-title">Trainingsablauf</h2>
     <div class="info-block">
       <ul>
         <li>Mit dem aktuellen Trainingsgrad starten und alle machbaren Routen dieses Grads sammeln.</li>
@@ -1051,16 +1307,16 @@
   </div>
 
   <div class="section">
-    <div class="section-title">Sturztraining</div>
+    <h2 class="section-title">Sturztraining</h2>
     <div class="info-block block-green">
       <p>Das Reinspringen am Routenende soll helfen, Sturzangst abzubauen und Vorstieg als normalen Trainingsmodus zu festigen. Es ist als Standardbaustein des Trainings gedacht – kontrolliert und bewusst durchgeführt.</p>
     </div>
   </div>
-</div>
+</section>
 
-<div id="tab-begriffe" class="tab-panel">
+<section id="tab-begriffe" class="tab-panel">
   <div class="section">
-    <div class="section-title">Begriffe</div>
+    <h2 class="section-title">Begriffe</h2>
 
     <div class="gloss-item">
       <div class="gloss-term">Rotpunkt <span class="gloss-en">Redpoint</span></div>
@@ -1093,6 +1349,76 @@
       <div class="gloss-def">Ein Trainingsblock über mehrere Wochen mit einem klaren Schwerpunkt.</div>
     </div>
   </div>
+</section>
+
+<div id="settings-modal" class="modal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+    <div class="modal-header">
+      <div>
+        <h2 id="settings-modal-title" class="modal-title">Einstellungen</h2>
+        <div class="modal-subtitle">Profil, Darstellung, Cloud-Status und sichere Verwaltungsaktionen.</div>
+      </div>
+      <button id="settings-close" type="button" class="modal-close" aria-label="Einstellungen schließen">✕</button>
+    </div>
+
+    <div class="settings-grid-modal">
+      <div class="settings-card">
+        <h3>Profil</h3>
+        <div class="settings-field">
+          <label for="settings-start-grade">Startgrad</label>
+          <select id="settings-start-grade">
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </div>
+        <label class="toggle-row" for="settings-vorstieg-only">
+          <input id="settings-vorstieg-only" type="checkbox">
+          <div>
+            <strong>Nur Vorstieg-Routen anzeigen</strong>
+            <span>Es werden nur die relevanten Vorstiegslinien berücksichtigt. Seil 51–56 bleibt optional.</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="settings-card">
+        <h3>Darstellung</h3>
+        <div class="settings-field">
+          <label for="settings-theme">Theme</label>
+          <select id="settings-theme">
+            <option value="light">Hell</option>
+            <option value="dark">Dunkel</option>
+          </select>
+        </div>
+        <p>Die Darstellung wird sofort übernommen und lokal gespeichert.</p>
+      </div>
+
+      <div class="settings-card">
+        <h3>Cloud-Status</h3>
+        <div class="cloud-status-line">
+          <div class="cloud-status-label">Login</div>
+          <div id="settings-login-status" class="cloud-status-value">Nicht angemeldet</div>
+        </div>
+        <div class="cloud-status-line">
+          <div class="cloud-status-label">Sync</div>
+          <div id="settings-sync-status" class="cloud-status-value">Nur lokal gespeichert</div>
+        </div>
+        <div class="cloud-status-line">
+          <div class="cloud-status-label">Speicherstand</div>
+          <div id="settings-storage-status" class="cloud-status-value">–</div>
+        </div>
+      </div>
+
+      <div class="settings-card danger-zone">
+        <h3>Fortschritt zurücksetzen</h3>
+        <p>Der Reset wurde bewusst aus dem Dashboard entfernt, damit er nicht versehentlich ausgelöst wird.</p>
+        <p>Beim Zurücksetzen werden alle abgehakten Stati auf „offen“ gesetzt. Zusatzrouten bleiben erhalten.</p>
+        <div class="danger-actions">
+          <button id="settings-reset-progress" type="button" class="danger-btn">Fortschritt zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="footer">
@@ -1102,105 +1428,411 @@
 
 <script src="tivoli-routes-data.js"></script>
 <script>
-  const STORAGE_KEY = 'jdavRotpunktRouteLog.v4.focus58';
-  const FIRST_OPEN_KEY = STORAGE_KEY + '.initialized';
-  const PROFILE_KEY = STORAGE_KEY + '.profile';
-  const DEFAULT_PROFILE = { startGrade: '5', vorstiegOnly: false };
-
-  const VORSTIEG_MANDATORY_RANGES = [[18, 34], [47, 50]];
-  const VORSTIEG_OPTIONAL_RANGES = [[51, 56]];
-
-  function getRopeNumber(entry) {
-    const code = String(entry.routeCode || '').trim();
-    const m = code.match(/^(\d+)/);
-    return m ? parseInt(m[1], 10) : null;
-  }
-  function inRanges(rope, ranges) {
-    return ranges.some(([lo, hi]) => rope >= lo && rope <= hi);
-  }
-  function isVorstiegMandatory(entry) {
-    const r = getRopeNumber(entry);
-    return r !== null && inRanges(r, VORSTIEG_MANDATORY_RANGES);
-  }
-  function isVorstiegOptional(entry) {
-    const r = getRopeNumber(entry);
-    return r !== null && inRanges(r, VORSTIEG_OPTIONAL_RANGES);
-  }
-
-  const FIREBASE_CONFIG = {
-    apiKey: 'AIzaSyCyXeMjZy81orV5S2_wbxVsArmhgeoFe8M',
-    authDomain: 'jdav-rotpunkt-training.firebaseapp.com',
-    projectId: 'jdav-rotpunkt-training',
-    storageBucket: 'jdav-rotpunkt-training.firebasestorage.app',
-    messagingSenderId: '447221192678',
-    appId: '1:447221192678:web:05a71d1f72d199b0902827'
+  const APP_CONFIG = {
+    storageVersion: 4,
+    storageKeys: {
+      routes: 'jdavRotpunkt.routes',
+      profile: 'jdavRotpunkt.profile',
+      meta: 'jdavRotpunkt.meta',
+      theme: 'jdavRotpunkt.theme'
+    },
+    legacyKeys: {
+      routes: 'jdavRotpunktRouteLog.v3.flash.defaultOpen',
+      profile: 'jdavRotpunktRouteLog.v3.flash.defaultOpen.profile'
+    },
+    defaultProfile: {
+      startGrade: '5',
+      vorstiegOnly: false
+    },
+    allowedStartGrades: ['4', '5', '6'],
+    roadmapGrades: ['5', '6', '7', '8'],
+    hiddenGrades: new Set(['3']),
+    vorstiegMandatoryRanges: [[18, 34], [47, 50]],
+    vorstiegOptionalRanges: [[51, 56]],
+    firebaseConfig: {
+      apiKey: 'AIzaSyCyXeMjZy81orV5S2_wbxVsArmhgeoFe8M',
+      authDomain: 'jdav-rotpunkt-training.firebaseapp.com',
+      projectId: 'jdav-rotpunkt-training',
+      storageBucket: 'jdav-rotpunkt-training.firebasestorage.app',
+      messagingSenderId: '447221192678',
+      appId: '1:447221192678:web:05a71d1f72d199b0902827'
+    }
   };
 
-  let db = null, auth = null, currentUser = null;
-  try {
-    if (window.firebase && FIREBASE_CONFIG.apiKey !== 'DEINE_API_KEY') {
-      if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-      auth = firebase.auth();
-      db = firebase.firestore();
-    }
-  } catch (e) {
-    console.warn('Firebase init error:', e);
-  }
+  const appState = {
+    routeEntries: [],
+    currentUser: null,
+    profile: { ...APP_CONFIG.defaultProfile },
+    filters: {
+      search: '',
+      grade: 'all',
+      status: 'open'
+    },
+    syncStatus: 'local',
+    authReady: false
+  };
 
-  const routeLogForm = document.getElementById('route-log-form');
-  const formFeedback = document.getElementById('form-feedback');
-  const routeBoard = document.getElementById('route-board');
-  const routeSearch = document.getElementById('route-search');
-  const routeGradeFilter = document.getElementById('route-grade-filter');
-  const routeStatusFilter = document.getElementById('route-status-filter');
-  const clearAllRoutesButton = document.getElementById('clear-all-routes');
+  const ui = {
+    tabs: document.querySelectorAll('[data-tab-target]'),
+    panels: document.querySelectorAll('.tab-panel'),
+    themeToggle: document.getElementById('theme-toggle'),
+    settingsToggle: document.getElementById('settings-toggle'),
+    settingsModal: document.getElementById('settings-modal'),
+    settingsClose: document.getElementById('settings-close'),
+    authUi: document.getElementById('auth-ui'),
+    routeBoard: document.getElementById('route-board'),
+    routeLogForm: document.getElementById('route-log-form'),
+    formFeedback: document.getElementById('form-feedback'),
+    routeSearch: document.getElementById('route-search'),
+    routeGradeFilter: document.getElementById('route-grade-filter'),
+    routeStatusFilter: document.getElementById('route-status-filter'),
+    focusGradeValue: document.getElementById('focus-grade-value'),
+    focusGradeNote: document.getElementById('focus-grade-note'),
+    metricOpenRoutes: document.getElementById('metric-open-routes'),
+    metricDoneRoutes: document.getElementById('metric-done-routes'),
+    metricNextGrade: document.getElementById('metric-next-grade'),
+    unlockMessage: document.getElementById('unlock-message'),
+    unlockPill: document.getElementById('unlock-pill'),
+    overallProgressLabel: document.getElementById('overall-progress-label'),
+    overallProgressHint: document.getElementById('overall-progress-hint'),
+    overallProgressFill: document.getElementById('overall-progress-fill'),
+    roadmapGrid: document.getElementById('roadmap-grid'),
+    roadmapMeta: document.getElementById('roadmap-meta'),
+    settingsStartGrade: document.getElementById('settings-start-grade'),
+    settingsVorstiegOnly: document.getElementById('settings-vorstieg-only'),
+    settingsTheme: document.getElementById('settings-theme'),
+    settingsLoginStatus: document.getElementById('settings-login-status'),
+    settingsSyncStatus: document.getElementById('settings-sync-status'),
+    settingsStorageStatus: document.getElementById('settings-storage-status'),
+    settingsResetProgress: document.getElementById('settings-reset-progress')
+  };
 
-  const openRoutesMetric = document.getElementById('metric-open-routes');
-  const currentGradeMetricNote = document.getElementById('metric-current-grade-note');
-  const overallProgressLabel = document.getElementById('overall-progress-label');
-  const overallProgressHint = document.getElementById('overall-progress-hint');
-  const overallProgressFill = document.getElementById('overall-progress-fill');
-  const focusGradeValue = document.getElementById('focus-grade-value');
-  const unlockMessage = document.getElementById('unlock-message');
-  const gradeTrack = document.getElementById('grade-track');
+  const FIREBASE_STATE = {
+    db: null,
+    auth: null
+  };
 
-  const DEFAULT_HIDDEN_GRADES = new Set(['3']);
+  const SUN_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+  const MOON_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" fill="currentColor"/></svg>';
+
   const HALL_ROUTE_CSV = typeof window.TIVOLI_ROUTE_CSV === 'string' ? window.TIVOLI_ROUTE_CSV : '';
   const HALL_ROUTE_ENTRIES = parseHallRouteData(HALL_ROUTE_CSV);
 
-  let routeEntries = loadRouteEntries();
-  let userProfile = loadProfile();
+  init();
 
-  function switchTab(id, btn) {
-    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(button => button.classList.remove('active'));
-    document.getElementById('tab-' + id).classList.add('active');
-    btn.classList.add('active');
+  function init() {
+    migrateLegacyStorage();
+    appState.profile = loadProfile();
+    appState.routeEntries = loadRouteEntries();
+    initFirebase();
+    bindEvents();
+    resetRouteForm();
+    applyTheme(getCurrentTheme());
+    renderApp();
   }
 
-  function getTodayValue() {
-    const now = new Date();
-    const timezoneOffset = now.getTimezoneOffset() * 60000;
-    return new Date(now.getTime() - timezoneOffset).toISOString().slice(0, 10);
+  function bindEvents() {
+    ui.tabs.forEach(button => {
+      button.addEventListener('click', () => switchTab(button.dataset.tabTarget));
+    });
+
+    ui.themeToggle.addEventListener('click', () => {
+      const nextTheme = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+      applyTheme(nextTheme);
+      saveTheme(nextTheme);
+      renderSettingsModal();
+    });
+
+    ui.settingsToggle.addEventListener('click', openSettingsModal);
+    ui.settingsClose.addEventListener('click', closeSettingsModal);
+    ui.settingsModal.addEventListener('click', event => {
+      if (event.target === ui.settingsModal) closeSettingsModal();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && ui.settingsModal.classList.contains('open')) closeSettingsModal();
+    });
+
+    ui.authUi.addEventListener('click', async event => {
+      const button = event.target.closest('[data-auth-action]');
+      if (!button) return;
+      if (button.dataset.authAction === 'signin') await signInWithGoogle();
+      if (button.dataset.authAction === 'signout') signOut();
+    });
+
+    ui.routeSearch.addEventListener('input', event => {
+      appState.filters.search = event.target.value.trim().toLowerCase();
+      renderRouteBoard();
+    });
+
+    ui.routeGradeFilter.addEventListener('change', event => {
+      appState.filters.grade = event.target.value;
+      renderRouteBoard();
+    });
+
+    ui.routeStatusFilter.addEventListener('change', event => {
+      appState.filters.status = event.target.value;
+      renderRouteBoard();
+    });
+
+    ui.routeBoard.addEventListener('change', event => {
+      const checkbox = event.target.closest('input[data-action="toggle-done"]');
+      if (!checkbox) return;
+      updateEntryStatus(checkbox.dataset.entryId, checkbox.checked ? 'rotpunkt' : 'open');
+    });
+
+    ui.routeBoard.addEventListener('click', event => {
+      const button = event.target.closest('button[data-action]');
+      if (!button) return;
+      const entryId = button.dataset.entryId;
+      if (!entryId) return;
+
+      if (button.dataset.action === 'set-status') {
+        updateEntryStatus(entryId, button.dataset.status);
+        return;
+      }
+
+      if (button.dataset.action === 'delete-entry') {
+        if (!window.confirm('Diese Zusatzroute wirklich löschen?')) return;
+        appState.routeEntries = appState.routeEntries.filter(entry => entry.id !== entryId);
+        persistAll();
+        renderApp();
+      }
+    });
+
+    ui.routeLogForm.addEventListener('submit', onRouteFormSubmit);
+    ui.routeLogForm.addEventListener('reset', () => {
+      requestAnimationFrame(resetRouteForm);
+    });
+
+    ui.settingsStartGrade.addEventListener('change', event => {
+      appState.profile.startGrade = event.target.value;
+      persistProfile();
+      renderApp();
+    });
+
+    ui.settingsVorstiegOnly.addEventListener('change', event => {
+      appState.profile.vorstiegOnly = event.target.checked;
+      persistProfile();
+      renderApp();
+    });
+
+    ui.settingsTheme.addEventListener('change', event => {
+      applyTheme(event.target.value);
+      saveTheme(event.target.value);
+      renderSettingsModal();
+    });
+
+    ui.settingsResetProgress.addEventListener('click', resetProgressSafely);
   }
 
-  function createEntryId() {
-    if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
-    return String(Date.now()) + Math.random().toString(16).slice(2);
+  function switchTab(tabId) {
+    ui.tabs.forEach(button => {
+      button.classList.toggle('active', button.dataset.tabTarget === tabId);
+    });
+    ui.panels.forEach(panel => {
+      panel.classList.toggle('active', panel.id === 'tab-' + tabId);
+    });
   }
 
-  function normalizeColor(value) {
-    const color = String(value || '').trim();
-    return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(color) ? color.toLowerCase() : '';
+  function openSettingsModal() {
+    renderSettingsModal();
+    ui.settingsModal.classList.add('open');
+    ui.settingsModal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeSettingsModal() {
+    ui.settingsModal.classList.remove('open');
+    ui.settingsModal.setAttribute('aria-hidden', 'true');
+  }
+
+  function initFirebase() {
+    try {
+      if (!window.firebase || APP_CONFIG.firebaseConfig.apiKey === 'DEINE_API_KEY') {
+        appState.authReady = false;
+        return;
+      }
+      if (!firebase.apps.length) firebase.initializeApp(APP_CONFIG.firebaseConfig);
+      FIREBASE_STATE.auth = firebase.auth();
+      FIREBASE_STATE.db = firebase.firestore();
+      appState.authReady = true;
+
+      FIREBASE_STATE.auth.getRedirectResult().catch(error => {
+        console.error('Redirect-Result:', error);
+        alert(getReadableAuthError(error));
+      });
+
+      FIREBASE_STATE.auth.onAuthStateChanged(async user => {
+        appState.currentUser = user;
+        renderAuthUI();
+        if (!user) {
+          appState.syncStatus = 'local';
+          appState.routeEntries = loadRouteEntries();
+          appState.profile = loadProfile();
+          renderApp();
+          return;
+        }
+
+        appState.syncStatus = 'syncing';
+        renderSettingsModal();
+        try {
+          const doc = await FIREBASE_STATE.db
+            .collection('users').doc(user.uid)
+            .collection('data').doc('routes')
+            .get();
+
+          if (doc.exists) {
+            const data = doc.data() || {};
+            const cloudEntries = Array.isArray(data.entries) ? data.entries.map(normalizeEntry).filter(Boolean) : [];
+            appState.routeEntries = mergeRouteEntries(cloudEntries);
+            if (data.profile && typeof data.profile === 'object') {
+              appState.profile = sanitizeProfile({ ...APP_CONFIG.defaultProfile, ...data.profile });
+              persistProfile(false);
+            }
+          } else {
+            await writeCloudSnapshot();
+          }
+
+          appState.syncStatus = 'synced';
+        } catch (error) {
+          console.error('Cloud sync failed:', error);
+          appState.syncStatus = 'error';
+        }
+
+        persistRoutes(false);
+        renderApp();
+      });
+    } catch (error) {
+      console.warn('Firebase init error:', error);
+      appState.authReady = false;
+    }
+  }
+
+  function getCurrentTheme() {
+    const attrTheme = document.documentElement.getAttribute('data-theme');
+    return attrTheme === 'dark' ? 'dark' : 'light';
+  }
+
+  function applyTheme(theme) {
+    const nextTheme = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', nextTheme);
+    updateThemeButton();
+  }
+
+  function saveTheme(theme) {
+    localStorage.setItem(APP_CONFIG.storageKeys.theme, theme);
+  }
+
+  function updateThemeButton() {
+    const isDark = getCurrentTheme() === 'dark';
+    ui.themeToggle.innerHTML = isDark ? SUN_ICON : MOON_ICON;
+    ui.themeToggle.title = isDark ? 'Helles Theme' : 'Dunkles Theme';
+  }
+
+  function migrateLegacyStorage() {
+    try {
+      const metaRaw = localStorage.getItem(APP_CONFIG.storageKeys.meta);
+      const meta = metaRaw ? JSON.parse(metaRaw) : null;
+      if (meta && meta.version === APP_CONFIG.storageVersion) return;
+
+      const legacyRoutesRaw = localStorage.getItem(APP_CONFIG.legacyKeys.routes);
+      const legacyProfileRaw = localStorage.getItem(APP_CONFIG.legacyKeys.profile);
+
+      if (legacyRoutesRaw && !localStorage.getItem(APP_CONFIG.storageKeys.routes)) {
+        localStorage.setItem(APP_CONFIG.storageKeys.routes, legacyRoutesRaw);
+      }
+      if (legacyProfileRaw && !localStorage.getItem(APP_CONFIG.storageKeys.profile)) {
+        localStorage.setItem(APP_CONFIG.storageKeys.profile, legacyProfileRaw);
+      }
+
+      localStorage.setItem(APP_CONFIG.storageKeys.meta, JSON.stringify({
+        version: APP_CONFIG.storageVersion,
+        migratedAt: new Date().toISOString()
+      }));
+    } catch (error) {
+      console.warn('Storage migration failed:', error);
+    }
+  }
+
+  function sanitizeProfile(profile) {
+    const startGrade = APP_CONFIG.allowedStartGrades.includes(String(profile.startGrade)) ? String(profile.startGrade) : APP_CONFIG.defaultProfile.startGrade;
+    return {
+      startGrade,
+      vorstiegOnly: Boolean(profile.vorstiegOnly)
+    };
+  }
+
+  function loadProfile() {
+    try {
+      const raw = localStorage.getItem(APP_CONFIG.storageKeys.profile);
+      if (!raw) return { ...APP_CONFIG.defaultProfile };
+      return sanitizeProfile(JSON.parse(raw));
+    } catch (error) {
+      return { ...APP_CONFIG.defaultProfile };
+    }
+  }
+
+  function loadRouteEntries() {
+    try {
+      const raw = localStorage.getItem(APP_CONFIG.storageKeys.routes);
+      const parsed = raw ? JSON.parse(raw) : [];
+      const storedEntries = Array.isArray(parsed) ? parsed.map(normalizeEntry).filter(Boolean) : [];
+      return mergeRouteEntries(storedEntries);
+    } catch (error) {
+      return mergeRouteEntries([]);
+    }
+  }
+
+  function persistProfile(allowCloud = true) {
+    localStorage.setItem(APP_CONFIG.storageKeys.profile, JSON.stringify(appState.profile));
+    if (allowCloud) writeCloudSnapshot().catch(() => {});
+  }
+
+  function persistRoutes(allowCloud = true) {
+    const persistedEntries = appState.routeEntries.filter(shouldPersistEntry).map(serializeEntry);
+    localStorage.setItem(APP_CONFIG.storageKeys.routes, JSON.stringify(persistedEntries));
+    if (allowCloud) writeCloudSnapshot().catch(() => {});
+  }
+
+  function persistAll() {
+    persistProfile(false);
+    persistRoutes(false);
+    writeCloudSnapshot().catch(() => {});
+  }
+
+  async function writeCloudSnapshot() {
+    if (!FIREBASE_STATE.db || !appState.currentUser) {
+      appState.syncStatus = 'local';
+      renderSettingsModal();
+      return;
+    }
+
+    const persistedEntries = appState.routeEntries.filter(shouldPersistEntry).map(serializeEntry);
+    appState.syncStatus = 'syncing';
+    renderSettingsModal();
+
+    await FIREBASE_STATE.db
+      .collection('users').doc(appState.currentUser.uid)
+      .collection('data').doc('routes')
+      .set({
+        entries: persistedEntries,
+        profile: appState.profile,
+        storageVersion: APP_CONFIG.storageVersion,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+    appState.syncStatus = 'synced';
+    renderSettingsModal();
   }
 
   function parseCsvLine(line) {
     const values = [];
     let current = '';
     let inQuotes = false;
+
     for (let index = 0; index < line.length; index += 1) {
       const character = line[index];
       const nextCharacter = line[index + 1];
+
       if (character === '"') {
         if (inQuotes && nextCharacter === '"') {
           current += '"';
@@ -1210,13 +1842,16 @@
         }
         continue;
       }
+
       if (character === ',' && !inQuotes) {
         values.push(current);
         current = '';
         continue;
       }
+
       current += character;
     }
+
     values.push(current);
     return values;
   }
@@ -1229,6 +1864,11 @@
   function normalizeHallGrade(value) {
     const match = String(value || '').match(/\d+/);
     return match ? match[0] : '';
+  }
+
+  function normalizeColor(value) {
+    const color = String(value || '').trim();
+    return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(color) ? color.toLowerCase() : '';
   }
 
   function buildHallRouteId(row, index) {
@@ -1250,20 +1890,26 @@
   function parseHallRouteData(rawCsv) {
     const trimmed = String(rawCsv || '').trim();
     if (!trimmed) return [];
+
     const lines = trimmed.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
     const headerIndex = lines.findIndex(line => line.startsWith('location,difficulty,'));
     if (headerIndex === -1) return [];
+
     const headers = parseCsvLine(lines[headerIndex]);
+
     return lines.slice(headerIndex + 1).map((line, index) => {
       const values = parseCsvLine(line);
       const row = headers.reduce((accumulator, header, columnIndex) => {
         accumulator[header] = values[columnIndex] || '';
         return accumulator;
       }, {});
+
       const grade = normalizeHallGrade(row.difficulty);
       const name = String(row.name || '').trim();
       if (!grade || !name) return null;
+
       const timestamp = Date.parse(String(row.set_at || '').trim()) || Date.now() + index;
+
       return normalizeEntry({
         id: buildHallRouteId(row, index),
         createdAt: timestamp,
@@ -1274,7 +1920,11 @@
         rawDifficulty: String(row.difficulty || '').trim(),
         routeCode: String(row.location || '').trim(),
         name,
-        location: [String(row.area || '').trim(), String(row.sector || '').trim(), row.location ? 'Linie ' + String(row.location).trim() : ''].filter(Boolean).join(' · '),
+        location: [
+          String(row.area || '').trim(),
+          String(row.sector || '').trim(),
+          row.location ? 'Linie ' + String(row.location).trim() : ''
+        ].filter(Boolean).join(' · '),
         notes: buildHallRouteNotes(row),
         link: String(row.link || '').trim(),
         primaryColor: normalizeColor(row.color_1),
@@ -1284,43 +1934,54 @@
     }).filter(Boolean);
   }
 
-  function createEntryKey(entry) {
-    return [String(entry.grade || '').trim(), String(entry.name || '').trim().toLowerCase(), String(entry.location || '').trim().toLowerCase()].join('||');
+  function createEntryId() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+    return String(Date.now()) + Math.random().toString(16).slice(2);
   }
 
-  function isTrackedGrade(grade) {
-    const g = Number(grade);
-    return !DEFAULT_HIDDEN_GRADES.has(String(grade || '').trim()) && g >= Number(userProfile.startGrade || 5);
-  }
+  function normalizeEntry(entry) {
+    if (!entry || typeof entry !== 'object') return null;
+    const grade = String(entry.grade || '').trim();
+    const name = String(entry.name || '').trim();
+    if (!grade || !name) return null;
 
-  function getTrackedEntries() {
-    return routeEntries.filter(entry => {
-      if (!isTrackedGrade(entry.grade)) return false;
-      if (userProfile.vorstiegOnly) return isVorstiegMandatory(entry) || isVorstiegOptional(entry);
-      return true;
-    });
-  }
+    const legacyStyle = typeof entry.style === 'string' ? entry.style : '';
+    const nextStatus = typeof entry.status === 'string'
+      ? entry.status
+      : (legacyStyle === 'projekt' ? 'open' : (legacyStyle ? 'done' : 'open'));
 
-  function mergeRouteEntries(storedEntries) {
-    const hallEntries = HALL_ROUTE_ENTRIES.map(entry => ({ ...entry }));
-    const byKey = new Map(hallEntries.map(entry => [createEntryKey(entry), entry]));
-    const customEntries = [];
-    storedEntries.forEach(entry => {
-      const key = createEntryKey(entry);
-      if (byKey.has(key)) {
-        const hallEntry = byKey.get(key);
-        byKey.set(key, {
-          ...hallEntry,
-          status: entry.status,
-          ascentType: entry.ascentType,
-          date: entry.status === 'done' ? entry.date : '',
-          updatedAt: entry.updatedAt || hallEntry.updatedAt
-        });
-        return;
-      }
-      customEntries.push({ ...entry, source: 'custom' });
-    });
-    return [...byKey.values(), ...customEntries];
+    const nextAscentType = typeof entry.ascentType === 'string'
+      ? entry.ascentType
+      : (legacyStyle === 'toprope'
+        ? 'toprope'
+        : (legacyStyle === 'flash'
+          ? 'flash'
+          : (legacyStyle === 'rotpunkt' ? 'rotpunkt' : '')));
+
+    const normalizedStatus = nextStatus === 'done' ? 'done' : 'open';
+    const normalizedAscentType = normalizedStatus === 'done'
+      ? (nextAscentType === 'toprope' ? 'toprope' : (nextAscentType === 'flash' ? 'flash' : 'rotpunkt'))
+      : '';
+
+    return {
+      id: String(entry.id || createEntryId()),
+      createdAt: Number(entry.createdAt) || Date.now(),
+      updatedAt: Number(entry.updatedAt) || Number(entry.createdAt) || Date.now(),
+      date: String(entry.date || ''),
+      setDate: String(entry.setDate || ''),
+      grade,
+      rawDifficulty: String(entry.rawDifficulty || '').trim(),
+      routeCode: String(entry.routeCode || '').trim(),
+      name,
+      location: String(entry.location || '').trim(),
+      notes: String(entry.notes || '').trim(),
+      link: String(entry.link || '').trim(),
+      primaryColor: normalizeColor(entry.primaryColor),
+      secondaryColor: normalizeColor(entry.secondaryColor),
+      status: normalizedStatus,
+      ascentType: normalizedAscentType,
+      source: entry.source === 'hall' ? 'hall' : 'custom'
+    };
   }
 
   function serializeEntry(entry) {
@@ -1350,96 +2011,193 @@
     return entry.status !== 'open' || Boolean(entry.date);
   }
 
-  function normalizeEntry(entry) {
-    if (!entry || typeof entry !== 'object') return null;
-    const grade = String(entry.grade || '').trim();
-    const name = String(entry.name || '').trim();
-    if (!grade || !name) return null;
-    const legacyStyle = typeof entry.style === 'string' ? entry.style : '';
-    const nextStatus = typeof entry.status === 'string' ? entry.status : (legacyStyle === 'projekt' ? 'open' : (legacyStyle ? 'done' : 'open'));
-    const nextAscentType = typeof entry.ascentType === 'string' ? entry.ascentType : (legacyStyle === 'toprope' ? 'toprope' : (legacyStyle === 'flash' ? 'flash' : (legacyStyle === 'rotpunkt' ? 'rotpunkt' : '')));
-    const normalizedStatus = nextStatus === 'done' ? 'done' : 'open';
-    const normalizedAscentType = normalizedStatus === 'done' ? (nextAscentType === 'toprope' ? 'toprope' : (nextAscentType === 'flash' ? 'flash' : 'rotpunkt')) : '';
+  function createEntryKey(entry) {
+    return [
+      String(entry.grade || '').trim(),
+      String(entry.name || '').trim().toLowerCase(),
+      String(entry.location || '').trim().toLowerCase()
+    ].join('||');
+  }
+
+  function mergeRouteEntries(storedEntries) {
+    const hallEntries = HALL_ROUTE_ENTRIES.map(entry => ({ ...entry }));
+    const byKey = new Map(hallEntries.map(entry => [createEntryKey(entry), entry]));
+    const customEntries = [];
+
+    storedEntries.forEach(entry => {
+      const key = createEntryKey(entry);
+      if (byKey.has(key)) {
+        const hallEntry = byKey.get(key);
+        byKey.set(key, {
+          ...hallEntry,
+          status: entry.status,
+          ascentType: entry.ascentType,
+          date: entry.status === 'done' ? entry.date : '',
+          updatedAt: entry.updatedAt || hallEntry.updatedAt
+        });
+      } else {
+        customEntries.push({ ...entry, source: 'custom' });
+      }
+    });
+
+    return [...byKey.values(), ...customEntries];
+  }
+
+  function getRopeNumber(entry) {
+    const code = String(entry.routeCode || '').trim();
+    const match = code.match(/^(\d+)/);
+    return match ? Number(match[1]) : null;
+  }
+
+  function inRanges(rope, ranges) {
+    return ranges.some(([lo, hi]) => rope >= lo && rope <= hi);
+  }
+
+  function isVorstiegMandatory(entry) {
+    const rope = getRopeNumber(entry);
+    return rope !== null && inRanges(rope, APP_CONFIG.vorstiegMandatoryRanges);
+  }
+
+  function isVorstiegOptional(entry) {
+    const rope = getRopeNumber(entry);
+    return rope !== null && inRanges(rope, APP_CONFIG.vorstiegOptionalRanges);
+  }
+
+  function isTrackedGrade(grade) {
+    const normalizedGrade = String(grade || '').trim();
+    if (APP_CONFIG.hiddenGrades.has(normalizedGrade)) return false;
+    return Number(normalizedGrade) >= Number(appState.profile.startGrade || APP_CONFIG.defaultProfile.startGrade);
+  }
+
+  function getTrackedEntries() {
+    return appState.routeEntries.filter(entry => {
+      if (!isTrackedGrade(entry.grade)) return false;
+      if (!appState.profile.vorstiegOnly) return true;
+      return isVorstiegMandatory(entry) || isVorstiegOptional(entry);
+    });
+  }
+
+  function getTrackedEntryCount() {
+    return getTrackedEntries().length;
+  }
+
+  function getGradeSummaries() {
+    const grouped = getTrackedEntries().reduce((accumulator, entry) => {
+      if (!accumulator[entry.grade]) {
+        accumulator[entry.grade] = {
+          grade: entry.grade,
+          total: 0,
+          done: 0,
+          rotpunkt: 0,
+          flash: 0,
+          toprope: 0,
+          open: 0,
+          requiredOpen: 0,
+          optionalTotal: 0,
+          optionalDone: 0
+        };
+      }
+
+      const summary = accumulator[entry.grade];
+      summary.total += 1;
+
+      if (isVorstiegOptional(entry)) summary.optionalTotal += 1;
+
+      if (entry.status === 'done') {
+        summary.done += 1;
+        if (entry.ascentType === 'toprope') summary.toprope += 1;
+        else if (entry.ascentType === 'flash') summary.flash += 1;
+        else summary.rotpunkt += 1;
+        if (isVorstiegOptional(entry)) summary.optionalDone += 1;
+      } else {
+        summary.open += 1;
+        if (isVorstiegMandatory(entry)) summary.requiredOpen += 1;
+      }
+
+      return accumulator;
+    }, {});
+
+    return Object.values(grouped).sort((left, right) => Number(left.grade) - Number(right.grade));
+  }
+
+  function getProgressState(summaries) {
+    if (!summaries.length) {
+      return {
+        current: null,
+        next: null,
+        canStartNext: false,
+        focusText: 'Noch kein Grad aktiv',
+        focusNote: 'Die Hallenliste ist geladen. Starte mit den offenen Routen deines Trainingsgrades.',
+        unlockText: 'Starte mit den offenen Routen deines Trainingsgrades.',
+        progressHint: 'Starte mit dem ersten Grad deiner aktuellen Trainingsphase.'
+      };
+    }
+
+    const effectiveOpen = summary => appState.profile.vorstiegOnly ? summary.requiredOpen : summary.open;
+    const isIncomplete = summary => appState.profile.vorstiegOnly ? summary.requiredOpen > 0 : summary.done < summary.total;
+
+    const firstIncompleteIndex = summaries.findIndex(isIncomplete);
+
+    if (firstIncompleteIndex === -1) {
+      return {
+        current: null,
+        next: null,
+        canStartNext: false,
+        focusText: 'Alle Grade abgeschlossen',
+        focusNote: 'Alle angelegten Grade sind aktuell komplett abgehakt.',
+        unlockText: 'Aktuell gibt es keine offenen Routen mehr.',
+        progressHint: 'Stark: Alle angelegten Routen sind erledigt.'
+      };
+    }
+
+    const current = summaries[firstIncompleteIndex];
+    const next = summaries[firstIncompleteIndex + 1] || null;
+    const openCount = effectiveOpen(current);
+    const routeLabel = appState.profile.vorstiegOnly ? 'Vorstieg-Routen' : 'Routen';
+    const canStartNext = next !== null && openCount <= 2;
+
+    let unlockText = `${openCount} ${routeLabel} in Grad ${current.grade} offen.`;
+    if (next && canStartNext) {
+      unlockText = `Nur noch ${openCount} ${routeLabel} in Grad ${current.grade} offen. Grad ${next.grade} darf begonnen werden.`;
+    } else if (next && !canStartNext) {
+      unlockText = `Noch ${Math.max(openCount - 2, 0)} weitere ${routeLabel} bis Grad ${next.grade} freigeschaltet wird.`;
+    }
+
     return {
-      id: String(entry.id || createEntryId()),
-      createdAt: Number(entry.createdAt) || Date.now(),
-      updatedAt: Number(entry.updatedAt) || Number(entry.createdAt) || Date.now(),
-      date: String(entry.date || ''),
-      setDate: String(entry.setDate || ''),
-      grade,
-      rawDifficulty: String(entry.rawDifficulty || '').trim(),
-      routeCode: String(entry.routeCode || '').trim(),
-      name,
-      location: String(entry.location || '').trim(),
-      notes: String(entry.notes || '').trim(),
-      link: String(entry.link || '').trim(),
-      primaryColor: normalizeColor(entry.primaryColor),
-      secondaryColor: normalizeColor(entry.secondaryColor),
-      status: normalizedStatus,
-      ascentType: normalizedAscentType,
-      source: entry.source === 'hall' ? 'hall' : 'custom'
+      current,
+      next,
+      canStartNext,
+      focusText: 'Grad ' + current.grade,
+      focusNote: openCount === 0
+        ? `Grad ${current.grade} ist abgeschlossen.`
+        : `${openCount} ${routeLabel} in Grad ${current.grade} fehlen noch.`,
+      unlockText,
+      progressHint: unlockText
     };
   }
 
-  function loadRouteEntries() {
-    try {
-      if (!localStorage.getItem(FIRST_OPEN_KEY)) {
-        localStorage.setItem(FIRST_OPEN_KEY, '1');
-        localStorage.removeItem(STORAGE_KEY);
-        return mergeRouteEntries([]);
-      }
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const parsed = raw ? JSON.parse(raw) : [];
-      const storedEntries = Array.isArray(parsed) ? parsed.map(normalizeEntry).filter(Boolean) : [];
-      return mergeRouteEntries(storedEntries);
-    } catch (error) {
-      return mergeRouteEntries([]);
+  function getRoadmapState(grade, progressState) {
+    const gradeNumber = Number(grade);
+    const currentNumber = progressState.current ? Number(progressState.current.grade) : null;
+    const nextNumber = progressState.next ? Number(progressState.next.grade) : null;
+    const summariesByGrade = new Map(getGradeSummaries().map(summary => [summary.grade, summary]));
+
+    if (!progressState.current && getGradeSummaries().length) {
+      return 'done';
     }
-  }
 
-  function saveRouteEntries() {
-    const persistedEntries = routeEntries.filter(shouldPersistEntry).map(serializeEntry);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(persistedEntries));
-    if (db && currentUser) {
-      setSyncStatus('syncing');
-      db.collection('users').doc(currentUser.uid).collection('data').doc('routes')
-        .set({ entries: persistedEntries, updatedAt: firebase.firestore.FieldValue.serverTimestamp() })
-        .then(() => setSyncStatus('synced'))
-        .catch(() => setSyncStatus('error'));
+    if (currentNumber !== null) {
+      if (gradeNumber < currentNumber) return 'done';
+      if (gradeNumber === currentNumber) return 'current';
+      if (progressState.canStartNext && nextNumber !== null && gradeNumber === nextNumber) return 'unlocked';
+      return 'locked';
     }
-  }
 
-  function loadProfile() {
-    try {
-      const raw = localStorage.getItem(PROFILE_KEY);
-      return raw ? { ...DEFAULT_PROFILE, ...JSON.parse(raw) } : { ...DEFAULT_PROFILE };
-    } catch (e) {
-      return { ...DEFAULT_PROFILE };
+    if (summariesByGrade.has(String(grade)) && summariesByGrade.get(String(grade)).done === summariesByGrade.get(String(grade)).total) {
+      return 'done';
     }
-  }
 
-  function saveProfile() {
-    localStorage.setItem(PROFILE_KEY, JSON.stringify(userProfile));
-    if (db && currentUser) {
-      db.collection('users').doc(currentUser.uid).collection('data').doc('routes')
-        .set({ profile: userProfile }, { merge: true }).catch(() => {});
-    }
-  }
-
-  function onProfileChange() {
-    const gradeEl = document.getElementById('profile-grade');
-    const vsEl = document.getElementById('profile-vorstieg');
-    if (gradeEl) userProfile.startGrade = gradeEl.value;
-    if (vsEl) userProfile.vorstiegOnly = vsEl.checked;
-    saveProfile();
-    renderDashboard();
-  }
-
-  function updateProfileUI() {
-    const gradeEl = document.getElementById('profile-grade');
-    const vsEl = document.getElementById('profile-vorstieg');
-    if (gradeEl) gradeEl.value = userProfile.startGrade;
-    if (vsEl) vsEl.checked = userProfile.vorstiegOnly;
+    return 'locked';
   }
 
   function formatDate(dateString) {
@@ -1447,6 +2205,12 @@
     const parsedDate = new Date(dateString + 'T00:00:00');
     if (Number.isNaN(parsedDate.getTime())) return dateString;
     return new Intl.DateTimeFormat('de-DE', { dateStyle: 'medium' }).format(parsedDate);
+  }
+
+  function getTodayValue() {
+    const now = new Date();
+    const timezoneOffset = now.getTimezoneOffset() * 60000;
+    return new Date(now.getTime() - timezoneOffset).toISOString().slice(0, 10);
   }
 
   function statusFromSelection(value) {
@@ -1478,6 +2242,12 @@
     return 'Ohne Datum';
   }
 
+  function sameRoute(left, right) {
+    return left.grade === right.grade
+      && left.name.trim().toLowerCase() === right.name.trim().toLowerCase()
+      && left.location.trim().toLowerCase() === right.location.trim().toLowerCase();
+  }
+
   function getStatusPriority(entry) {
     const selection = selectionFromEntry(entry);
     if (selection === 'open') return 0;
@@ -1496,253 +2266,165 @@
     });
   }
 
-  function sameRoute(left, right) {
-    return left.grade === right.grade &&
-      left.name.trim().toLowerCase() === right.name.trim().toLowerCase() &&
-      left.location.trim().toLowerCase() === right.location.trim().toLowerCase();
-  }
-
-  function getGradeSummaries() {
-    const grouped = getTrackedEntries().reduce((acc, entry) => {
-      if (!acc[entry.grade]) {
-        acc[entry.grade] = {
-          grade: entry.grade,
-          total: 0,
-          done: 0,
-          rotpunkt: 0,
-          flash: 0,
-          toprope: 0,
-          open: 0,
-          requiredOpen: 0
-        };
-      }
-      const s = acc[entry.grade];
-      s.total++;
-      if (entry.status === 'done') {
-        s.done++;
-        if (entry.ascentType === 'toprope') s.toprope++;
-        else if (entry.ascentType === 'flash') s.flash++;
-        else s.rotpunkt++;
-      } else {
-        s.open++;
-        if (isVorstiegMandatory(entry)) s.requiredOpen++;
-      }
-      return acc;
-    }, {});
-    return Object.values(grouped).sort((a, b) => Number(a.grade) - Number(b.grade));
-  }
-
-  function getProgressState(summaries) {
-    if (!summaries.length) {
-      return {
-        firstIncompleteIndex: -1,
-        current: null,
-        next: null,
-        canStartNext: false,
-        focusText: 'Noch kein Grad aktiv',
-        unlockText: 'Die Hallenliste ist geladen. Starte mit den offenen Routen deines Trainingsgrades.',
-        progressHint: 'Starte mit dem ersten Grad deiner aktuellen Trainingsphase.'
-      };
-    }
-
-    const effectiveOpen = s => userProfile.vorstiegOnly ? s.requiredOpen : s.open;
-    const isIncomplete = s => userProfile.vorstiegOnly ? s.requiredOpen > 0 : s.done < s.total;
-    const firstIncompleteIndex = summaries.findIndex(isIncomplete);
-
-    if (firstIncompleteIndex === -1) {
-      return {
-        firstIncompleteIndex: -1,
-        current: null,
-        next: null,
-        canStartNext: false,
-        focusText: 'Alle Grade abgeschlossen',
-        unlockText: 'Alle angelegten Grade sind bereits komplett abgehakt.',
-        progressHint: 'Stark: Alle angelegten Routen sind erledigt.'
-      };
-    }
-
-    const current = summaries[firstIncompleteIndex];
-    const next = summaries[firstIncompleteIndex + 1] || null;
-    const effOpen = effectiveOpen(current);
-    const canStartNext = effOpen <= 2 && next !== null;
-    const routeLabel = userProfile.vorstiegOnly ? 'Vorstieg-Routen' : 'Routen';
-
-    let unlockText = `${effOpen} ${routeLabel} in Grad ${current.grade} offen.`;
-    if (next && canStartNext) {
-      unlockText = `Nur noch ${effOpen} ${routeLabel} in Grad ${current.grade} offen. Grad ${next.grade} darf begonnen werden.`;
-    } else if (next && !canStartNext) {
-      unlockText = `Noch ${Math.max(effOpen - 2, 0)} weitere ${routeLabel} bis Grad ${next.grade} freigeschaltet wird.`;
-    }
-
-    return {
-      firstIncompleteIndex,
-      current,
-      next,
-      canStartNext,
-      focusText: 'Grad ' + current.grade,
-      unlockText,
-      progressHint: effOpen === 0
-        ? 'Grad ' + current.grade + ' ist abgeschlossen.'
-        : effOpen + ` ${routeLabel} in Grad ` + current.grade + ' fehlen noch.'
-    };
-  }
-
-  function getDefaultRouteGradeFilterValue(summaries, progressState) {
-    if (progressState.current && summaries.some(summary => summary.grade === progressState.current.grade)) {
-      return progressState.current.grade;
-    }
-    return 'all';
-  }
-
-  function updateGradeFilterOptions(summaries, progressState) {
-    const currentValue = routeGradeFilter.value;
-    routeGradeFilter.innerHTML = '<option value="all">Alle Grade</option>';
-    summaries.forEach(summary => {
-      const option = document.createElement('option');
-      option.value = summary.grade;
-      option.textContent = 'Grad ' + summary.grade;
-      routeGradeFilter.appendChild(option);
-    });
-    const allowedValues = Array.from(routeGradeFilter.options).map(opt => opt.value);
-    routeGradeFilter.value = allowedValues.includes(currentValue)
-      ? currentValue
-      : getDefaultRouteGradeFilterValue(summaries, progressState);
-  }
-
-  function renderMetrics(progressState) {
-    const trackedEntries = getTrackedEntries();
-    const completedRoutes = trackedEntries.filter(entry => entry.status === 'done').length;
-    const openRoutes = trackedEntries.length - completedRoutes;
-    const progressPercent = trackedEntries.length ? Math.round((completedRoutes / trackedEntries.length) * 100) : 0;
-
-    openRoutesMetric.textContent = String(openRoutes);
-    currentGradeMetricNote.textContent = progressState.unlockText;
-    overallProgressLabel.textContent = trackedEntries.length
-      ? completedRoutes + ' von ' + trackedEntries.length + ' Routen abgeschlossen'
-      : 'Noch keine Routen im Board';
-    overallProgressHint.textContent = progressState.progressHint;
-    overallProgressFill.style.width = progressPercent + '%';
-    focusGradeValue.textContent = progressState.focusText;
-    unlockMessage.textContent = progressState.current ? (progressState.next ? 'Grad ' + progressState.next.grade : 'Letzter Grad') : '–';
-  }
-
-  function renderGradeTrack(progressState) {
-    gradeTrack.innerHTML = '';
-    const focusGrades = [5, 6, 7, 8];
-    const summariesMap = new Map(getGradeSummaries().map(s => [Number(s.grade), s]));
-
-    focusGrades.forEach((grade) => {
-      const summary = summariesMap.get(grade) || { total: 0, done: 0, open: 0 };
-      const card = document.createElement('div');
-      card.className = 'grade-step';
-      let stepState = 'locked';
-
-      if (progressState.current) {
-        if (grade < Number(progressState.current.grade)) stepState = 'done';
-        if (grade === Number(progressState.current.grade)) stepState = 'current';
-        if (progressState.next && grade === Number(progressState.next.grade)) stepState = 'next';
-      } else if (summary.total && summary.done === summary.total) {
-        stepState = 'done';
-      }
-
-      card.classList.add(stepState);
-
-      const label = document.createElement('div');
-      label.className = 'grade-step-label';
-      label.textContent =
-        stepState === 'current' ? 'In Bearbeitung' :
-        stepState === 'next' ? 'Danach' :
-        stepState === 'done' ? 'Fertig' : 'Später';
-
-      const value = document.createElement('div');
-      value.className = 'grade-step-value';
-      value.textContent = String(grade);
-
-      const note = document.createElement('div');
-      note.className = 'grade-step-note';
-
-      if (summary.total > 0) {
-        note.textContent = `${summary.done}/${summary.total} erledigt`;
-        if (summary.open > 0) note.textContent += ` · ${summary.open} offen`;
-      } else {
-        note.textContent = 'Noch keine Route im Board';
-      }
-
-      card.appendChild(label);
-      card.appendChild(value);
-      card.appendChild(note);
-      gradeTrack.appendChild(card);
-    });
-  }
-
-  function getFilteredEntries() {
-    const searchTerm = routeSearch.value.trim().toLowerCase();
-    const gradeFilter = routeGradeFilter.value;
-    const statusFilter = routeStatusFilter.value;
-
-    return sortEntries(getTrackedEntries()).filter(entry => {
-      const matchesSearch = !searchTerm ||
-        entry.name.toLowerCase().includes(searchTerm) ||
-        entry.location.toLowerCase().includes(searchTerm) ||
-        entry.routeCode.toLowerCase().includes(searchTerm) ||
-        entry.rawDifficulty.toLowerCase().includes(searchTerm) ||
-        entry.notes.toLowerCase().includes(searchTerm);
-
-      const matchesGrade = gradeFilter === 'all' || entry.grade === gradeFilter;
-      const selection = selectionFromEntry(entry);
-      const matchesStatus = statusFilter === 'all' || selection === statusFilter;
-      return matchesSearch && matchesGrade && matchesStatus;
-    });
-  }
-
   function isEntryLocked(entry, progressState) {
-    if (!progressState || !progressState.current) return false;
-    return Number(entry.grade) > Number(progressState.current.grade) && !(progressState.next && Number(entry.grade) === Number(progressState.next.grade) && progressState.canStartNext);
+    if (!progressState.current) return false;
+    return Number(entry.grade) > Number(progressState.current.grade) && !(progressState.canStartNext && progressState.next && Number(entry.grade) === Number(progressState.next.grade));
   }
 
   function updateEntryStatus(entryId, selection) {
-    const entry = routeEntries.find(candidate => candidate.id === entryId);
-    if (!entry) return false;
     const progressState = getProgressState(getGradeSummaries());
-    if (isEntryLocked(entry, progressState)) {
-      renderDashboard();
-      return false;
+    const targetEntry = appState.routeEntries.find(entry => entry.id === entryId);
+    if (!targetEntry) return;
+
+    if (isEntryLocked(targetEntry, progressState)) {
+      renderApp();
+      return;
     }
+
     const nextStatus = statusFromSelection(selection);
-    routeEntries = routeEntries.map(item => {
-      if (item.id !== entryId) return item;
+    appState.routeEntries = appState.routeEntries.map(entry => {
+      if (entry.id !== entryId) return entry;
       return {
-        ...item,
+        ...entry,
         status: nextStatus.status,
         ascentType: nextStatus.ascentType,
         updatedAt: Date.now(),
         date: nextStatus.status === 'done'
-          ? (item.date || getTodayValue())
-          : (item.source === 'hall' ? '' : item.date)
+          ? (entry.date || getTodayValue())
+          : (entry.source === 'hall' ? '' : entry.date)
       };
     });
-    saveRouteEntries();
-    renderDashboard();
-    return true;
+
+    persistRoutes();
+    renderApp();
   }
 
-  function renderRouteBoard(progressState) {
-    routeBoard.innerHTML = '';
+  function getFilteredEntries() {
+    const searchTerm = appState.filters.search;
+    const gradeFilter = appState.filters.grade;
+    const statusFilter = appState.filters.status;
+
+    return sortEntries(getTrackedEntries()).filter(entry => {
+      const matchesSearch = !searchTerm
+        || entry.name.toLowerCase().includes(searchTerm)
+        || entry.location.toLowerCase().includes(searchTerm)
+        || entry.routeCode.toLowerCase().includes(searchTerm)
+        || entry.rawDifficulty.toLowerCase().includes(searchTerm)
+        || entry.notes.toLowerCase().includes(searchTerm);
+
+      const matchesGrade = gradeFilter === 'all' || entry.grade === gradeFilter;
+      const matchesStatus = statusFilter === 'all' || selectionFromEntry(entry) === statusFilter;
+      return matchesSearch && matchesGrade && matchesStatus;
+    });
+  }
+
+  function updateGradeFilterOptions(summaries, progressState) {
+    const currentValue = appState.filters.grade;
+    ui.routeGradeFilter.innerHTML = '<option value="all">Alle Grade</option>';
+    summaries.forEach(summary => {
+      const option = document.createElement('option');
+      option.value = summary.grade;
+      option.textContent = 'Grad ' + summary.grade;
+      ui.routeGradeFilter.appendChild(option);
+    });
+
+    if (currentValue !== 'all' && summaries.some(summary => summary.grade === currentValue)) {
+      ui.routeGradeFilter.value = currentValue;
+      return;
+    }
+
+    if (progressState.current && summaries.some(summary => summary.grade === progressState.current.grade)) {
+      appState.filters.grade = progressState.current.grade;
+      ui.routeGradeFilter.value = progressState.current.grade;
+      return;
+    }
+
+    appState.filters.grade = 'all';
+    ui.routeGradeFilter.value = 'all';
+  }
+
+  function renderMetrics() {
     const trackedEntries = getTrackedEntries();
+    const summaries = getGradeSummaries();
+    const progressState = getProgressState(summaries);
+
+    const completedRoutes = trackedEntries.filter(entry => entry.status === 'done').length;
+    const openRoutes = trackedEntries.length - completedRoutes;
+    const progressPercent = trackedEntries.length ? Math.round((completedRoutes / trackedEntries.length) * 100) : 0;
+
+    ui.focusGradeValue.textContent = progressState.focusText;
+    ui.focusGradeNote.textContent = progressState.focusNote;
+    ui.metricOpenRoutes.textContent = String(openRoutes);
+    ui.metricDoneRoutes.textContent = String(completedRoutes);
+    ui.metricNextGrade.textContent = progressState.next ? progressState.next.grade : '–';
+    ui.unlockMessage.textContent = progressState.unlockText;
+    ui.unlockPill.textContent = progressState.canStartNext && progressState.next
+      ? 'Grad ' + progressState.next.grade + ' bereits freigegeben'
+      : (progressState.current ? 'Aktuell in Bearbeitung' : 'Alles erledigt');
+
+    ui.overallProgressLabel.textContent = trackedEntries.length
+      ? completedRoutes + ' von ' + trackedEntries.length + ' Routen abgeschlossen'
+      : 'Noch keine Routen im Board';
+
+    ui.overallProgressHint.textContent = progressState.progressHint;
+    ui.overallProgressFill.style.width = progressPercent + '%';
+    ui.roadmapMeta.textContent = appState.profile.vorstiegOnly
+      ? 'Roadmap mit Vorstieg-Fokus. Optionale Linien werden separat markiert.'
+      : 'Roadmap für die Grade 5 bis 8 mit aktuellem Fokus und den nächsten Schritten.';
+  }
+
+  function renderRoadmap() {
+    const summaries = getGradeSummaries();
+    const progressState = getProgressState(summaries);
+    const summariesByGrade = new Map(summaries.map(summary => [summary.grade, summary]));
+
+    ui.roadmapGrid.innerHTML = '';
+
+    APP_CONFIG.roadmapGrades.forEach(grade => {
+      const card = document.createElement('div');
+      const state = getRoadmapState(grade, progressState);
+      const summary = summariesByGrade.get(grade) || { total: 0, done: 0, open: 0, requiredOpen: 0 };
+      const completion = summary.total ? Math.round((summary.done / summary.total) * 100) : 0;
+
+      card.className = 'roadmap-card ' + state;
+      card.innerHTML = `
+        <div class="roadmap-grade">${grade}</div>
+        <div class="roadmap-state">${getRoadmapStateLabel(state)}</div>
+        <div class="roadmap-bar"><span style="width:${completion}%"></span></div>
+        <p>${summary.total ? `${summary.done} von ${summary.total} erledigt` : 'Noch keine Route im aktuellen Filterbereich'}</p>
+      `;
+      ui.roadmapGrid.appendChild(card);
+    });
+  }
+
+  function getRoadmapStateLabel(state) {
+    if (state === 'done') return 'Abgeschlossen';
+    if (state === 'current') return 'Aktuell';
+    if (state === 'unlocked') return 'Freigegeben';
+    return 'Folgt';
+  }
+
+  function renderRouteBoard() {
+    const summaries = getGradeSummaries();
+    const progressState = getProgressState(summaries);
+    const trackedEntries = getTrackedEntries();
+    const filteredEntries = getFilteredEntries();
+
+    ui.routeBoard.innerHTML = '';
+
     if (!trackedEntries.length) {
       const empty = document.createElement('div');
       empty.className = 'tracker-empty';
       empty.textContent = 'Aktuell sind keine berücksichtigten Routen im Board.';
-      routeBoard.appendChild(empty);
+      ui.routeBoard.appendChild(empty);
       return;
     }
 
-    const filteredEntries = getFilteredEntries();
     if (!filteredEntries.length) {
       const empty = document.createElement('div');
       empty.className = 'tracker-empty';
       empty.textContent = 'Keine Route passt aktuell zu deinem Filter.';
-      routeBoard.appendChild(empty);
+      ui.routeBoard.appendChild(empty);
       return;
     }
 
@@ -1754,7 +2436,7 @@
 
     const title = document.createElement('div');
     title.className = 'route-table-title';
-    title.textContent = 'Routenübersicht';
+    title.textContent = 'Direkte Trainingsliste';
 
     const meta = document.createElement('div');
     meta.className = 'route-table-meta';
@@ -1770,134 +2452,59 @@
     const table = document.createElement('table');
     table.className = 'route-table';
 
-    const thead = document.createElement('thead');
-    const headRow = document.createElement('tr');
-    ['Check','Grad','Route','Infos','Bereich','Status','Aktionen'].forEach(labelText => {
-      const th = document.createElement('th');
-      th.scope = 'col';
-      th.textContent = labelText;
-      headRow.appendChild(th);
-    });
-    thead.appendChild(headRow);
-    table.appendChild(thead);
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Check</th>
+          <th>Grad</th>
+          <th>Route</th>
+          <th>Infos</th>
+          <th>Bereich</th>
+          <th>Status</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
 
-    const tbody = document.createElement('tbody');
+    const tbody = table.querySelector('tbody');
 
     filteredEntries.forEach(entry => {
-      const statusMeta = getRouteStatusMeta(entry);
-      const locked = isEntryLocked(entry, progressState);
       const row = document.createElement('tr');
       row.className = 'route-row-' + selectionFromEntry(entry);
 
-      const checkCell = document.createElement('td');
-      checkCell.className = 'route-cell-check';
-      const quickToggle = document.createElement('label');
-      quickToggle.className = 'route-quick-toggle' + (entry.status === 'done' ? ' checked' : '') + (locked ? ' locked' : '');
-      const quickToggleInput = document.createElement('input');
-      quickToggleInput.type = 'checkbox';
-      quickToggleInput.checked = entry.status === 'done';
-      quickToggleInput.disabled = locked;
-      quickToggleInput.dataset.action = 'toggle-done';
-      quickToggleInput.dataset.entryId = entry.id;
-      const quickToggleText = document.createElement('span');
-      quickToggleText.textContent = entry.status === 'done' ? 'Ja' : 'Nein';
-      quickToggle.appendChild(quickToggleInput);
-      quickToggle.appendChild(quickToggleText);
-      checkCell.appendChild(quickToggle);
-      row.appendChild(checkCell);
+      const statusMeta = getRouteStatusMeta(entry);
+      const locked = isEntryLocked(entry, progressState);
+      const quickChecked = entry.status === 'done';
 
-      const gradeCell = document.createElement('td');
-      gradeCell.className = 'route-cell-grade';
-      const gradeBadge = document.createElement('span');
-      gradeBadge.className = 'route-grade-badge';
-      gradeBadge.textContent = entry.grade;
-      gradeCell.appendChild(gradeBadge);
-      row.appendChild(gradeCell);
+      const infoCellHtml = buildInfoCellHtml(entry);
 
-      const routeCell = document.createElement('td');
-      const routeName = document.createElement('div');
-      routeName.className = 'route-name-main';
-      routeName.textContent = entry.name;
-      if (userProfile.vorstiegOnly && isVorstiegOptional(entry)) {
-        const badge = document.createElement('span');
-        badge.className = 'route-optional-badge';
-        badge.textContent = 'Optional';
-        routeName.appendChild(badge);
-      }
-      routeCell.appendChild(routeName);
-      const routeDate = document.createElement('div');
-      routeDate.className = 'route-name-sub';
-      routeDate.textContent = getRouteDateLabel(entry);
-      routeCell.appendChild(routeDate);
-      if (entry.notes) {
-        const routeNotes = document.createElement('div');
-        routeNotes.className = 'route-notes-text';
-        routeNotes.textContent = entry.notes;
-        routeCell.appendChild(routeNotes);
-      }
-      row.appendChild(routeCell);
+      row.innerHTML = `
+        <td>
+          <label class="route-quick-toggle ${quickChecked ? 'checked' : ''} ${locked ? 'locked' : ''}">
+            <input type="checkbox" ${quickChecked ? 'checked' : ''} ${locked ? 'disabled' : ''} data-action="toggle-done" data-entry-id="${escapeHtml(entry.id)}">
+            <span>${quickChecked ? 'Ja' : 'Nein'}</span>
+          </label>
+        </td>
+        <td><span class="route-grade-badge">${escapeHtml(entry.grade)}</span></td>
+        <td>
+          <div class="route-name-main">
+            ${escapeHtml(entry.name)}
+            ${appState.profile.vorstiegOnly && isVorstiegOptional(entry) ? '<span class="route-optional-badge">Optional</span>' : ''}
+          </div>
+          <div class="route-name-sub">${escapeHtml(getRouteDateLabel(entry))}</div>
+          ${entry.notes ? `<div class="route-notes-text">${escapeHtml(entry.notes)}</div>` : ''}
+        </td>
+        <td>${infoCellHtml}</td>
+        <td><div class="route-location-text">${escapeHtml(entry.location || '—')}</div></td>
+        <td>
+          <span class="tracker-pill ${statusMeta.pillClass}">${escapeHtml(statusMeta.label)}</span>
+          ${locked ? '<div class="route-lock-note">Gesperrt oberhalb des aktuellen Grades</div>' : ''}
+        </td>
+        <td></td>
+      `;
 
-      const infoCell = document.createElement('td');
-      const infoStack = document.createElement('div');
-      infoStack.className = 'route-info-stack';
-      if (entry.rawDifficulty) {
-        const difficulty = document.createElement('span');
-        difficulty.className = 'route-mini-badge';
-        difficulty.textContent = 'VL ' + entry.rawDifficulty;
-        infoStack.appendChild(difficulty);
-      }
-      if (entry.routeCode) {
-        const routeCode = document.createElement('span');
-        routeCode.className = 'route-mini-badge';
-        routeCode.textContent = 'Linie ' + entry.routeCode;
-        infoStack.appendChild(routeCode);
-      }
-      if (entry.primaryColor || entry.secondaryColor) {
-        const colors = document.createElement('div');
-        colors.className = 'route-colors';
-        [entry.primaryColor, entry.secondaryColor].filter(Boolean).forEach(colorValue => {
-          const dot = document.createElement('span');
-          dot.className = 'route-color-dot';
-          dot.style.backgroundColor = colorValue;
-          colors.appendChild(dot);
-        });
-        infoStack.appendChild(colors);
-      }
-      if (entry.link) {
-        const link = document.createElement('a');
-        link.className = 'route-meta-link';
-        link.href = entry.link;
-        link.target = '_blank';
-        link.rel = 'noreferrer';
-        link.textContent = 'Vertical-Life';
-        infoStack.appendChild(link);
-      }
-      infoCell.appendChild(infoStack);
-      row.appendChild(infoCell);
-
-      const locationCell = document.createElement('td');
-      const locationText = document.createElement('div');
-      locationText.className = 'route-location-text';
-      locationText.textContent = entry.location || '—';
-      locationCell.appendChild(locationText);
-      row.appendChild(locationCell);
-
-      const statusCell = document.createElement('td');
-      statusCell.className = 'route-cell-status';
-      const pill = document.createElement('span');
-      pill.className = 'tracker-pill ' + statusMeta.pillClass;
-      pill.textContent = statusMeta.label;
-      statusCell.appendChild(pill);
-      if (locked) {
-        const lockNote = document.createElement('div');
-        lockNote.className = 'route-lock-note';
-        lockNote.textContent = 'Noch nicht freigeschaltet';
-        statusCell.appendChild(lockNote);
-      }
-      row.appendChild(statusCell);
-
-      const actionsCell = document.createElement('td');
-      actionsCell.className = 'route-cell-actions';
+      const actionsCell = row.lastElementChild;
       const actions = document.createElement('div');
       actions.className = 'route-status-actions';
 
@@ -1909,9 +2516,8 @@
       ].forEach(option => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = 'status-btn status-' + option.value;
+        button.className = 'status-btn status-' + option.value + (selectionFromEntry(entry) === option.value ? ' active' : '');
         button.disabled = locked;
-        if (selectionFromEntry(entry) === option.value) button.classList.add('active');
         button.dataset.action = 'set-status';
         button.dataset.entryId = entry.id;
         button.dataset.status = option.value;
@@ -1930,52 +2536,162 @@
       }
 
       actionsCell.appendChild(actions);
-      row.appendChild(actionsCell);
       tbody.appendChild(row);
     });
 
-    table.appendChild(tbody);
     tableWrap.appendChild(table);
     shell.appendChild(tableWrap);
-    routeBoard.appendChild(shell);
+    ui.routeBoard.appendChild(shell);
   }
 
-  function renderDashboard() {
-    const summaries = getGradeSummaries();
-    const progressState = getProgressState(summaries);
-    updateGradeFilterOptions(summaries, progressState);
-    renderMetrics(progressState);
-    renderGradeTrack(progressState);
-    renderRouteBoard(progressState);
-    updateProfileUI();
-    updateAuthUI(currentUser);
+  function buildInfoCellHtml(entry) {
+    const bits = [];
+
+    if (entry.rawDifficulty) {
+      bits.push(`<span class="route-mini-badge">VL ${escapeHtml(entry.rawDifficulty)}</span>`);
+    }
+
+    if (entry.routeCode) {
+      bits.push(`<span class="route-mini-badge">Linie ${escapeHtml(entry.routeCode)}</span>`);
+    }
+
+    if (entry.primaryColor || entry.secondaryColor) {
+      const colors = [entry.primaryColor, entry.secondaryColor]
+        .filter(Boolean)
+        .map(color => `<span class="route-color-dot" style="background-color:${escapeHtml(color)}"></span>`)
+        .join('');
+      bits.push(`<span class="route-colors">${colors}</span>`);
+    }
+
+    if (entry.link) {
+      bits.push(`<a class="route-meta-link" href="${escapeHtml(entry.link)}" target="_blank" rel="noreferrer">Vertical-Life</a>`);
+    }
+
+    return `<div class="route-info-stack">${bits.join('')}</div>`;
   }
 
-  function showFeedback(message, type) {
-    formFeedback.textContent = message;
-    formFeedback.className = 'form-feedback show ' + (type === 'error' ? 'feedback-error' : 'feedback-success');
+  function renderAuthUI() {
+    if (!appState.currentUser) {
+      ui.authUi.innerHTML = `
+        <button class="auth-signin-btn" type="button" data-auth-action="signin">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Mit Google anmelden
+        </button>
+      `;
+      renderSettingsModal();
+      return;
+    }
+
+    const initial = (appState.currentUser.displayName || appState.currentUser.email || '?')[0].toUpperCase();
+    const avatar = appState.currentUser.photoURL
+      ? `<img src="${escapeHtml(appState.currentUser.photoURL)}" alt="">`
+      : escapeHtml(initial);
+
+    ui.authUi.innerHTML = `
+      <div class="auth-user">
+        <span class="auth-sync ${appState.syncStatus === 'error' ? 'error' : ''}">${escapeHtml(getSyncStatusText())}</span>
+        <div class="auth-avatar">${avatar}</div>
+        <span class="auth-name">${escapeHtml(appState.currentUser.displayName || appState.currentUser.email || '')}</span>
+        <button class="auth-signout-btn" type="button" data-auth-action="signout">Abmelden</button>
+      </div>
+    `;
+
+    renderSettingsModal();
   }
 
-  function clearFeedback() {
-    formFeedback.textContent = '';
-    formFeedback.className = 'form-feedback';
+  function renderSettingsModal() {
+    ui.settingsStartGrade.value = appState.profile.startGrade;
+    ui.settingsVorstiegOnly.checked = appState.profile.vorstiegOnly;
+    ui.settingsTheme.value = getCurrentTheme();
+    ui.settingsLoginStatus.textContent = appState.currentUser
+      ? (appState.currentUser.displayName || appState.currentUser.email || 'Angemeldet')
+      : 'Nicht angemeldet';
+    ui.settingsSyncStatus.textContent = getSyncStatusText();
+    ui.settingsStorageStatus.textContent = getTrackedEntryCount() + ' Routen im aktiven Speicher';
   }
 
-  function resetRouteForm() {
-    routeLogForm.reset();
-    document.getElementById('route-date').value = getTodayValue();
-    document.getElementById('route-status').value = 'open';
-    clearFeedback();
+  function getSyncStatusText() {
+    if (appState.syncStatus === 'syncing') return 'Wird gespeichert …';
+    if (appState.syncStatus === 'synced') return 'Mit Cloud synchronisiert';
+    if (appState.syncStatus === 'error') return 'Sync-Fehler';
+    return 'Nur lokal gespeichert';
   }
 
-  routeLogForm.addEventListener('submit', event => {
+  async function signInWithGoogle() {
+    if (!FIREBASE_STATE.auth) {
+      alert('Google-Login ist momentan nicht verfügbar. Bitte Seite neu laden.');
+      return;
+    }
+
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    try {
+      await FIREBASE_STATE.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    } catch (error) {
+      console.warn('Persistence konnte nicht gesetzt werden:', error);
+    }
+
+    const preferRedirect = window.matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+
+    if (preferRedirect) {
+      try {
+        await FIREBASE_STATE.auth.signInWithRedirect(provider);
+        return;
+      } catch (error) {
+        console.error('Redirect-Login:', error);
+        alert(getReadableAuthError(error));
+        return;
+      }
+    }
+
+    try {
+      await FIREBASE_STATE.auth.signInWithPopup(provider);
+    } catch (error) {
+      console.error('Popup-Login:', error);
+      const fallbackCodes = new Set(['auth/popup-blocked', 'auth/popup-closed-by-user', 'auth/cancelled-popup-request', 'auth/web-storage-unsupported']);
+      if (fallbackCodes.has(error && error.code)) {
+        try {
+          await FIREBASE_STATE.auth.signInWithRedirect(provider);
+          return;
+        } catch (redirectError) {
+          console.error('Redirect-Fallback:', redirectError);
+          alert(getReadableAuthError(redirectError));
+          return;
+        }
+      }
+      alert(getReadableAuthError(error));
+    }
+  }
+
+  function signOut() {
+    if (!FIREBASE_STATE.auth) return;
+    FIREBASE_STATE.auth.signOut();
+  }
+
+  function getReadableAuthError(error) {
+    const code = error && error.code ? String(error.code) : '';
+    if (code === 'auth/popup-blocked') return 'Der Popup-Login wurde blockiert. Es wird automatisch auf Redirect umgestellt.';
+    if (code === 'auth/popup-closed-by-user') return 'Das Login-Fenster wurde geschlossen, bevor die Anmeldung abgeschlossen war.';
+    if (code === 'auth/cancelled-popup-request') return 'Es läuft bereits ein anderer Login-Versuch. Bitte versuche es erneut.';
+    if (code === 'auth/unauthorized-domain') return 'Die aktuelle Domain ist in Firebase noch nicht für Google-Login freigeschaltet. In Firebase Authentication → Settings → Authorized domains muss lukas-jdav.github.io eingetragen sein.';
+    if (code === 'auth/web-storage-unsupported') return 'Der Browser unterstützt den nötigen Web-Speicher für den Login nicht vollständig.';
+    if (code === 'auth/network-request-failed') return 'Die Anmeldung ist an einem Netzwerkproblem gescheitert.';
+    return (error && (error.message || error.code)) || 'Unbekannter Fehler beim Google-Login.';
+  }
+
+  function onRouteFormSubmit(event) {
     event.preventDefault();
-
-    const formData = new FormData(routeLogForm);
+    const formData = new FormData(ui.routeLogForm);
     const selection = String(formData.get('status') || 'open');
     const statusInfo = statusFromSelection(selection);
 
-    const entry = {
+    const entry = normalizeEntry({
       id: createEntryId(),
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -1993,225 +2709,83 @@
       source: 'custom',
       status: statusInfo.status,
       ascentType: statusInfo.ascentType
-    };
+    });
 
-    if (!entry.date || !entry.grade || !entry.name) {
+    if (!entry || !entry.date || !entry.grade || !entry.name) {
       showFeedback('Bitte fülle mindestens Datum, Grad und Routenname aus.', 'error');
       return;
     }
 
-    if (routeEntries.some(existingEntry => sameRoute(existingEntry, entry))) {
+    if (appState.routeEntries.some(existingEntry => sameRoute(existingEntry, entry))) {
       showFeedback('Diese Route ist schon im Dashboard angelegt. Nutze unten die Abhak- und Statusfunktionen.', 'error');
       return;
     }
 
-    routeEntries.push(entry);
-    saveRouteEntries();
-    renderDashboard();
+    appState.routeEntries.push(entry);
+    persistRoutes();
+    renderApp();
     showFeedback('Zusatzroute gespeichert.', 'success');
-
-    routeLogForm.reset();
+    ui.routeLogForm.reset();
     document.getElementById('route-date').value = getTodayValue();
     document.getElementById('route-status').value = selection;
     document.getElementById('route-name').focus();
-  });
+  }
 
-  routeLogForm.addEventListener('reset', () => requestAnimationFrame(resetRouteForm));
+  function resetRouteForm() {
+    ui.routeLogForm.reset();
+    document.getElementById('route-date').value = getTodayValue();
+    document.getElementById('route-status').value = 'open';
+    clearFeedback();
+  }
 
-  routeBoard.addEventListener('change', event => {
-    const checkbox = event.target.closest('input[data-action="toggle-done"]');
-    if (!checkbox) return;
-    updateEntryStatus(checkbox.dataset.entryId, checkbox.checked ? 'rotpunkt' : 'open');
-  });
+  function showFeedback(message, type) {
+    ui.formFeedback.textContent = message;
+    ui.formFeedback.className = 'form-feedback show ' + (type === 'error' ? 'feedback-error' : 'feedback-success');
+  }
 
-  routeBoard.addEventListener('click', event => {
-    const button = event.target.closest('button[data-action]');
-    if (!button) return;
-    const entryId = button.dataset.entryId;
-    if (!entryId) return;
+  function clearFeedback() {
+    ui.formFeedback.textContent = '';
+    ui.formFeedback.className = 'form-feedback';
+  }
 
-    if (button.dataset.action === 'delete-entry') {
-      if (!window.confirm('Diese Route wirklich aus dem Dashboard löschen?')) return;
-      routeEntries = routeEntries.filter(entry => entry.id !== entryId);
-      saveRouteEntries();
-      renderDashboard();
-      return;
-    }
+  function resetProgressSafely() {
+    const trackedEntries = getTrackedEntries();
+    if (!trackedEntries.length) return;
 
-    if (button.dataset.action === 'set-status') {
-      updateEntryStatus(entryId, button.dataset.status);
-    }
-  });
+    const response = window.prompt('Zum Bestätigen bitte RESET eingeben.');
+    if (response !== 'RESET') return;
 
-  clearAllRoutesButton.addEventListener('click', () => {
-    if (!getTrackedEntries().length) return;
-    if (!window.confirm('Den gespeicherten Fortschritt wirklich zurücksetzen?')) return;
-    routeEntries = routeEntries.map(entry => ({
+    appState.routeEntries = appState.routeEntries.map(entry => ({
       ...entry,
       status: 'open',
       ascentType: '',
       date: '',
       updatedAt: Date.now()
     }));
-    saveRouteEntries();
-    renderDashboard();
-    resetRouteForm();
-  });
 
-  routeSearch.addEventListener('input', renderDashboard);
-  routeGradeFilter.addEventListener('change', renderDashboard);
-  routeStatusFilter.addEventListener('change', renderDashboard);
-
-  const escHtml = s => String(s || '')
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
-
-  function isLikelyMobileBrowser() {
-    return window.matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+    persistRoutes();
+    renderApp();
+    closeSettingsModal();
   }
 
-  function buildGoogleProvider() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    return provider;
+  function renderApp() {
+    const summaries = getGradeSummaries();
+    const progressState = getProgressState(summaries);
+    updateGradeFilterOptions(summaries, progressState);
+    renderMetrics();
+    renderRoadmap();
+    renderRouteBoard();
+    renderAuthUI();
+    renderSettingsModal();
   }
 
-  function getReadableAuthError(error) {
-    const code = error && error.code ? String(error.code) : '';
-    if (code === 'auth/popup-blocked') return 'Der Popup-Login wurde blockiert. Es wird automatisch auf Redirect umgestellt.';
-    if (code === 'auth/popup-closed-by-user') return 'Das Login-Fenster wurde geschlossen, bevor die Anmeldung abgeschlossen war.';
-    if (code === 'auth/cancelled-popup-request') return 'Es läuft bereits ein anderer Login-Versuch. Bitte versuche es erneut.';
-    if (code === 'auth/unauthorized-domain') return 'Die aktuelle Domain ist in Firebase noch nicht für Google-Login freigeschaltet. In Firebase Authentication → Settings → Authorized domains muss lukas-jdav.github.io eingetragen sein.';
-    if (code === 'auth/web-storage-unsupported') return 'Der Browser unterstützt den nötigen Web-Speicher für den Login nicht vollständig.';
-    if (code === 'auth/network-request-failed') return 'Die Anmeldung ist an einem Netzwerkproblem gescheitert.';
-    return (error && (error.message || error.code)) || 'Unbekannter Fehler beim Google-Login.';
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
-
-  async function signInWithGoogle() {
-    if (!auth) {
-      alert('Google-Login ist momentan nicht verfügbar. Bitte Seite neu laden.');
-      return;
-    }
-    const provider = buildGoogleProvider();
-    try { await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch (persistenceError) { console.warn('Persistence konnte nicht gesetzt werden:', persistenceError); }
-
-    const preferRedirect = isLikelyMobileBrowser();
-    if (preferRedirect) {
-      try { await auth.signInWithRedirect(provider); return; }
-      catch (redirectError) { console.error('Redirect-Login:', redirectError); alert(getReadableAuthError(redirectError)); return; }
-    }
-
-    try {
-      await auth.signInWithPopup(provider);
-    } catch (error) {
-      console.error('Popup-Login:', error);
-      const fallbackCodes = new Set(['auth/popup-blocked','auth/popup-closed-by-user','auth/cancelled-popup-request','auth/web-storage-unsupported']);
-      if (fallbackCodes.has(error && error.code)) {
-        try { await auth.signInWithRedirect(provider); return; }
-        catch (redirectError) { console.error('Redirect-Fallback:', redirectError); alert(getReadableAuthError(redirectError)); return; }
-      }
-      alert(getReadableAuthError(error));
-    }
-  }
-  window.signInWithGoogle = signInWithGoogle;
-
-  function signOut() {
-    if (!auth) return;
-    auth.signOut();
-  }
-  window.signOut = signOut;
-
-  function setSyncStatus(status) {
-    const el = document.getElementById('auth-sync');
-    if (!el) return;
-    if (status === 'syncing') {
-      el.textContent = '↻ Wird gespeichert…';
-      el.className = 'auth-sync';
-    } else if (status === 'error') {
-      el.textContent = '⚠ Sync-Fehler';
-      el.className = 'auth-sync error';
-    } else {
-      el.textContent = '✓ Gespeichert';
-      el.className = 'auth-sync';
-    }
-  }
-
-  function updateAuthUI(user) {
-    const ui = document.getElementById('auth-ui');
-    if (!ui) return;
-
-    if (user) {
-      const initial = (user.displayName || user.email || '?')[0].toUpperCase();
-      const photo = user.photoURL ? `<img src="${escHtml(user.photoURL)}" alt="">` : escHtml(initial);
-      ui.innerHTML = `<div class="auth-user"><span class="auth-sync" id="auth-sync"></span><div class="auth-avatar">${photo}</div><span class="auth-name">${escHtml(user.displayName || user.email)}</span><button class="auth-signout-btn" onclick="signOut()">Abmelden</button></div>`;
-    } else {
-      ui.innerHTML = `<button class="auth-signin-btn" onclick="signInWithGoogle()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Mit Google anmelden</button>`;
-    }
-  }
-
-  if (auth) {
-    auth.getRedirectResult().catch(error => {
-      console.error('Redirect-Result:', error);
-      alert(getReadableAuthError(error));
-    });
-
-    auth.onAuthStateChanged(async user => {
-      currentUser = user;
-      updateAuthUI(user);
-      if (user) {
-        setSyncStatus('syncing');
-        try {
-          const doc = await db.collection('users').doc(user.uid).collection('data').doc('routes').get();
-          if (doc.exists) {
-            const data = doc.data();
-            const cloudEntries = (data.entries || []).map(normalizeEntry).filter(Boolean);
-            routeEntries = mergeRouteEntries(cloudEntries);
-            if (data.profile) userProfile = { ...DEFAULT_PROFILE, ...data.profile };
-          } else {
-            const local = routeEntries.filter(shouldPersistEntry).map(serializeEntry);
-            if (local.length > 0) {
-              await db.collection('users').doc(user.uid).collection('data').doc('routes')
-                .set({ entries: local, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-            }
-          }
-          setSyncStatus('synced');
-        } catch (e) {
-          setSyncStatus('error');
-        }
-        renderDashboard();
-      } else {
-        routeEntries = loadRouteEntries();
-        renderDashboard();
-      }
-    });
-  } else {
-    updateAuthUI(null);
-  }
-
-  const SUN_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
-  const MOON_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" fill="currentColor"/></svg>';
-
-  function updateThemeBtn() {
-    const btn = document.getElementById('theme-toggle');
-    if (!btn) return;
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    btn.innerHTML = isDark ? SUN_ICON : MOON_ICON;
-    btn.title = isDark ? 'Light Mode' : 'Dark Mode';
-  }
-
-  function toggleTheme() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const next = isDark ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-    updateThemeBtn();
-  }
-
-  resetRouteForm();
-  renderDashboard();
-  updateThemeBtn();
 </script>
 </body>
 </html>
