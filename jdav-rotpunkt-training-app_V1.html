@@ -2981,7 +2981,7 @@
   const escHtml = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
   function signInWithGoogle() {
-    if (!auth) return;
+    if (!auth) { alert('Google-Login ist momentan nicht verfügbar. Bitte Seite neu laden.'); return; }
     auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => console.error('Login:', e));
   }
 
@@ -3008,7 +3008,6 @@
   function updateAuthUI(user) {
     const ui = document.getElementById('auth-ui');
     if (!ui) return;
-    if (!auth) { ui.innerHTML = ''; return; }
     if (user) {
       const initial = (user.displayName || user.email || '?')[0].toUpperCase();
       const photo   = user.photoURL
@@ -3035,6 +3034,7 @@
     }
   }
 
+  updateAuthUI(null);
   if (auth) {
     auth.onAuthStateChanged(async user => {
       currentUser = user;
@@ -3065,8 +3065,6 @@
         renderDashboard();
       }
     });
-  } else {
-    updateAuthUI(null);
   }
   // ─────────────────────────────────────────────────────────────────────────
 
