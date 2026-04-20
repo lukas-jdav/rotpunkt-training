@@ -1174,6 +1174,45 @@
   [data-theme="dark"] .auth-signin-btn:hover,
   [data-theme="dark"] .auth-signout-btn:hover,
   [data-theme="dark"] .theme-btn:hover { background: var(--gray-200); }
+
+  /* ── PROFIL ── */
+  .profile-card {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .profile-hint {
+    margin-top: 12px;
+    font-size: 13px;
+  }
+  .age-table tbody tr.age-row-active td {
+    background: var(--dav-green-light) !important;
+    font-weight: 600;
+  }
+  .profile-vorstieg-label {
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-top: 14px; padding: 12px 14px;
+    background: var(--gray-100); border: 1px solid var(--gray-200);
+    border-radius: 8px; cursor: pointer; font-size: 13px; line-height: 1.4;
+  }
+  .profile-vorstieg-label input { flex-shrink: 0; margin-top: 2px; accent-color: var(--dav-green); }
+  .profile-vorstieg-label strong { display: block; font-weight: 600; color: var(--gray-800); }
+  .profile-vorstieg-label span { color: var(--gray-400); font-size: 12px; }
+  .route-optional-badge {
+    display: inline-block; padding: 1px 6px; border-radius: 999px;
+    font-size: 10px; font-weight: 700; background: var(--blue-light);
+    color: var(--blue); border: 1px solid #B3CFED; margin-left: 6px; vertical-align: middle;
+  }
+  .profile-regeln-hint { margin-bottom: 16px; }
+  [data-theme="dark"] .profile-card { background: var(--gray-100); border-color: var(--gray-200); }
+  [data-theme="dark"] .profile-vorstieg-label { background: var(--gray-200); border-color: var(--gray-300); }
+  [data-theme="dark"] .route-optional-badge { border-color: #1A3D6A; }
 </style>
 </head>
 <body>
@@ -1203,6 +1242,41 @@
 
 <!-- ═══════════════════════════════════ TAB 1: DASHBOARD ═══════════════════ -->
 <div id="tab-dashboard" class="tab-panel active">
+
+  <div class="section">
+    <div class="section-title">Mein Profil</div>
+    <div class="profile-card">
+      <div class="profile-grid">
+        <div class="field-group">
+          <label for="profile-age">Altersklasse</label>
+          <select id="profile-age" onchange="onProfileChange()">
+            <option value="u9-u11">U9 / U11</option>
+            <option value="u13">U13</option>
+            <option value="u15-u17">U15 / U17</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label for="profile-grade">Startgrad</label>
+          <select id="profile-grade" onchange="onProfileChange()">
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
+        </div>
+      </div>
+      <label class="profile-vorstieg-label">
+        <input type="checkbox" id="profile-vorstieg" onchange="onProfileChange()">
+        <div>
+          <strong>Nur Vorstieg-Routen anzeigen (Seil 18–34, 47–56)</strong>
+          <span>Routen an Seil 51–56 werden angezeigt, sind aber nicht erforderlich für die Freischaltung des nächsten Grads.</span>
+        </div>
+      </label>
+      <div id="profile-hint" class="profile-hint"></div>
+    </div>
+  </div>
 
   <div class="section">
     <div class="section-title">Fortschritt auf einen Blick</div>
@@ -1427,6 +1501,8 @@
 <!-- ═══════════════════════════════════ TAB 2: REGELN ════════════════════ -->
 <div id="tab-regeln" class="tab-panel">
 
+  <div id="regeln-profile-hint" class="profile-regeln-hint"></div>
+
   <div class="section">
     <div class="section-title">Vorstieg-Pflicht nach Altersklasse</div>
     <table class="age-table">
@@ -1439,19 +1515,19 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr data-age="u9-u11">
           <td><strong>U9 / U11</strong></td>
           <td><span class="tag tag-frei">Freiwillig</span></td>
           <td>Unbegrenzt</td>
           <td>✅ Ja, auch Toprope</td>
         </tr>
-        <tr>
+        <tr data-age="u13">
           <td><strong>U13</strong></td>
           <td><span class="tag tag-frei">Ziel: alle im VS</span></td>
           <td>Unbegrenzt möglich</td>
           <td>✅ Ja, auch Toprope</td>
         </tr>
-        <tr>
+        <tr data-age="u15-u17">
           <td><strong>U15 / U17</strong></td>
           <td><span class="tag tag-pflicht">Pflicht</span></td>
           <td><strong>2 Routen pro Grad</strong> in Toprope erlaubt</td>
@@ -1728,8 +1804,30 @@
 
 <script src="tivoli-routes-data.js"></script>
 <script>
-  const STORAGE_KEY = 'jdavRotpunktRouteLog.v3.flash.defaultOpen';
+  const STORAGE_KEY   = 'jdavRotpunktRouteLog.v3.flash.defaultOpen';
   const FIRST_OPEN_KEY = STORAGE_KEY + '.initialized';
+  const PROFILE_KEY   = STORAGE_KEY + '.profile';
+  const DEFAULT_PROFILE = { ageGroup: 'u15-u17', startGrade: '5', vorstiegOnly: false };
+
+  const VORSTIEG_MANDATORY_RANGES = [[18, 34], [47, 50]];
+  const VORSTIEG_OPTIONAL_RANGES  = [[51, 56]];
+
+  function getRopeNumber(entry) {
+    const code = String(entry.routeCode || '').trim();
+    const m = code.match(/^(\d+)/);
+    return m ? parseInt(m[1], 10) : null;
+  }
+  function inRanges(rope, ranges) {
+    return ranges.some(([lo, hi]) => rope >= lo && rope <= hi);
+  }
+  function isVorstiegMandatory(entry) {
+    const r = getRopeNumber(entry);
+    return r !== null && inRanges(r, VORSTIEG_MANDATORY_RANGES);
+  }
+  function isVorstiegOptional(entry) {
+    const r = getRopeNumber(entry);
+    return r !== null && inRanges(r, VORSTIEG_OPTIONAL_RANGES);
+  }
 
   // ── Firebase-Konfiguration ────────────────────────────────────────────────
   // 1. Gehe zu https://console.firebase.google.com und erstelle ein Projekt
@@ -1781,6 +1879,7 @@
   const HALL_ROUTE_ENTRIES = parseHallRouteData(HALL_ROUTE_CSV);
 
   let routeEntries = loadRouteEntries();
+  let userProfile   = loadProfile();
 
   function switchTab(id, btn) {
     document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
@@ -1936,11 +2035,17 @@
   }
 
   function isTrackedGrade(grade) {
-    return !DEFAULT_HIDDEN_GRADES.has(String(grade || '').trim());
+    const g = Number(grade);
+    return !DEFAULT_HIDDEN_GRADES.has(String(grade || '').trim())
+        && g >= Number(userProfile.startGrade || 5);
   }
 
   function getTrackedEntries() {
-    return routeEntries.filter(entry => isTrackedGrade(entry.grade));
+    return routeEntries.filter(entry => {
+      if (!isTrackedGrade(entry.grade)) return false;
+      if (userProfile.vorstiegOnly) return isVorstiegMandatory(entry) || isVorstiegOptional(entry);
+      return true;
+    });
   }
 
   function mergeRouteEntries(storedEntries) {
@@ -2230,39 +2335,31 @@
   }
 
   function getGradeSummaries() {
-    const grouped = getTrackedEntries().reduce((accumulator, entry) => {
-      if (!accumulator[entry.grade]) {
-        accumulator[entry.grade] = {
+    const grouped = getTrackedEntries().reduce((acc, entry) => {
+      if (!acc[entry.grade]) {
+        acc[entry.grade] = {
           grade: entry.grade,
-          total: 0,
-          done: 0,
-          rotpunkt: 0,
-          flash: 0,
-          toprope: 0,
-          open: 0
+          total: 0, done: 0, rotpunkt: 0, flash: 0, toprope: 0, open: 0,
+          requiredOpen: 0, optionalTotal: 0, optionalDone: 0
         };
       }
-
-      accumulator[entry.grade].total += 1;
-
+      const s = acc[entry.grade];
+      s.total++;
+      if (isVorstiegOptional(entry)) s.optionalTotal++;
       if (entry.status === 'done') {
-        accumulator[entry.grade].done += 1;
-
-        if (entry.ascentType === 'toprope') {
-          accumulator[entry.grade].toprope += 1;
-        } else if (entry.ascentType === 'flash') {
-          accumulator[entry.grade].flash += 1;
-        } else {
-          accumulator[entry.grade].rotpunkt += 1;
-        }
+        s.done++;
+        if (entry.ascentType === 'toprope') s.toprope++;
+        else if (entry.ascentType === 'flash') s.flash++;
+        else s.rotpunkt++;
+        if (isVorstiegOptional(entry)) s.optionalDone++;
       } else {
-        accumulator[entry.grade].open += 1;
+        s.open++;
+        if (isVorstiegMandatory(entry)) s.requiredOpen++;
       }
-
-      return accumulator;
+      return acc;
     }, {});
 
-    return Object.values(grouped).sort((left, right) => Number(left.grade) - Number(right.grade));
+    return Object.values(grouped).sort((a, b) => Number(a.grade) - Number(b.grade));
   }
 
   function getProgressState(summaries) {
@@ -2278,7 +2375,10 @@
       };
     }
 
-    const firstIncompleteIndex = summaries.findIndex(summary => summary.done < summary.total);
+    const effectiveOpen = s => userProfile.vorstiegOnly ? s.requiredOpen : s.open;
+    const isIncomplete  = s => userProfile.vorstiegOnly ? s.requiredOpen > 0 : s.done < s.total;
+
+    const firstIncompleteIndex = summaries.findIndex(isIncomplete);
 
     if (firstIncompleteIndex === -1) {
       return {
@@ -2294,13 +2394,15 @@
 
     const current = summaries[firstIncompleteIndex];
     const next = summaries[firstIncompleteIndex + 1] || null;
-    const canStartNext = current.open <= 2 && next !== null;
+    const effOpen = effectiveOpen(current);
+    const canStartNext = effOpen <= 2 && next !== null;
+    const routeLabel = userProfile.vorstiegOnly ? 'Vorstieg-Route(n)' : 'Route(n)';
 
-    let unlockText = 'In Grad ' + current.grade + ' sind noch ' + current.open + ' Route(n) offen.';
+    let unlockText = `In Grad ${current.grade} sind noch ${effOpen} ${routeLabel} offen.`;
     if (next && canStartNext) {
-      unlockText = 'In Grad ' + current.grade + ' sind nur noch ' + current.open + ' Route(n) offen. Grad ' + next.grade + ' darf schon begonnen werden.';
+      unlockText = `In Grad ${current.grade} sind nur noch ${effOpen} ${routeLabel} offen. Grad ${next.grade} darf schon begonnen werden.`;
     } else if (next && !canStartNext) {
-      unlockText = 'Noch ' + (current.open - 2) + ' weitere Route(n) in Grad ' + current.grade + ', dann wird Grad ' + next.grade + ' freigeschaltet.';
+      unlockText = `Noch ${effOpen - 2} weitere ${routeLabel} in Grad ${current.grade}, dann wird Grad ${next.grade} freigeschaltet.`;
     }
 
     return {
@@ -2310,9 +2412,9 @@
       canStartNext,
       focusText: 'Grad ' + current.grade,
       unlockText,
-      progressHint: current.open === 0
+      progressHint: effOpen === 0
         ? 'Grad ' + current.grade + ' ist abgeschlossen.'
-        : current.open + ' Route(n) in Grad ' + current.grade + ' fehlen noch.'
+        : effOpen + ` ${routeLabel} in Grad ` + current.grade + ' fehlen noch.'
     };
   }
 
@@ -2614,6 +2716,12 @@
       const routeName = document.createElement('div');
       routeName.className = 'route-name-main';
       routeName.textContent = entry.name;
+      if (userProfile.vorstiegOnly && isVorstiegOptional(entry)) {
+        const badge = document.createElement('span');
+        badge.className = 'route-optional-badge';
+        badge.textContent = 'Optional';
+        routeName.appendChild(badge);
+      }
       routeCell.appendChild(routeName);
 
       const routeDate = document.createElement('div');
@@ -2752,6 +2860,7 @@
     renderGradeSummary(summaries);
     renderGradeBoard(summaries, progressState);
     renderRouteBoard(summaries, progressState);
+    updateProfileUI();
   }
 
   function resetRouteForm() {
@@ -2933,8 +3042,10 @@
         try {
           const doc = await db.collection('users').doc(user.uid).collection('data').doc('routes').get();
           if (doc.exists) {
-            const cloudEntries = (doc.data().entries || []).map(normalizeEntry).filter(Boolean);
+            const data = doc.data();
+            const cloudEntries = (data.entries || []).map(normalizeEntry).filter(Boolean);
             routeEntries = mergeRouteEntries(cloudEntries);
+            if (data.profile) userProfile = { ...DEFAULT_PROFILE, ...data.profile };
           } else {
             const local = routeEntries.filter(shouldPersistEntry).map(serializeEntry);
             if (local.length > 0) {
@@ -2954,6 +3065,68 @@
     });
   } else {
     updateAuthUI(null);
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
+  // ── Profil ───────────────────────────────────────────────────────────────
+  function loadProfile() {
+    try {
+      const raw = localStorage.getItem(PROFILE_KEY);
+      return raw ? { ...DEFAULT_PROFILE, ...JSON.parse(raw) } : { ...DEFAULT_PROFILE };
+    } catch (e) { return { ...DEFAULT_PROFILE }; }
+  }
+
+  function saveProfile() {
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(userProfile));
+    if (db && currentUser) {
+      db.collection('users').doc(currentUser.uid).collection('data').doc('routes')
+        .update({ profile: userProfile }).catch(() => {});
+    }
+  }
+
+  function onProfileChange() {
+    const ageEl    = document.getElementById('profile-age');
+    const gradeEl  = document.getElementById('profile-grade');
+    const vsEl     = document.getElementById('profile-vorstieg');
+    if (ageEl)   userProfile.ageGroup    = ageEl.value;
+    if (gradeEl) userProfile.startGrade  = gradeEl.value;
+    if (vsEl)    userProfile.vorstiegOnly = vsEl.checked;
+    saveProfile();
+    renderDashboard();
+  }
+
+  const PROFILE_RULES = {
+    'u9-u11':   { text: 'Vorstieg freiwillig – Toprope zählt unbegrenzt als abgehakt.', cls: 'block-green' },
+    'u13':      { text: 'Ziel: alle Routen im Vorstieg. Toprope ist noch unbegrenzt möglich.', cls: 'block-green' },
+    'u15-u17':  { text: 'Vorstieg Pflicht – max. 2 Toprope-Routen pro Grad zählen als abgehakt.', cls: 'block-red' }
+  };
+
+  function updateProfileUI() {
+    const ageEl   = document.getElementById('profile-age');
+    const gradeEl = document.getElementById('profile-grade');
+    const vsEl    = document.getElementById('profile-vorstieg');
+    const hintEl  = document.getElementById('profile-hint');
+    const regelnEl = document.getElementById('regeln-profile-hint');
+
+    if (ageEl)   ageEl.value      = userProfile.ageGroup;
+    if (gradeEl) gradeEl.value    = userProfile.startGrade;
+    if (vsEl)    vsEl.checked     = userProfile.vorstiegOnly;
+
+    const rule = PROFILE_RULES[userProfile.ageGroup] || PROFILE_RULES['u15-u17'];
+    const ageLabels = { 'u9-u11': 'U9/U11', 'u13': 'U13', 'u15-u17': 'U15/U17' };
+
+    if (hintEl) {
+      hintEl.className = `profile-hint info-block ${rule.cls}`;
+      hintEl.textContent = rule.text;
+    }
+    if (regelnEl) {
+      regelnEl.className = `info-block ${rule.cls} profile-regeln-hint`;
+      regelnEl.innerHTML = `<strong>${ageLabels[userProfile.ageGroup] || ''} – deine Regel:</strong> ${rule.text}`;
+    }
+
+    document.querySelectorAll('.age-table tbody tr[data-age]').forEach(row => {
+      row.classList.toggle('age-row-active', row.dataset.age === userProfile.ageGroup);
+    });
   }
   // ─────────────────────────────────────────────────────────────────────────
 
