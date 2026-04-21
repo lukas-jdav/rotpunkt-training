@@ -49,5 +49,5 @@ const ui = {
   settingsSyncStatus: document.getElementById('settings-sync-status'),
   settingsStorageStatus: document.getElementById('settings-storage-status'),
   settingsResetProgress: document.getElementById('settings-reset-progress'),
-  statsPanel: document.getElementById('tab-statistik')
+  statsPanel: document.getElementById('status-stats-panel')
 };
