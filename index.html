@@ -1,43 +1,364 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="0; url=./jdav-rotpunkt-training-app_V1.html">
-  <title>JDAV Aachen Rotpunkt-Trainings-App</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: #f4f7f5;
-      color: #163322;
-    }
-
-    main {
-      max-width: 42rem;
-      padding: 2rem;
-      text-align: center;
-      background: #ffffff;
-      border: 1px solid #d8e4dc;
-      border-radius: 12px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
-    }
-
-    a {
-      color: #006633;
-      font-weight: 700;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JDAV Aachen – Rotpunkt-Trainingskonzept</title>
+<script>
+(function () {
+  try {
+    const storedTheme = localStorage.getItem('jdavRotpunkt.theme');
+    const fallbackTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const theme = storedTheme || fallbackTheme;
+    if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  } catch (error) {}
+})();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <main>
-    <h1>JDAV Aachen Rotpunkt-Trainings-App</h1>
-    <p>Die App wird geladen.</p>
-    <p>Falls die Weiterleitung nicht klappt, geht es hier weiter:</p>
-    <p><a href="./jdav-rotpunkt-training-app_V1.html">App oeffnen</a></p>
-  </main>
+<header class="header">
+  <div class="header-side header-left">
+    <div class="org-tag">Sektion Aachen</div>
+    <div class="header-side-text">JDAV Leistungsgruppe</div>
+  </div>
+
+  <div class="header-center">
+    <h1 class="header-title">Rotpunkt-Trainingskonzept</h1>
+    <div class="header-subtitle">Trainingsliste, Roadmap und Cloud-Sync</div>
+  </div>
+
+  <div class="header-side header-right">
+    <button id="theme-toggle" class="theme-switch" type="button" title="Darstellung umschalten" aria-label="Darstellung umschalten"></button>
+    <button id="settings-toggle" class="icon-btn" type="button" title="Einstellungen" aria-label="Einstellungen öffnen">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M10.33 3.49c.52-1.98 3.34-1.98 3.86 0a1.97 1.97 0 0 0 2.95 1.19c1.74-1.04 3.74.96 2.7 2.7a1.97 1.97 0 0 0 1.19 2.95c1.98.52 1.98 3.34 0 3.86a1.97 1.97 0 0 0-1.19 2.95c1.04 1.74-.96 3.74-2.7 2.7a1.97 1.97 0 0 0-2.95 1.19c-.52 1.98-3.34 1.98-3.86 0a1.97 1.97 0 0 0-2.95-1.19c-1.74 1.04-3.74-.96-2.7-2.7a1.97 1.97 0 0 0-1.19-2.95c-1.98-.52-1.98-3.34 0-3.86a1.97 1.97 0 0 0 1.19-2.95c-1.04-1.74.96-3.74 2.7-2.7a1.97 1.97 0 0 0 2.95-1.19Z" stroke="currentColor" stroke-width="1.7"/>
+        <circle cx="12" cy="12" r="3.3" stroke="currentColor" stroke-width="1.7"/>
+      </svg>
+    </button>
+    <div id="auth-ui">
+      <button class="auth-signin-btn" type="button" data-auth-action="signin">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Mit Google anmelden
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="tab-nav" aria-label="Navigation">
+  <button class="tab-btn active" type="button" data-tab-target="dashboard">Dashboard</button>
+  <button class="tab-btn" type="button" data-tab-target="status">Status &amp; Fortschritt</button>
+  <button class="tab-btn" type="button" data-tab-target="statistik">Statistik</button>
+  <button class="tab-btn" type="button" data-tab-target="konzept">Konzept &amp; Regeln</button>
+  <button class="tab-btn" type="button" data-tab-target="begriffe">Begriffe</button>
+</nav>
+
+<section id="tab-dashboard" class="tab-panel active">
+  <div class="section">
+    <h2 class="section-title">Trainingsliste</h2>
+    <div class="route-toolbar">
+      <input id="route-search" type="search" placeholder="Nach Route, Grad, Linie oder Halle filtern">
+      <select id="route-status-filter">
+        <option value="all">Alle Stati</option>
+        <option value="open" selected>Noch offen</option>
+        <option value="toprope">Toprope</option>
+        <option value="flash">Flash</option>
+        <option value="rotpunkt">Rotpunkt</option>
+      </select>
+      <div id="route-grade-chips" class="grade-filter-shell" aria-label="Gradfilter"></div>
+    </div>
+    <div id="route-board" aria-live="polite"></div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Zusatzroute</h2>
+    <details class="collapsible-section card">
+      <summary>
+        <strong>Zusatzroute anlegen</strong>
+        <span style="display:block; margin-top:4px; color:var(--gray-400);">Nur für neue oder spezielle Routen, die noch nicht in der Hallenliste auftauchen.</span>
+      </summary>
+      <div style="padding:0 18px 18px; border-top:1px solid var(--gray-100);">
+        <form id="route-log-form">
+          <div class="form-grid" style="margin-top:18px;">
+            <div class="field-group">
+              <label for="route-date">Datum</label>
+              <input id="route-date" name="date" type="date" required>
+            </div>
+            <div class="field-group">
+              <label for="route-grade">Grad</label>
+              <select id="route-grade" name="grade" required>
+                <option value="">Bitte wählen</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+              </select>
+            </div>
+            <div class="field-group full-width">
+              <label for="route-name">Route</label>
+              <input id="route-name" name="name" type="text" placeholder="z. B. Grüne Kante" required>
+            </div>
+            <div class="field-group">
+              <label for="route-status">Aktueller Status</label>
+              <select id="route-status" name="status" required>
+                <option value="open">Noch offen / Projekt</option>
+                <option value="toprope">Toprope geschafft</option>
+                <option value="flash">Flash geschafft</option>
+                <option value="rotpunkt">Rotpunkt geschafft</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="route-location">Halle / Wand</label>
+              <input id="route-location" name="location" type="text" placeholder="optional">
+            </div>
+            <div class="field-group full-width">
+              <label for="route-notes">Notiz</label>
+              <textarea id="route-notes" name="notes" placeholder="z. B. harter Zug an kleiner Leiste, im 2. Versuch geklappt"></textarea>
+              <div class="field-help">Die importierten Hallenrouten kannst du oben direkt abhaken. Hier nur Ergänzungen eintragen.</div>
+            </div>
+          </div>
+          <div id="form-feedback" class="form-feedback" aria-live="polite"></div>
+          <div class="tracker-actions">
+            <button type="submit" class="primary-btn">Route speichern</button>
+            <button type="reset" class="secondary-btn">Felder leeren</button>
+          </div>
+        </form>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="tab-status" class="tab-panel">
+  <div class="section">
+    <h2 class="section-title">Gradstatus &amp; Fortschritt</h2>
+    <div class="status-grid">
+      <div class="card status-card">
+        <div class="status-card-header">
+          <div>
+            <div class="eyebrow">Gradstatus</div>
+            <h2 id="focus-grade-value" class="status-title">Noch kein Grad aktiv</h2>
+            <div id="focus-grade-note" class="status-subtitle">Die Freischaltung richtet sich nach deinen abgehakten Hallenrouten.</div>
+          </div>
+          <div id="unlock-pill" class="status-pill">Fokus aktiv</div>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-box">
+            <div class="metric-label">Noch offen</div>
+            <div id="metric-open-routes" class="metric-value">0</div>
+            <div class="metric-text">Routen im aktuell relevanten Bereich.</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Erledigt</div>
+            <div id="metric-done-routes" class="metric-value">0</div>
+            <div class="metric-text">Bereits abgehakte Linien.</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Nächster Schritt</div>
+            <div id="metric-next-grade" class="metric-value">–</div>
+            <div class="metric-text" id="unlock-message">Starte mit den offenen Routen deines Trainingsgrades.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">Fortschritt</div>
+        <h3 class="progress-card-title" id="overall-progress-label">Hallenliste wird geladen</h3>
+        <div class="progress-track" aria-hidden="true">
+          <div id="overall-progress-fill" class="progress-fill"></div>
+        </div>
+        <div id="overall-progress-hint" class="progress-meta">Starte mit dem ersten Grad deiner aktuellen Trainingsphase.</div>
+
+        <div style="margin-top:16px;">
+          <div class="eyebrow">Roadmap 5–8</div>
+          <div class="roadmap-meta" id="roadmap-meta">Die Übersicht zeigt aktuellen Grad und die nächsten Schritte.</div>
+          <div id="roadmap-grid" class="roadmap-grid" style="margin-top:12px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tab-statistik" class="tab-panel" aria-live="polite"></section>
+
+<section id="tab-konzept" class="tab-panel">
+  <div class="section">
+    <h2 class="section-title">Grundprinzip</h2>
+    <div class="info-grid">
+      <div class="info-block block-green">
+        <strong>Freischalt-Prinzip</strong>
+        <p>Begonnen wird 2–3 Grade unter dem persönlichen Rotpunkt-Maximum. Ein Grad gilt als abgeschlossen, wenn alle möglichen Routen dieses Grads erledigt wurden.</p>
+      </div>
+      <div class="info-block block-yellow">
+        <strong>Sonderregel</strong>
+        <p>Sobald nur noch 2 Routen eines Grades fehlen, darf der nächste Grad bereits begonnen werden. Die offenen Routen werden parallel weiter probiert.</p>
+      </div>
+      <div class="info-block block-blue">
+        <strong>Abgeschlossene Grade</strong>
+        <p>Bereits erledigte Grade eignen sich ideal zum Aufwärmen oder für lockere Wiederholungen.</p>
+      </div>
+      <div class="info-block block-red">
+        <strong>Vorstieg-Fokus</strong>
+        <p>Wenn du nur Vorstieg-Routen anzeigst, werden nur die relevanten Linien für den Freischaltstatus berücksichtigt. Seil 51–56 bleibt optional.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Trainingsablauf</h2>
+    <div class="info-block">
+      <ul>
+        <li>Mit dem aktuellen Trainingsgrad starten und alle machbaren Routen dieses Grads sammeln.</li>
+        <li>Offene Stellen oder Hänger notieren und in der nächsten Einheit erneut probieren.</li>
+        <li>Erst wenn ein Grad weitgehend erledigt ist, den nächsten Grad systematisch aufmachen.</li>
+        <li>Schwierige Projekt-Routen mehrfach ernsthaft versuchen statt nur kurz anzutesten.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Sturztraining</h2>
+    <div class="info-block block-green">
+      <p>Das Reinspringen am Routenende soll helfen, Sturzangst abzubauen und Vorstieg als normalen Trainingsmodus zu festigen. Es ist als Standardbaustein des Trainings gedacht – kontrolliert und bewusst durchgeführt.</p>
+    </div>
+  </div>
+</section>
+
+<section id="tab-begriffe" class="tab-panel">
+  <div class="section">
+    <h2 class="section-title">Begriffe</h2>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Rotpunkt <span class="gloss-en">Redpoint</span></div>
+      <div class="gloss-def">Freies Durchsteigen einer Route ohne Sturz, ohne Pause im Seil und ohne Entlastung an Zwischensicherungen.</div>
+      <div class="gloss-note">Im Dashboard ist das der Standardfall für „erledigt“.</div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Vorstieg <span class="gloss-en">Lead</span></div>
+      <div class="gloss-def">Die kletternde Person clippt das Seil selbst in die Zwischensicherungen ein.</div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Toprope <span class="gloss-en">Top Rope</span></div>
+      <div class="gloss-def">Das Seil läuft bereits von oben. Die Sturzhöhe ist deutlich geringer als im Vorstieg.</div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Flash</div>
+      <div class="gloss-def">Die Route gelingt direkt im ersten Versuch mit Vorwissen oder Beobachtung.</div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Hänger</div>
+      <div class="gloss-def">Eine Route wurde noch nicht frei durchgestiegen und bleibt weiter offen.</div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Mesozyklus</div>
+      <div class="gloss-def">Ein Trainingsblock über mehrere Wochen mit einem klaren Schwerpunkt.</div>
+    </div>
+  </div>
+</section>
+
+<div id="settings-modal" class="modal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+    <div class="modal-header">
+      <div>
+        <h2 id="settings-modal-title" class="modal-title">Einstellungen</h2>
+        <div class="modal-subtitle">Profil, Darstellung, Cloud-Status und sichere Verwaltungsaktionen.</div>
+      </div>
+      <button id="settings-close" type="button" class="modal-close" aria-label="Einstellungen schließen">✕</button>
+    </div>
+
+    <div class="settings-grid-modal">
+      <div class="settings-card">
+        <h3>Profil</h3>
+        <div class="settings-field">
+          <label for="settings-start-grade">Startgrad</label>
+          <select id="settings-start-grade">
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </div>
+        <label class="toggle-row" for="settings-vorstieg-only">
+          <input id="settings-vorstieg-only" type="checkbox">
+          <div>
+            <strong>Nur Vorstieg-Routen anzeigen</strong>
+            <span>Es werden nur die relevanten Vorstiegslinien berücksichtigt. Seil 51–56 bleibt optional.</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="settings-card">
+        <h3>Darstellung</h3>
+        <div class="settings-field">
+          <label for="settings-theme">Theme</label>
+          <select id="settings-theme">
+            <option value="light">Hell</option>
+            <option value="dark">Dunkel</option>
+          </select>
+        </div>
+        <p>Die Darstellung wird sofort übernommen und lokal gespeichert.</p>
+      </div>
+
+      <div class="settings-card">
+        <h3>Cloud-Status</h3>
+        <div class="cloud-status-line">
+          <div class="cloud-status-label">Login</div>
+          <div id="settings-login-status" class="cloud-status-value">Nicht angemeldet</div>
+        </div>
+        <div class="cloud-status-line">
+          <div class="cloud-status-label">Sync</div>
+          <div id="settings-sync-status" class="cloud-status-value">Nur lokal gespeichert</div>
+        </div>
+        <div class="cloud-status-line">
+          <div class="cloud-status-label">Speicherstand</div>
+          <div id="settings-storage-status" class="cloud-status-value">–</div>
+        </div>
+      </div>
+
+      <div class="settings-card danger-zone">
+        <h3>Fortschritt zurücksetzen</h3>
+        <p>Der Reset wurde bewusst aus dem Dashboard entfernt, damit er nicht versehentlich ausgelöst wird.</p>
+        <p>Beim Zurücksetzen werden alle abgehakten Stati auf „offen“ gesetzt. Zusatzrouten bleiben erhalten.</p>
+        <div class="danger-actions">
+          <button id="settings-reset-progress" type="button" class="danger-btn">Fortschritt zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>Sektion Aachen · JDAV Leistungsgruppe</span>
+  <span>Konzept: Andi · Dashboard: Lukas</span>
+</div>
+
+
+<script src="tivoli-routes-data.js"></script>
+<script src="config.js"></script>
+<script src="utils.js"></script>
+<script src="routes.js"></script>
+<script src="state.js"></script>
+<script src="storage.js"></script>
+<script src="auth.js"></script>
+<script src="stats.js"></script>
+<script src="ui.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
