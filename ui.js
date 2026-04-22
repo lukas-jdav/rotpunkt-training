@@ -294,7 +294,17 @@ function renderRouteBoard(progressState) {
       actions.appendChild(deleteButton);
     }
 
+    const attempts = entry.attempts || 0;
+    const attemptLabel = attempts === 1 ? '1 Versuch' : attempts + ' Versuche';
+    const counter = document.createElement('div');
+    counter.className = 'attempt-counter';
+    counter.innerHTML = `
+      <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="-1"${attempts === 0 ? ' disabled' : ''}>−</button>
+      <span class="attempt-count">${escapeHtml(attemptLabel)}</span>
+      <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="1">+</button>
+    `;
     actionsCell.appendChild(actions);
+    actionsCell.appendChild(counter);
     tbody.appendChild(row);
   });
 
