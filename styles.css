@@ -1079,3 +1079,55 @@
     .stats-grid { grid-template-columns: 1fr; }
     .stats-week-label { width: 110px; }
   }
+
+  .attempt-counter {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .attempt-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: 1px solid var(--gray-200);
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-600);
+    transition: background .1s, border-color .1s;
+  }
+
+  .attempt-btn:hover:not(:disabled) {
+    background: var(--gray-100);
+    border-color: var(--gray-300);
+    color: var(--gray-900);
+  }
+
+  .attempt-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .attempt-count {
+    font-size: 12px;
+    color: var(--gray-500);
+    min-width: 72px;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  [data-theme="dark"] .attempt-btn {
+    border-color: var(--gray-200);
+    color: var(--gray-400);
+  }
+
+  [data-theme="dark"] .attempt-btn:hover:not(:disabled) {
+    background: var(--gray-100);
+    color: var(--gray-900);
+  }

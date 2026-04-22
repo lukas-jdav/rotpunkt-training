@@ -75,6 +75,11 @@ function bindEvents() {
       return;
     }
 
+    if (button.dataset.action === 'change-attempts') {
+      changeAttempts(entryId, Number(button.dataset.delta));
+      return;
+    }
+
     if (button.dataset.action === 'delete-entry') {
       if (!window.confirm('Diese Zusatzroute wirklich löschen?')) return;
       appState.routeEntries = appState.routeEntries.filter(entry => entry.id !== entryId);
@@ -151,6 +156,15 @@ function updateEntryStatus(entryId, selection) {
     };
   });
 
+  persistRoutes();
+  renderApp();
+}
+
+function changeAttempts(entryId, delta) {
+  appState.routeEntries = appState.routeEntries.map(entry => {
+    if (entry.id !== entryId) return entry;
+    return { ...entry, attempts: Math.max(0, (entry.attempts || 0) + delta), updatedAt: Date.now() };
+  });
   persistRoutes();
   renderApp();
 }

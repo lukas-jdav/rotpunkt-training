@@ -106,7 +106,8 @@ function normalizeEntry(entry) {
     secondaryColor: normalizeColor(entry.secondaryColor),
     status: normalizedStatus,
     ascentType: normalizedAscentType,
-    source: entry.source === 'hall' ? 'hall' : 'custom'
+    source: entry.source === 'hall' ? 'hall' : 'custom',
+    attempts: Number(entry.attempts) || 0
   };
 }
 
@@ -128,13 +129,14 @@ function serializeEntry(entry) {
     secondaryColor: entry.secondaryColor,
     status: entry.status,
     ascentType: entry.ascentType,
-    source: entry.source
+    source: entry.source,
+    attempts: entry.attempts
   };
 }
 
 function shouldPersistEntry(entry) {
   if (entry.source === 'custom') return true;
-  return entry.status !== 'open' || Boolean(entry.date);
+  return entry.status !== 'open' || Boolean(entry.date) || entry.attempts > 0;
 }
 
 function createEntryKey(entry) {
@@ -161,7 +163,8 @@ function mergeRouteEntries(storedEntries) {
         status: entry.status,
         ascentType: entry.ascentType,
         date: entry.status === 'done' ? entry.date : '',
-        updatedAt: entry.updatedAt || hallEntry.updatedAt
+        updatedAt: entry.updatedAt || hallEntry.updatedAt,
+        attempts: entry.attempts || 0
       });
     } else {
       customEntries.push({ ...entry, source: 'custom' });

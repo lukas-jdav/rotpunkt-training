@@ -82,7 +82,11 @@ function computeStats() {
   const activeWeeks = Object.keys(byWeek).length;
   const avgPerWeek = activeWeeks > 0 ? (totalDone / activeWeeks).toFixed(1) : '—';
 
-  return { ascentCounts, totalDone, weekRows, maxWeekCount, maxGrade, maxGradeCount, avgPerWeek, activeWeeks };
+  const totalAttempts = appState.routeEntries.reduce((sum, e) => sum + (e.attempts || 0), 0);
+  const attemptedRoutes = appState.routeEntries.filter(e => (e.attempts || 0) > 0).length;
+  const avgAttemptsPerRoute = attemptedRoutes > 0 ? (totalAttempts / attemptedRoutes).toFixed(1) : '—';
+
+  return { ascentCounts, totalDone, weekRows, maxWeekCount, maxGrade, maxGradeCount, avgPerWeek, activeWeeks, totalAttempts, attemptedRoutes, avgAttemptsPerRoute };
 }
 
 function renderStats() {
@@ -132,6 +136,21 @@ function renderStats() {
             <div class="stats-summary-row">
               <span>Ø Routen pro Woche</span>
               <strong>${stats.avgPerWeek}</strong>
+            </div>
+          </div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--gray-100);">
+            <div class="eyebrow">Versuche</div>
+            <div class="stats-summary-row">
+              <span>Versuche gesamt</span>
+              <strong>${stats.totalAttempts}</strong>
+            </div>
+            <div class="stats-summary-row">
+              <span>Angegangene Routen</span>
+              <strong>${stats.attemptedRoutes}</strong>
+            </div>
+            <div class="stats-summary-row">
+              <span>Ø Versuche pro Route</span>
+              <strong>${stats.avgAttemptsPerRoute}</strong>
             </div>
           </div>
         </div>
