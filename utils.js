@@ -78,6 +78,10 @@ function openRouteLink(url) {
     // so the OS opens the Vertical-Life app if installed, otherwise falls back to browser.
     window.location.href = url;
   } else {
-    window.open(url, '_blank', 'noreferrer');
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noreferrer noopener';
+    a.click();
   }
 }
