@@ -22,6 +22,8 @@ Die Routendaten koennen mit Node aktualisiert werden:
 
 Der Sync liest die oeffentliche 8a.nu-Topo-Seite fuer Tivoli aus, aktualisiert `tivoli-routes-data.js` und schreibt bei Aenderungen einen aktuellen CSV-Snapshot mit Tagesdatum.
 
+Fuer GitHub gibt es ausserdem den Workflow `.github/workflows/sync-tivoli-routes.yml`, der den Sync taeglich ausfuehrt und Aenderungen automatisch nach `main` committed.
+
 ## GitHub
 
 Dieses Projekt ist fuer ein einfaches Hosting ueber GitHub Pages vorbereitet.
