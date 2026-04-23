@@ -771,6 +771,69 @@
     font-size: 13px;
   }
 
+  .footer-version {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    color: var(--gray-300);
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
+    padding: 2px 7px;
+  }
+
+  .version-current {
+    font-size: 13px;
+    color: var(--gray-600);
+    margin-bottom: 12px;
+  }
+
+  .version-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .version-list li {
+    font-size: 13px;
+    color: var(--gray-600);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    line-height: 1.5;
+  }
+
+  .version-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    color: var(--dav-green);
+    background: rgba(14,139,76,.08);
+    border-radius: 4px;
+    padding: 1px 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .version-date {
+    color: var(--gray-400);
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  [data-theme="dark"] .footer-version {
+    background: var(--gray-200);
+    border-color: var(--gray-200);
+  }
+
+  [data-theme="dark"] .version-tag {
+    background: rgba(14,139,76,.15);
+  }
+
   .modal {
     position: fixed;
     inset: 0;
