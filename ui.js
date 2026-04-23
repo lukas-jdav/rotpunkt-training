@@ -169,7 +169,15 @@ function isEntryLocked(entry, progressState) {
 
 function renderRouteBoard(progressState) {
   const trackedEntries = getTrackedEntries();
-  const filteredEntries = getFilteredEntries();
+  const allFiltered = getFilteredEntries();
+
+  const useOptionalSplit = appState.profile.vorstiegOnly;
+  const filteredEntries = useOptionalSplit
+    ? allFiltered.filter(e => !isVorstiegOptional(e))
+    : allFiltered;
+  const optionalEntries = useOptionalSplit
+    ? allFiltered.filter(e => isVorstiegOptional(e))
+    : [];
 
   ui.routeBoard.innerHTML = '';
 
@@ -216,10 +224,10 @@ function renderRouteBoard(progressState) {
     <thead>
       <tr>
         <th>Grad</th>
-        <th>Route</th>
-        <th>Infos</th>
-        <th>Bereich</th>
         <th>Aktionen</th>
+        <th>Infos</th>
+        <th>Route</th>
+        <th>Bereich</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -230,82 +238,98 @@ function renderRouteBoard(progressState) {
   filteredEntries.forEach(entry => {
     const row = document.createElement('tr');
     row.className = 'route-row-' + selectionFromEntry(entry);
-
-    const locked = isEntryLocked(entry, progressState);
-    const infoCellHtml = buildInfoCellHtml(entry);
-    const totalAttempts = (entry.attemptLog || []).reduce((sum, s) => sum + s.count, 0);
-    const todayAttempts = (entry.attemptLog || []).find(s => s.date === getTodayValue())?.count || 0;
-
-    row.innerHTML = `
-      <td><span class="route-grade-badge">${escapeHtml(entry.grade)}</span></td>
-      <td>
-        <div class="route-name-main">
-          ${escapeHtml(entry.name)}
-          ${appState.profile.vorstiegOnly && isVorstiegOptional(entry) ? '<span class="route-optional-badge">Optional</span>' : ''}
-        </div>
-        <div class="route-name-sub">${escapeHtml(getRouteDateLabel(entry))}</div>
-        ${totalAttempts > 0 ? `<div class="route-attempt-info">${totalAttempts} ${totalAttempts === 1 ? 'Versuch' : 'Versuche'} gesamt${todayAttempts > 0 ? ' · heute ' + todayAttempts : ''}</div>` : ''}
-        ${entry.notes ? `<div class="route-notes-text">${escapeHtml(entry.notes)}</div>` : ''}
-      </td>
-      <td>${infoCellHtml}</td>
-      <td><div class="route-location-text">${escapeHtml(entry.location || '—')}</div></td>
-      <td></td>
-    `;
-
-    const actionsCell = row.lastElementChild;
-    const actions = document.createElement('div');
-    actions.className = 'route-status-actions';
-
-    [
-      { value: 'open', label: 'Offen' },
-      { value: 'toprope', label: 'Toprope' },
-      { value: 'flash', label: 'Flash' },
-      { value: 'rotpunkt', label: 'Rotpunkt' }
-    ].forEach(option => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'status-btn status-' + option.value + (selectionFromEntry(entry) === option.value ? ' active' : '');
-      button.disabled = locked;
-      button.dataset.action = 'set-status';
-      button.dataset.entryId = entry.id;
-      button.dataset.status = option.value;
-      button.textContent = option.label;
-      actions.appendChild(button);
-    });
-
-    if (entry.source === 'custom') {
-      const deleteButton = document.createElement('button');
-      deleteButton.type = 'button';
-      deleteButton.className = 'status-btn delete-btn';
-      deleteButton.dataset.action = 'delete-entry';
-      deleteButton.dataset.entryId = entry.id;
-      deleteButton.textContent = 'Löschen';
-      actions.appendChild(deleteButton);
-    }
-
-    const todayCount = todayAttempts;
-    const todayLabel = todayCount === 0 ? 'Heute: 0' : 'Heute: ' + todayCount;
-    const counter = document.createElement('div');
-    counter.className = 'attempt-counter';
-    counter.innerHTML = `
-      <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="-1"${todayCount === 0 ? ' disabled' : ''}>−</button>
-      <span class="attempt-count">${escapeHtml(todayLabel)}</span>
-      <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="1">+</button>
-    `;
-    actionsCell.appendChild(actions);
-    actionsCell.appendChild(counter);
-    if (locked) {
-      const lockNote = document.createElement('div');
-      lockNote.className = 'route-lock-note';
-      lockNote.textContent = 'Gesperrt oberhalb des aktuellen Grades';
-      actionsCell.appendChild(lockNote);
-    }
+    appendEntryRow(row, entry, progressState);
     tbody.appendChild(row);
   });
+
+  if (optionalEntries.length > 0) {
+    const separator = document.createElement('tr');
+    separator.className = 'route-section-separator';
+    separator.innerHTML = '<td colspan="5" class="route-section-label">Optionale Routen · Seil 51–56</td>';
+    tbody.appendChild(separator);
+
+    optionalEntries.forEach(entry => {
+      const row = document.createElement('tr');
+      row.className = 'route-row-' + selectionFromEntry(entry);
+      appendEntryRow(row, entry, progressState);
+      tbody.appendChild(row);
+    });
+  }
 
   tableWrap.appendChild(table);
   shell.appendChild(tableWrap);
   ui.routeBoard.appendChild(shell);
+}
+
+function appendEntryRow(row, entry, progressState) {
+  const locked = isEntryLocked(entry, progressState);
+  const infoCellHtml = buildInfoCellHtml(entry);
+  const totalAttempts = (entry.attemptLog || []).reduce((sum, s) => sum + s.count, 0);
+  const todayAttempts = (entry.attemptLog || []).find(s => s.date === getTodayValue())?.count || 0;
+
+  row.innerHTML = `
+    <td><span class="route-grade-badge">${escapeHtml(entry.grade)}</span></td>
+    <td></td>
+    <td>${infoCellHtml}</td>
+    <td>
+      <div class="route-name-main">
+        ${escapeHtml(entry.name)}
+        ${appState.profile.vorstiegOnly && isVorstiegOptional(entry) ? '<span class="route-optional-badge">Optional</span>' : ''}
+      </div>
+      <div class="route-name-sub">${escapeHtml(getRouteDateLabel(entry))}</div>
+      ${totalAttempts > 0 ? `<div class="route-attempt-info">${totalAttempts} ${totalAttempts === 1 ? 'Versuch' : 'Versuche'} gesamt${todayAttempts > 0 ? ' · heute ' + todayAttempts : ''}</div>` : ''}
+      ${entry.notes ? `<div class="route-notes-text">${escapeHtml(entry.notes)}</div>` : ''}
+    </td>
+    <td><div class="route-location-text">${escapeHtml(entry.location || '—')}</div></td>
+  `;
+
+  const actionsCell = row.children[1];
+  const actions = document.createElement('div');
+  actions.className = 'route-status-actions';
+
+  [
+    { value: 'open', label: 'Offen' },
+    { value: 'toprope', label: 'Toprope' },
+    { value: 'flash', label: 'Flash' },
+    { value: 'rotpunkt', label: 'Rotpunkt' }
+  ].forEach(option => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'status-btn status-' + option.value + (selectionFromEntry(entry) === option.value ? ' active' : '');
+    button.disabled = locked;
+    button.dataset.action = 'set-status';
+    button.dataset.entryId = entry.id;
+    button.dataset.status = option.value;
+    button.textContent = option.label;
+    actions.appendChild(button);
+  });
+
+  if (entry.source === 'custom') {
+    const deleteButton = document.createElement('button');
+    deleteButton.type = 'button';
+    deleteButton.className = 'status-btn delete-btn';
+    deleteButton.dataset.action = 'delete-entry';
+    deleteButton.dataset.entryId = entry.id;
+    deleteButton.textContent = 'Löschen';
+    actions.appendChild(deleteButton);
+  }
+
+  const todayLabel = todayAttempts === 0 ? 'Heute: 0' : 'Heute: ' + todayAttempts;
+  const counter = document.createElement('div');
+  counter.className = 'attempt-counter';
+  counter.innerHTML = `
+    <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="-1"${todayAttempts === 0 ? ' disabled' : ''}>−</button>
+    <span class="attempt-count">${escapeHtml(todayLabel)}</span>
+    <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="1">+</button>
+  `;
+  actionsCell.appendChild(actions);
+  actionsCell.appendChild(counter);
+  if (locked) {
+    const lockNote = document.createElement('div');
+    lockNote.className = 'route-lock-note';
+    lockNote.textContent = 'Gesperrt oberhalb des aktuellen Grades';
+    actionsCell.appendChild(lockNote);
+  }
 }
 
 function buildInfoCellHtml(entry) {
