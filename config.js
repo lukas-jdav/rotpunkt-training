@@ -14,8 +14,24 @@ const APP_CONFIG = {
   },
   defaultProfile: {
     startGrade: '5',
-    vorstiegOnly: false
+    vorstiegOnly: false,
+    tablePrefs: {
+      columnOrder: ['grad', 'aktionen', 'infos', 'route', 'bereich'],
+      hiddenColumns: [],
+      sortBy: null,
+      sortDir: 'asc'
+    }
   },
+  tableColumns: [
+    { key: 'grad',     label: 'Grad',         sortable: true,  hideable: false },
+    { key: 'aktionen', label: 'Aktionen',      sortable: false, hideable: false },
+    { key: 'infos',    label: 'Infos',         sortable: false, hideable: true  },
+    { key: 'route',    label: 'Route',         sortable: true,  hideable: false },
+    { key: 'bereich',  label: 'Bereich',       sortable: true,  hideable: true  },
+    { key: 'versuche', label: 'Versuche',      sortable: true,  hideable: true, defaultHidden: true },
+    { key: 'gesetzt',  label: 'Gesetzt am',    sortable: true,  hideable: true, defaultHidden: true },
+    { key: 'zuletzt',  label: 'Zuletzt aktiv', sortable: true,  hideable: true, defaultHidden: true }
+  ],
   allowedStartGrades: ['4', '5', '6'],
   roadmapGrades: ['5', '6', '7', '8'],
   hiddenGrades: new Set(['3']),
@@ -41,7 +57,7 @@ const APP_CONFIG = {
   }
 };
 
-const APP_VERSION = 'v2.4';
+const APP_VERSION = 'v2.5';
 const APP_BUILD_DATE = '2026-04-23';
 
 const SUN_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';

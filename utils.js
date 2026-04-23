@@ -70,3 +70,14 @@ function createEntryId() {
   if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
   return String(Date.now()) + Math.random().toString(16).slice(2);
 }
+
+function openRouteLink(url) {
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isMobile) {
+    // On mobile, window.location triggers iOS Universal Links & Android App Links,
+    // so the OS opens the Vertical-Life app if installed, otherwise falls back to browser.
+    window.location.href = url;
+  } else {
+    window.open(url, '_blank', 'noreferrer');
+  }
+}

@@ -1,4 +1,5 @@
 let routeSyncPollHandle = null;
+let _dragSrcCol = null;
 
 function init() {
   migrateLegacyStorage();
@@ -89,6 +90,33 @@ function bindEvents() {
   ui.routeBoard.addEventListener('click', event => {
     const button = event.target.closest('button[data-action]');
     if (!button) return;
+
+    if (button.dataset.action === 'open-route-link') {
+      openRouteLink(button.dataset.url);
+      return;
+    }
+
+    if (button.dataset.action === 'toggle-col-panel') {
+      appState._colPanelOpen = !appState._colPanelOpen;
+      renderRouteBoard(getComputedState().progressState);
+      return;
+    }
+
+    if (button.dataset.action === 'sort-column') {
+      const col = button.dataset.col;
+      const prefs = appState.profile.tablePrefs;
+      if (prefs.sortBy === col) {
+        if (prefs.sortDir === 'asc') prefs.sortDir = 'desc';
+        else { prefs.sortBy = null; prefs.sortDir = 'asc'; }
+      } else {
+        prefs.sortBy = col;
+        prefs.sortDir = 'asc';
+      }
+      persistProfile();
+      renderRouteBoard(getComputedState().progressState);
+      return;
+    }
+
     const entryId = button.dataset.entryId;
     if (!entryId) return;
 
@@ -108,6 +136,75 @@ function bindEvents() {
       persistAll();
       renderApp();
     }
+  });
+
+  ui.routeBoard.addEventListener('change', event => {
+    const cb = event.target.closest('input[data-action="toggle-column"]');
+    if (!cb) return;
+    const col = cb.dataset.col;
+    const prefs = appState.profile.tablePrefs;
+    if (cb.checked) {
+      prefs.hiddenColumns = prefs.hiddenColumns.filter(k => k !== col);
+    } else {
+      if (!prefs.hiddenColumns.includes(col)) prefs.hiddenColumns.push(col);
+    }
+    persistProfile();
+    renderRouteBoard(getComputedState().progressState);
+  });
+
+  ui.routeBoard.addEventListener('dragstart', event => {
+    const th = event.target.closest('th[data-col]');
+    if (!th) return;
+    _dragSrcCol = th.dataset.col;
+    th.classList.add('col-dragging');
+    event.dataTransfer.effectAllowed = 'move';
+  });
+
+  ui.routeBoard.addEventListener('dragover', event => {
+    const th = event.target.closest('th[data-col]');
+    if (!th || th.dataset.col === _dragSrcCol) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    th.classList.add('col-drag-over');
+  });
+
+  ui.routeBoard.addEventListener('dragleave', event => {
+    const th = event.target.closest('th[data-col]');
+    if (th) th.classList.remove('col-drag-over');
+  });
+
+  ui.routeBoard.addEventListener('dragend', event => {
+    event.target.closest('th[data-col]')?.classList.remove('col-dragging');
+    ui.routeBoard.querySelectorAll('.col-drag-over').forEach(el => el.classList.remove('col-drag-over'));
+  });
+
+  ui.routeBoard.addEventListener('drop', event => {
+    const th = event.target.closest('th[data-col]');
+    if (!th || !_dragSrcCol || th.dataset.col === _dragSrcCol) return;
+    event.preventDefault();
+    th.classList.remove('col-drag-over');
+
+    const prefs = appState.profile.tablePrefs;
+    const order = [...prefs.columnOrder];
+    const fromIdx = order.indexOf(_dragSrcCol);
+    const toIdx = order.indexOf(th.dataset.col);
+    if (fromIdx === -1 || toIdx === -1) return;
+
+    order.splice(fromIdx, 1);
+    order.splice(toIdx, 0, _dragSrcCol);
+    prefs.columnOrder = order;
+    _dragSrcCol = null;
+
+    persistProfile();
+    renderRouteBoard(getComputedState().progressState);
+  });
+
+  document.addEventListener('click', event => {
+    if (!appState._colPanelOpen) return;
+    if (event.target.closest('[data-action="toggle-col-panel"]')) return;
+    if (event.target.closest('.col-mgr-panel')) return;
+    appState._colPanelOpen = false;
+    renderRouteBoard(getComputedState().progressState);
   });
 
   ui.routeLogForm.addEventListener('submit', onRouteFormSubmit);

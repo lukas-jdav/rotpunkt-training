@@ -303,6 +303,15 @@ function isEntryLocked(entry, progressState) {
     && !(progressState.canStartNext && progressState.next && Number(entry.grade) === Number(progressState.next.grade));
 }
 
+function getActiveColumns() {
+  const prefs = appState.profile.tablePrefs;
+  const hidden = new Set(prefs.hiddenColumns);
+  return prefs.columnOrder
+    .filter(key => !hidden.has(key))
+    .map(key => APP_CONFIG.tableColumns.find(c => c.key === key))
+    .filter(Boolean);
+}
+
 function renderRouteBoard(progressState) {
   const trackedEntries = getTrackedEntries();
   const allFiltered = getFilteredEntries();
@@ -333,9 +342,13 @@ function renderRouteBoard(progressState) {
     return;
   }
 
+  const activeColumns = getActiveColumns();
+  const prefs = appState.profile.tablePrefs;
+
   const shell = document.createElement('section');
   shell.className = 'route-table-shell';
 
+  // ── Header bar ────────────────────────────────────────────────────────────
   const tableHead = document.createElement('div');
   tableHead.className = 'route-table-head';
 
@@ -343,129 +356,214 @@ function renderRouteBoard(progressState) {
   title.className = 'route-table-title';
   title.textContent = 'Direkte Trainingsliste';
 
+  const headRight = document.createElement('div');
+  headRight.className = 'route-table-head-right';
+
   const meta = document.createElement('div');
   meta.className = 'route-table-meta';
   meta.textContent = filteredEntries.length + ' von ' + trackedEntries.length + ' Routen sichtbar';
 
+  const colMgrBtn = document.createElement('button');
+  colMgrBtn.type = 'button';
+  colMgrBtn.className = 'col-mgr-btn';
+  colMgrBtn.dataset.action = 'toggle-col-panel';
+  colMgrBtn.title = 'Spalten anpassen';
+  colMgrBtn.textContent = '⚙';
+
+  headRight.appendChild(meta);
+  headRight.appendChild(colMgrBtn);
   tableHead.appendChild(title);
-  tableHead.appendChild(meta);
+  tableHead.appendChild(headRight);
   shell.appendChild(tableHead);
 
+  // ── Column manager panel ──────────────────────────────────────────────────
+  const colPanel = document.createElement('div');
+  colPanel.className = 'col-mgr-panel' + (appState._colPanelOpen ? '' : ' hidden');
+
+  APP_CONFIG.tableColumns.filter(c => c.hideable).forEach(col => {
+    const isVisible = !prefs.hiddenColumns.includes(col.key);
+    const label = document.createElement('label');
+    label.className = 'col-mgr-item';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = isVisible;
+    cb.dataset.action = 'toggle-column';
+    cb.dataset.col = col.key;
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(' ' + col.label));
+    colPanel.appendChild(label);
+  });
+  shell.appendChild(colPanel);
+
+  // ── Table ─────────────────────────────────────────────────────────────────
   const tableWrap = document.createElement('div');
   tableWrap.className = 'route-table-wrap';
 
   const table = document.createElement('table');
   table.className = 'route-table';
-  table.innerHTML = `
-    <thead>
-      <tr>
-        <th>Grad</th>
-        <th>Aktionen</th>
-        <th>Infos</th>
-        <th>Route</th>
-        <th>Bereich</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  `;
 
-  const tbody = table.querySelector('tbody');
+  const thead = document.createElement('thead');
+  const headerRow = document.createElement('tr');
+
+  activeColumns.forEach(col => {
+    const th = document.createElement('th');
+    th.dataset.col = col.key;
+    th.draggable = true;
+
+    const handle = document.createElement('span');
+    handle.className = 'col-drag-handle';
+    handle.textContent = '⠿';
+    th.appendChild(handle);
+
+    if (col.sortable) {
+      const isActive = prefs.sortBy === col.key;
+      const arrow = isActive ? (prefs.sortDir === 'desc' ? '↓' : '↑') : '↕';
+      const sortBtn = document.createElement('button');
+      sortBtn.type = 'button';
+      sortBtn.className = 'col-sort-btn' + (isActive ? ' active' : '');
+      sortBtn.dataset.action = 'sort-column';
+      sortBtn.dataset.col = col.key;
+      sortBtn.textContent = col.label + ' ' + arrow;
+      th.appendChild(sortBtn);
+    } else {
+      th.appendChild(document.createTextNode(col.label));
+    }
+
+    headerRow.appendChild(th);
+  });
+
+  thead.appendChild(headerRow);
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
 
   filteredEntries.forEach(entry => {
     const row = document.createElement('tr');
     row.className = 'route-row-' + selectionFromEntry(entry);
-    appendEntryRow(row, entry, progressState);
+    appendEntryRow(row, entry, progressState, activeColumns);
     tbody.appendChild(row);
   });
 
   if (optionalEntries.length > 0) {
     const separator = document.createElement('tr');
     separator.className = 'route-section-separator';
-    separator.innerHTML = '<td colspan="5" class="route-section-label">Optionale Routen · Seil 51–56</td>';
+    separator.innerHTML = `<td colspan="${activeColumns.length}" class="route-section-label">Optionale Routen · Seil 51–56</td>`;
     tbody.appendChild(separator);
 
     optionalEntries.forEach(entry => {
       const row = document.createElement('tr');
       row.className = 'route-row-' + selectionFromEntry(entry);
-      appendEntryRow(row, entry, progressState);
+      appendEntryRow(row, entry, progressState, activeColumns);
       tbody.appendChild(row);
     });
   }
 
+  table.appendChild(tbody);
   tableWrap.appendChild(table);
   shell.appendChild(tableWrap);
   ui.routeBoard.appendChild(shell);
 }
 
-function appendEntryRow(row, entry, progressState) {
+function appendEntryRow(row, entry, progressState, activeColumns) {
   const locked = isEntryLocked(entry, progressState);
-  const infoCellHtml = buildInfoCellHtml(entry);
-  const totalAttempts = (entry.attemptLog || []).reduce((sum, s) => sum + s.count, 0);
+  const totalAttempts = getTotalAttempts(entry);
   const todayAttempts = (entry.attemptLog || []).find(s => s.date === getTodayValue())?.count || 0;
 
-  row.innerHTML = `
-    <td><span class="route-grade-badge">${escapeHtml(entry.grade)}</span></td>
-    <td></td>
-    <td>${infoCellHtml}</td>
-    <td>
-      <div class="route-name-main">
-        ${escapeHtml(entry.name)}
-        ${appState.profile.vorstiegOnly && isVorstiegOptional(entry) ? '<span class="route-optional-badge">Optional</span>' : ''}
-      </div>
-      <div class="route-name-sub">${escapeHtml(getRouteDateLabel(entry))}</div>
-      ${totalAttempts > 0 ? `<div class="route-attempt-info">${totalAttempts} ${totalAttempts === 1 ? 'Versuch' : 'Versuche'} gesamt${todayAttempts > 0 ? ' · heute ' + todayAttempts : ''}</div>` : ''}
-      ${entry.notes ? `<div class="route-notes-text">${escapeHtml(entry.notes)}</div>` : ''}
-    </td>
-    <td><div class="route-location-text">${escapeHtml(entry.location || '—')}</div></td>
-  `;
+  activeColumns.forEach(col => {
+    const td = document.createElement('td');
 
-  const actionsCell = row.children[1];
-  const actions = document.createElement('div');
-  actions.className = 'route-status-actions';
+    switch (col.key) {
+      case 'grad':
+        td.innerHTML = `<span class="route-grade-badge">${escapeHtml(entry.grade)}</span>`;
+        break;
 
-  [
-    { value: 'open', label: 'Offen' },
-    { value: 'toprope', label: 'Toprope' },
-    { value: 'flash', label: 'Flash' },
-    { value: 'rotpunkt', label: 'Rotpunkt' }
-  ].forEach(option => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'status-btn status-' + option.value + (selectionFromEntry(entry) === option.value ? ' active' : '');
-    button.disabled = locked;
-    button.dataset.action = 'set-status';
-    button.dataset.entryId = entry.id;
-    button.dataset.status = option.value;
-    button.textContent = option.label;
-    actions.appendChild(button);
+      case 'aktionen': {
+        const actions = document.createElement('div');
+        actions.className = 'route-status-actions';
+        [
+          { value: 'open', label: 'Offen' },
+          { value: 'toprope', label: 'Toprope' },
+          { value: 'flash', label: 'Flash' },
+          { value: 'rotpunkt', label: 'Rotpunkt' }
+        ].forEach(option => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'status-btn status-' + option.value + (selectionFromEntry(entry) === option.value ? ' active' : '');
+          btn.disabled = locked;
+          btn.dataset.action = 'set-status';
+          btn.dataset.entryId = entry.id;
+          btn.dataset.status = option.value;
+          btn.textContent = option.label;
+          actions.appendChild(btn);
+        });
+        if (entry.source === 'custom') {
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.className = 'status-btn delete-btn';
+          delBtn.dataset.action = 'delete-entry';
+          delBtn.dataset.entryId = entry.id;
+          delBtn.textContent = 'Löschen';
+          actions.appendChild(delBtn);
+        }
+        const todayLabel = todayAttempts === 0 ? 'Heute: 0' : 'Heute: ' + todayAttempts;
+        const counter = document.createElement('div');
+        counter.className = 'attempt-counter';
+        counter.innerHTML = `
+          <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="-1"${todayAttempts === 0 ? ' disabled' : ''}>−</button>
+          <span class="attempt-count">${escapeHtml(todayLabel)}</span>
+          <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="1">+</button>
+        `;
+        td.appendChild(actions);
+        td.appendChild(counter);
+        if (locked) {
+          const lockNote = document.createElement('div');
+          lockNote.className = 'route-lock-note';
+          lockNote.textContent = 'Gesperrt oberhalb des aktuellen Grades';
+          td.appendChild(lockNote);
+        }
+        break;
+      }
+
+      case 'infos':
+        td.innerHTML = buildInfoCellHtml(entry);
+        break;
+
+      case 'route':
+        td.innerHTML = `
+          <div class="route-name-main">
+            ${escapeHtml(entry.name)}
+            ${appState.profile.vorstiegOnly && isVorstiegOptional(entry) ? '<span class="route-optional-badge">Optional</span>' : ''}
+          </div>
+          <div class="route-name-sub">${escapeHtml(getRouteDateLabel(entry))}</div>
+          ${totalAttempts > 0 ? `<div class="route-attempt-info">${totalAttempts} ${totalAttempts === 1 ? 'Versuch' : 'Versuche'} gesamt${todayAttempts > 0 ? ' · heute ' + todayAttempts : ''}</div>` : ''}
+          ${entry.notes ? `<div class="route-notes-text">${escapeHtml(entry.notes)}</div>` : ''}
+        `;
+        break;
+
+      case 'bereich':
+        td.innerHTML = `<div class="route-location-text">${escapeHtml(entry.location || '—')}</div>`;
+        break;
+
+      case 'versuche':
+        td.className = 'col-numeric';
+        td.innerHTML = `<span class="route-attempts-badge">${totalAttempts > 0 ? totalAttempts : '—'}</span>`;
+        break;
+
+      case 'gesetzt':
+        td.className = 'col-date';
+        td.innerHTML = `<span class="route-date-text">${escapeHtml(entry.setDate ? formatDate(entry.setDate) : '—')}</span>`;
+        break;
+
+      case 'zuletzt': {
+        const last = getLastActiveDate(entry);
+        td.className = 'col-date';
+        td.innerHTML = `<span class="route-date-text">${escapeHtml(last ? formatDate(last) : '—')}</span>`;
+        break;
+      }
+    }
+
+    row.appendChild(td);
   });
-
-  if (entry.source === 'custom') {
-    const deleteButton = document.createElement('button');
-    deleteButton.type = 'button';
-    deleteButton.className = 'status-btn delete-btn';
-    deleteButton.dataset.action = 'delete-entry';
-    deleteButton.dataset.entryId = entry.id;
-    deleteButton.textContent = 'Löschen';
-    actions.appendChild(deleteButton);
-  }
-
-  const todayLabel = todayAttempts === 0 ? 'Heute: 0' : 'Heute: ' + todayAttempts;
-  const counter = document.createElement('div');
-  counter.className = 'attempt-counter';
-  counter.innerHTML = `
-    <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="-1"${todayAttempts === 0 ? ' disabled' : ''}>−</button>
-    <span class="attempt-count">${escapeHtml(todayLabel)}</span>
-    <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="1">+</button>
-  `;
-  actionsCell.appendChild(actions);
-  actionsCell.appendChild(counter);
-  if (locked) {
-    const lockNote = document.createElement('div');
-    lockNote.className = 'route-lock-note';
-    lockNote.textContent = 'Gesperrt oberhalb des aktuellen Grades';
-    actionsCell.appendChild(lockNote);
-  }
 }
 
 function buildInfoCellHtml(entry) {
@@ -484,7 +582,7 @@ function buildInfoCellHtml(entry) {
   }
 
   if (entry.link) {
-    bits.push(`<a class="route-meta-link" href="${escapeHtml(entry.link)}" target="_blank" rel="noreferrer">Vertical-Life</a>`);
+    bits.push(`<button class="route-meta-link" type="button" data-action="open-route-link" data-url="${escapeHtml(entry.link)}">Vertical-Life ↗</button>`);
   }
 
   return `<div class="route-info-stack">${bits.join('')}</div>`;
