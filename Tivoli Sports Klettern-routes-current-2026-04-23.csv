@@ -1,4 +1,4 @@
-window.TIVOLI_ROUTE_CSV = String.raw`Tivoli Sports Klettern - export by 8a.nu sync
+Tivoli Sports Klettern - export by 8a.nu sync
 location,difficulty,color_1,color_2,name,notes,set_at,link,routesetter,area,sector
 1.1,3,#0000ff,,Captain Blaubär,,2025-05-22 10:30:05 UTC,https://url.vertical-life.info/HjvFyMFbUeCFyVDQA,N/A ,Sportklettern Empore,Empore
 1.2,6,#ffff00,,Snake,,2025-05-22 10:30:19 UTC,https://url.vertical-life.info/ZHveq2quPKNn9PT89,N/A ,Sportklettern Empore,Empore
@@ -146,4 +146,4 @@ location,difficulty,color_1,color_2,name,notes,set_at,link,routesetter,area,sect
 56.1,6,#9400d3,,Normalweg,,2026-01-03 12:00:00 UTC,https://url.vertical-life.info/Xb2kgESnVx9Ga04v4,Dominik Schuler,Sportklettern Empore,Empore
 56.2,4,#ff0000,#ffffff,Marmor,,2026-01-08 12:04:31 UTC,https://url.vertical-life.info/MiLkwmd4EryAYVKsp,Flo Weikert,Sportklettern Empore,Empore
 56.3,7,#9400d3,,Aaron's Weg,Ohne Crimps,2026-01-12 15:58:52 UTC,https://url.vertical-life.info/2y5JxYfeH73OfFiBT,N/A ,Sportklettern Empore,Empore
-56.4,7+,#ffa500,,Kraftfutter,,2026-01-14 14:08:01 UTC,https://url.vertical-life.info/s2kPBnt3bFfeOSWlj,Jochen Schäfer,Sportklettern Empore,Empore`;
+56.4,7+,#ffa500,,Kraftfutter,,2026-01-14 14:08:01 UTC,https://url.vertical-life.info/s2kPBnt3bFfeOSWlj,Jochen Schäfer,Sportklettern Empore,Empore
