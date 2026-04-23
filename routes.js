@@ -107,7 +107,9 @@ function normalizeEntry(entry) {
     status: normalizedStatus,
     ascentType: normalizedAscentType,
     source: entry.source === 'hall' ? 'hall' : 'custom',
-    attempts: Number(entry.attempts) || 0
+    attemptLog: Array.isArray(entry.attemptLog)
+      ? entry.attemptLog.map(s => ({ date: String(s.date || ''), count: Math.max(0, Number(s.count) || 0) })).filter(s => s.count > 0)
+      : Number(entry.attempts) > 0 ? [{ date: '', count: Number(entry.attempts) }] : []
   };
 }
 
@@ -130,13 +132,13 @@ function serializeEntry(entry) {
     status: entry.status,
     ascentType: entry.ascentType,
     source: entry.source,
-    attempts: entry.attempts
+    attemptLog: entry.attemptLog
   };
 }
 
 function shouldPersistEntry(entry) {
   if (entry.source === 'custom') return true;
-  return entry.status !== 'open' || Boolean(entry.date) || entry.attempts > 0;
+  return entry.status !== 'open' || Boolean(entry.date) || (entry.attemptLog || []).length > 0;
 }
 
 function createEntryKey(entry) {
@@ -164,7 +166,7 @@ function mergeRouteEntries(storedEntries) {
         ascentType: entry.ascentType,
         date: entry.status === 'done' ? entry.date : '',
         updatedAt: entry.updatedAt || hallEntry.updatedAt,
-        attempts: entry.attempts || 0
+        attemptLog: entry.attemptLog || []
       });
     } else {
       customEntries.push({ ...entry, source: 'custom' });

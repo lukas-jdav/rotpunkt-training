@@ -24,7 +24,7 @@ function getISOWeekLabel(weekKey) {
   monday.setDate(simple.getDate() - dayOfWeek);
 
   const formatted = new Intl.DateTimeFormat('de-DE', { day: 'numeric', month: 'short' }).format(monday);
-  return 'KW ' + week + ' · ' + formatted;
+  return 'KW ' + week + ' · ' + formatted;
 }
 
 function computeStats() {
@@ -38,15 +38,6 @@ function computeStats() {
 
   const totalDone = doneEntries.length;
 
-  // Routes per week (based on entry.date)
-  const byWeek = {};
-  doneEntries.forEach(e => {
-    if (!e.date) return;
-    const key = getISOWeekKey(e.date);
-    if (!key) return;
-    byWeek[key] = (byWeek[key] || 0) + 1;
-  });
-
   // Build sorted list of last 8 weeks (always show, even if 0)
   const today = new Date();
   const recentWeeks = [];
@@ -57,13 +48,39 @@ function computeStats() {
     if (key && !recentWeeks.includes(key)) recentWeeks.push(key);
   }
 
+  // Abgeschlossene Routen pro Woche
+  const completedByWeek = {};
+  doneEntries.forEach(e => {
+    if (!e.date) return;
+    const key = getISOWeekKey(e.date);
+    if (!key) return;
+    completedByWeek[key] = (completedByWeek[key] || 0) + 1;
+  });
+
   const weekRows = recentWeeks.map(key => ({
     key,
     label: getISOWeekLabel(key),
-    count: byWeek[key] || 0
+    count: completedByWeek[key] || 0
   }));
-
   const maxWeekCount = Math.max(...weekRows.map(r => r.count), 1);
+
+  // Versuche pro Woche (aus attemptLog aller Einträge)
+  const attemptsByWeek = {};
+  appState.routeEntries.forEach(entry => {
+    (entry.attemptLog || []).forEach(session => {
+      if (!session.date) return;
+      const key = getISOWeekKey(session.date);
+      if (!key) return;
+      attemptsByWeek[key] = (attemptsByWeek[key] || 0) + session.count;
+    });
+  });
+
+  const attemptWeekRows = recentWeeks.map(key => ({
+    key,
+    label: getISOWeekLabel(key),
+    count: attemptsByWeek[key] || 0
+  }));
+  const maxAttemptWeekCount = Math.max(...attemptWeekRows.map(r => r.count), 1);
 
   // Strongest grade
   let maxGrade = null;
@@ -79,14 +96,21 @@ function computeStats() {
     }
   });
 
-  const activeWeeks = Object.keys(byWeek).length;
+  const activeWeeks = Object.keys(completedByWeek).length;
   const avgPerWeek = activeWeeks > 0 ? (totalDone / activeWeeks).toFixed(1) : '—';
 
-  const totalAttempts = appState.routeEntries.reduce((sum, e) => sum + (e.attempts || 0), 0);
-  const attemptedRoutes = appState.routeEntries.filter(e => (e.attempts || 0) > 0).length;
+  const totalAttempts = appState.routeEntries.reduce(
+    (sum, e) => sum + (e.attemptLog || []).reduce((s2, sess) => s2 + sess.count, 0), 0
+  );
+  const attemptedRoutes = appState.routeEntries.filter(e => (e.attemptLog || []).length > 0).length;
   const avgAttemptsPerRoute = attemptedRoutes > 0 ? (totalAttempts / attemptedRoutes).toFixed(1) : '—';
 
-  return { ascentCounts, totalDone, weekRows, maxWeekCount, maxGrade, maxGradeCount, avgPerWeek, activeWeeks, totalAttempts, attemptedRoutes, avgAttemptsPerRoute };
+  return {
+    ascentCounts, totalDone, weekRows, maxWeekCount,
+    maxGrade, maxGradeCount, avgPerWeek, activeWeeks,
+    totalAttempts, attemptedRoutes, avgAttemptsPerRoute,
+    attemptWeekRows, maxAttemptWeekCount
+  };
 }
 
 function renderStats() {
@@ -95,6 +119,7 @@ function renderStats() {
 
   const stats = computeStats();
   const total = stats.ascentCounts.rotpunkt + stats.ascentCounts.flash + stats.ascentCounts.toprope;
+  const hasAttempts = stats.totalAttempts > 0;
 
   panel.innerHTML = `
     <div class="section">
@@ -124,7 +149,7 @@ function renderStats() {
             </div>
           ` : '<p style="color:var(--gray-400);font-size:13px;">Noch kein Grad abgeschlossen.</p>'}
           <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--gray-100);">
-            <div class="eyebrow">Zusammenfassung</div>
+            <div class="eyebrow">Abschlüsse</div>
             <div class="stats-summary-row">
               <span>Abgeschlossen gesamt</span>
               <strong>${stats.totalDone}</strong>
@@ -134,7 +159,7 @@ function renderStats() {
               <strong>${stats.activeWeeks}</strong>
             </div>
             <div class="stats-summary-row">
-              <span>Ø Routen pro Woche</span>
+              <span>Ø Abschlüsse pro Woche</span>
               <strong>${stats.avgPerWeek}</strong>
             </div>
           </div>
@@ -156,15 +181,32 @@ function renderStats() {
         </div>
 
         <div class="card" style="grid-column:1/-1;">
-          <div class="eyebrow">Routen pro Woche</div>
+          <div class="eyebrow">Abschlüsse pro Woche</div>
           <h3 class="progress-card-title">Letzte 8 Wochen</h3>
-          ${stats.weekRows.every(r => r.count === 0) ? '<p style="color:var(--gray-400);font-size:13px;">Noch keine Einträge mit Datum vorhanden.</p>' : ''}
+          ${stats.weekRows.every(r => r.count === 0) ? '<p style="color:var(--gray-400);font-size:13px;">Noch keine abgeschlossenen Routen mit Datum vorhanden.</p>' : ''}
           <div class="stats-week-list">
             ${stats.weekRows.map(row => `
               <div class="stats-week-row">
                 <div class="stats-week-label">${escapeHtml(row.label)}</div>
                 <div class="stats-week-bar-wrap">
                   <div class="stats-week-bar" style="width:${Math.round((row.count / stats.maxWeekCount) * 100)}%"></div>
+                </div>
+                <div class="stats-week-count">${row.count}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="card" style="grid-column:1/-1;">
+          <div class="eyebrow">Versuche pro Woche</div>
+          <h3 class="progress-card-title">Letzte 8 Wochen</h3>
+          ${!hasAttempts ? '<p style="color:var(--gray-400);font-size:13px;">Noch keine Versuche eingetragen. Nutze die −/+ Buttons in der Trainingsliste.</p>' : ''}
+          <div class="stats-week-list">
+            ${stats.attemptWeekRows.map(row => `
+              <div class="stats-week-row">
+                <div class="stats-week-label">${escapeHtml(row.label)}</div>
+                <div class="stats-week-bar-wrap">
+                  <div class="stats-week-bar stats-week-bar--attempts" style="width:${Math.round((row.count / stats.maxAttemptWeekCount) * 100)}%"></div>
                 </div>
                 <div class="stats-week-count">${row.count}</div>
               </div>

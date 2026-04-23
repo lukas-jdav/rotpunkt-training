@@ -161,9 +161,19 @@ function updateEntryStatus(entryId, selection) {
 }
 
 function changeAttempts(entryId, delta) {
+  const today = getTodayValue();
   appState.routeEntries = appState.routeEntries.map(entry => {
     if (entry.id !== entryId) return entry;
-    return { ...entry, attempts: Math.max(0, (entry.attempts || 0) + delta), updatedAt: Date.now() };
+    const log = [...(entry.attemptLog || [])];
+    const idx = log.findIndex(s => s.date === today);
+    if (idx === -1) {
+      if (delta > 0) log.push({ date: today, count: delta });
+    } else {
+      const next = Math.max(0, log[idx].count + delta);
+      if (next === 0) log.splice(idx, 1);
+      else log[idx] = { date: today, count: next };
+    }
+    return { ...entry, attemptLog: log, updatedAt: Date.now() };
   });
   persistRoutes();
   renderApp();

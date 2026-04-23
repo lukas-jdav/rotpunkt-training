@@ -237,6 +237,8 @@ function renderRouteBoard(progressState) {
     const locked = isEntryLocked(entry, progressState);
     const quickChecked = entry.status === 'done';
     const infoCellHtml = buildInfoCellHtml(entry);
+    const totalAttempts = (entry.attemptLog || []).reduce((sum, s) => sum + s.count, 0);
+    const todayAttempts = (entry.attemptLog || []).find(s => s.date === getTodayValue())?.count || 0;
 
     row.innerHTML = `
       <td>
@@ -252,6 +254,7 @@ function renderRouteBoard(progressState) {
           ${appState.profile.vorstiegOnly && isVorstiegOptional(entry) ? '<span class="route-optional-badge">Optional</span>' : ''}
         </div>
         <div class="route-name-sub">${escapeHtml(getRouteDateLabel(entry))}</div>
+        ${totalAttempts > 0 ? `<div class="route-attempt-info">${totalAttempts} ${totalAttempts === 1 ? 'Versuch' : 'Versuche'} gesamt${todayAttempts > 0 ? ' · heute ' + todayAttempts : ''}</div>` : ''}
         ${entry.notes ? `<div class="route-notes-text">${escapeHtml(entry.notes)}</div>` : ''}
       </td>
       <td>${infoCellHtml}</td>
@@ -294,13 +297,13 @@ function renderRouteBoard(progressState) {
       actions.appendChild(deleteButton);
     }
 
-    const attempts = entry.attempts || 0;
-    const attemptLabel = attempts === 1 ? '1 Versuch' : attempts + ' Versuche';
+    const todayCount = todayAttempts;
+    const todayLabel = todayCount === 0 ? 'Heute: 0' : 'Heute: ' + todayCount;
     const counter = document.createElement('div');
     counter.className = 'attempt-counter';
     counter.innerHTML = `
-      <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="-1"${attempts === 0 ? ' disabled' : ''}>−</button>
-      <span class="attempt-count">${escapeHtml(attemptLabel)}</span>
+      <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="-1"${todayCount === 0 ? ' disabled' : ''}>−</button>
+      <span class="attempt-count">${escapeHtml(todayLabel)}</span>
       <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="1">+</button>
     `;
     actionsCell.appendChild(actions);
