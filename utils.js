@@ -82,6 +82,8 @@ function openRouteLink(url) {
     a.href = url;
     a.target = '_blank';
     a.rel = 'noreferrer noopener';
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
   }
 }
