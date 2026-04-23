@@ -335,6 +335,7 @@ function appendEntryRow(row, entry, progressState) {
 function buildInfoCellHtml(entry) {
   const bits = [];
 
+  if (isRouteNew(entry)) bits.push(`<span class="badge-new">Neu</span>`);
   if (entry.rawDifficulty) bits.push(`<span class="route-mini-badge">VL ${escapeHtml(entry.rawDifficulty)}</span>`);
   if (entry.routeCode) bits.push(`<span class="route-mini-badge">Linie ${escapeHtml(entry.routeCode)}</span>`);
 
