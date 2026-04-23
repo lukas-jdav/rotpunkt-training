@@ -9,6 +9,7 @@ const appState = {
   },
   syncStatus: 'local',
   authReady: false,
+  _colPanelOpen: false,
   githubSync: {
     token: '',
     status: 'idle',

@@ -23,13 +23,34 @@ function migrateLegacyStorage() {
   }
 }
 
+function sanitizeTablePrefs(raw) {
+  const def = APP_CONFIG.defaultProfile.tablePrefs;
+  const validKeys = APP_CONFIG.tableColumns.map(c => c.key);
+  const validSortKeys = APP_CONFIG.tableColumns.filter(c => c.sortable).map(c => c.key);
+
+  const columnOrder = Array.isArray(raw && raw.columnOrder)
+    ? raw.columnOrder.filter(k => validKeys.includes(k))
+    : def.columnOrder;
+  const merged = [...columnOrder, ...def.columnOrder.filter(k => !columnOrder.includes(k))];
+
+  const hiddenColumns = Array.isArray(raw && raw.hiddenColumns)
+    ? raw.hiddenColumns.filter(k => validKeys.includes(k))
+    : def.hiddenColumns;
+
+  const sortBy = validSortKeys.includes(raw && raw.sortBy) ? raw.sortBy : def.sortBy;
+  const sortDir = raw && raw.sortDir === 'desc' ? 'desc' : 'asc';
+
+  return { columnOrder: merged, hiddenColumns, sortBy, sortDir };
+}
+
 function sanitizeProfile(profile) {
   const startGrade = APP_CONFIG.allowedStartGrades.includes(String(profile.startGrade))
     ? String(profile.startGrade)
     : APP_CONFIG.defaultProfile.startGrade;
   return {
     startGrade,
-    vorstiegOnly: Boolean(profile.vorstiegOnly)
+    vorstiegOnly: Boolean(profile.vorstiegOnly),
+    tablePrefs: sanitizeTablePrefs(profile.tablePrefs)
   };
 }
 

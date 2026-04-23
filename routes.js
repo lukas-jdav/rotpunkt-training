@@ -374,14 +374,59 @@ function getStatusPriority(entry) {
   return 3;
 }
 
-function sortEntries(entries) {
+function getTotalAttempts(entry) {
+  return (entry.attemptLog || []).reduce((sum, s) => sum + s.count, 0);
+}
+
+function getLastActiveDate(entry) {
+  const log = entry.attemptLog || [];
+  if (!log.length) return '';
+  return log.reduce((latest, s) => s.date > latest ? s.date : latest, '');
+}
+
+function sortEntries(entries, sortBy, sortDir) {
+  const dir = sortDir === 'desc' ? -1 : 1;
+
+  if (!sortBy) {
+    return [...entries].sort((left, right) => {
+      const ld = left.setDate || '￿';
+      const rd = right.setDate || '￿';
+      if (ld !== rd) return ld < rd ? -1 : 1;
+      const byGrade = Number(left.grade) - Number(right.grade);
+      if (byGrade !== 0) return byGrade;
+      return left.name.localeCompare(right.name, 'de', { sensitivity: 'base' });
+    });
+  }
+
   return [...entries].sort((left, right) => {
-    const ld = left.setDate || '￿';
-    const rd = right.setDate || '￿';
-    if (ld !== rd) return ld < rd ? -1 : 1;
-    const byGrade = Number(left.grade) - Number(right.grade);
-    if (byGrade !== 0) return byGrade;
-    return left.name.localeCompare(right.name, 'de', { sensitivity: 'base' });
+    let diff = 0;
+    switch (sortBy) {
+      case 'grad':
+        diff = Number(left.grade) - Number(right.grade);
+        break;
+      case 'route':
+        diff = left.name.localeCompare(right.name, 'de', { sensitivity: 'base' });
+        break;
+      case 'bereich':
+        diff = (left.location || '').localeCompare(right.location || '', 'de', { sensitivity: 'base' });
+        break;
+      case 'versuche':
+        diff = getTotalAttempts(left) - getTotalAttempts(right);
+        break;
+      case 'gesetzt': {
+        const ld = left.setDate || '';
+        const rd = right.setDate || '';
+        diff = ld < rd ? -1 : ld > rd ? 1 : 0;
+        break;
+      }
+      case 'zuletzt': {
+        const ll = getLastActiveDate(left);
+        const rl = getLastActiveDate(right);
+        diff = ll < rl ? -1 : ll > rl ? 1 : 0;
+        break;
+      }
+    }
+    return diff * dir;
   });
 }
 
@@ -412,7 +457,8 @@ function getFilteredEntries() {
   const selectedGrades = appState.filters.grades;
   const statusFilter = appState.filters.status;
 
-  return sortEntries(getTrackedEntries()).filter(entry => {
+  const { sortBy, sortDir } = appState.profile.tablePrefs || {};
+  return sortEntries(getTrackedEntries(), sortBy, sortDir).filter(entry => {
     const matchesSearch = !searchTerm
       || entry.name.toLowerCase().includes(searchTerm)
       || entry.location.toLowerCase().includes(searchTerm)
