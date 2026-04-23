@@ -38,6 +38,12 @@ app.js              init(), bindEvents(), Event-Handler
 tivoli-routes-data.js   Rohdaten der Hallenkletterrouten (CSV als JS-Konstante)
 ```
 
+## CI / Deployment
+
+- GitHub Pages deployed **automatisch von `main`** — kein separater `deploy.yml`-Workflow nötig oder erwünscht.
+- **Kein PR-Preview-Workflow** hinzufügen: Die `rossjrw/pr-preview-action` und ähnliche Actions setzen einen `gh-pages`-Branch als Deployment-Quelle voraus, was mit dem aktuellen Setup (Deployment direkt von `main`) inkompatibel ist.
+- Die einzige erlaubte Workflow-Datei in `.github/workflows/` ist `sync-tivoli-routes.yml`.
+
 ## Versionierung
 
 - Version und Datum in `config.js` (`APP_VERSION`, `APP_BUILD_DATE`) pflegen
