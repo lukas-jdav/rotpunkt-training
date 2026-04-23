@@ -25,12 +25,12 @@ location,difficulty,color_1,color_2,name,notes,set_at,link,routesetter,area,sect
 9.1,5,#0000ff,,Zoologischer Garten,,2025-08-30 20:51:52 UTC,https://url.vertical-life.info/TmghE2FjxNvTbwsv5,Julius Dammann,Sportklettern Erdgeschoß,Main Wall
 9.2,7,#ffff00,,Zelten mit Bär,,2019-08-23 12:41:49 UTC,https://url.vertical-life.info/h3UsWmUPsCntLQhx9,Daniel Krommen,Sportklettern Erdgeschoß,Main Wall
 9.3,8-,#ffa500,#000000,"Jump, Baby. Jump!",,2025-08-30 20:52:26 UTC,https://url.vertical-life.info/aHAJqD96Bq9ixeXR7,Julius Dammann,Sportklettern Erdgeschoß,Main Wall
-10.1,5,#008000,,American Idiot,,2026-04-17 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing#route-360773,Laurin Ebert,Sportklettern Erdgeschoß,Main Wall
-10.2,7+,#ff69b4,#ffffff,Boulevard of broken dreams,,2026-04-20 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing#route-360883,Laurin Ebert,Sportklettern Erdgeschoß,Main Wall
+10.1,5,#008000,,American Idiot,,2026-04-17 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/zlaggables/sportclimbing/360773/ascents,Laurin Ebert,Sportklettern Erdgeschoß,Main Wall
+10.2,7+,#ff69b4,#ffffff,Boulevard of broken dreams,,2026-04-20 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/zlaggables/sportclimbing/360883/ascents,Laurin Ebert,Sportklettern Erdgeschoß,Main Wall
 11.3,4,#cfab8f,,Trainingsleiter Speedklettern,,2023-02-20 12:00:00 UTC,https://url.vertical-life.info/xKniiBvzmt2hFCWd6,N/A ,Sportklettern Erdgeschoß,Main Wall
-12.1,5-,#808080,,Idiocracy,,2026-04-17 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing#route-360776,Silas Pollmann,Sportklettern Erdgeschoß,Main Wall
-12.2,9+,#32cd32,,Dancing in the moonlight,,2026-04-18 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing#route-360778,Silas Pollmann,Sportklettern Erdgeschoß,Main Wall
-13.1,5,#ffa500,#000000,Tigerentenjägertrauma,,2026-04-15 07:06:38 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing#route-360350,Silas Pollmann,Sportklettern Erdgeschoß,Main Wall
+12.1,5-,#808080,,Idiocracy,,2026-04-17 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/zlaggables/sportclimbing/360776/ascents,Silas Pollmann,Sportklettern Erdgeschoß,Main Wall
+12.2,9+,#32cd32,,Dancing in the moonlight,,2026-04-18 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/zlaggables/sportclimbing/360778/ascents,Silas Pollmann,Sportklettern Erdgeschoß,Main Wall
+13.1,5,#ffa500,#000000,Tigerentenjägertrauma,,2026-04-15 07:06:38 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/zlaggables/sportclimbing/360350/ascents,Silas Pollmann,Sportklettern Erdgeschoß,Main Wall
 14.1,7-,#008000,,Schornsteinfeger,,2025-10-16 14:03:38 UTC,https://url.vertical-life.info/TnYR9CBo6pL1ygirp,Laurin Ebert,Sportklettern Erdgeschoß,Main Wall
 14.2,7+,#000000,,Fata Morgana,Mit Versys Element,2025-10-18 12:00:00 UTC,https://url.vertical-life.info/IVEWNi4SThwhL4Wpv,Julius Dammann,Sportklettern Erdgeschoß,Main Wall
 15.1,5-,#ffffff,,St. Georg,,2025-10-16 14:03:58 UTC,https://url.vertical-life.info/uZnYRXo1ty8jbBEKW,Laurin Ebert,Sportklettern Erdgeschoß,Main Wall
@@ -54,7 +54,7 @@ location,difficulty,color_1,color_2,name,notes,set_at,link,routesetter,area,sect
 20.3,6,#808080,,Greyjoy,,2025-09-17 14:04:29 UTC,https://url.vertical-life.info/kfv48nzg4RZ7Hw0T0,Laurin Ebert,Sportklettern Erdgeschoß,Main Wall
 21.1,8-,#0000ff,,Durchkämmt die Wüste,,2025-10-30 12:00:00 UTC,https://url.vertical-life.info/zDenWu1gsXQLKffEa,Silas Pollmann,Sportklettern Erdgeschoß,Main Wall
 21.2,5+,#ffff00,,Gelbe Kristalle,,2025-10-02 12:45:44 UTC,https://url.vertical-life.info/DVNIqJJydwve7DaxH,Dominik Schuler,Sportklettern Erdgeschoß,Main Wall
-21.3,7+/8-,#ffa500,,Kids Cup Route 2,,2026-04-11 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing#route-360596,Silas Pollmann,Sportklettern Erdgeschoß,Main Wall
+21.3,7+/8-,#ffa500,,Kids Cup Route 2,,2026-04-11 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/zlaggables/sportclimbing/360596/ascents,Silas Pollmann,Sportklettern Erdgeschoß,Main Wall
 22.1,8,#ff69b4,,Lord Helmchen,,2025-10-30 12:00:00 UTC,https://url.vertical-life.info/6RidZTmy2jmXkMlQf,Julius Dammann,Sportklettern Erdgeschoß,Main Wall
 22.2,5,#000000,,Elefantenschaukel,,2025-11-10 10:12:25 UTC,https://url.vertical-life.info/6j9RX0y3S9NqGgQQW,Malina Schemm,Sportklettern Erdgeschoß,Main Wall
 22.3,7-,#008000,,Wie? Das letzte?,,2019-05-21 14:58:24 UTC,https://url.vertical-life.info/pYRnAoSax7HkeZ2F8,Daniel Krommen,Sportklettern Erdgeschoß,Main Wall
@@ -64,9 +64,9 @@ location,difficulty,color_1,color_2,name,notes,set_at,link,routesetter,area,sect
 24.1,6,#808080,,Grey,,2026-03-12 19:19:11 UTC,https://url.vertical-life.info/VkHwUr3p0XXgNMb7q,N/A ,Sportklettern Erdgeschoß,Main Wall
 24.2,8,#32cd32,,Lime green,,2026-03-12 19:19:31 UTC,https://url.vertical-life.info/uZRnvtxZua0AZmxES,N/A ,Sportklettern Erdgeschoß,Main Wall
 25.1,8,#ffd700,,Yellow,,2026-03-12 19:18:51 UTC,https://url.vertical-life.info/DL4sTqmtpVabhDZ9l,Julius Dammann,Sportklettern Erdgeschoß,Main Wall
-25.2,8+/9-,#ffa500,,One Step Closer,,2026-03-25 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing#route-358682,Laurin Ebert,Sportklettern Erdgeschoß,Main Wall
-25.3,6,#0000ff,,Kids Cup Route 1,,2026-04-11 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing#route-360597,Laurin Ebert,Sportklettern Erdgeschoß,Main Wall
-26.1,9-,#000000,,Wieder zu leicht!,,2026-03-12 19:18:34 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing#route-357528,N/A ,Sportklettern Erdgeschoß,Main Wall
+25.2,8+/9-,#ffa500,,One Step Closer,,2026-03-25 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/zlaggables/sportclimbing/358682/ascents,Laurin Ebert,Sportklettern Erdgeschoß,Main Wall
+25.3,6,#0000ff,,Kids Cup Route 1,,2026-04-11 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/zlaggables/sportclimbing/360597/ascents,Laurin Ebert,Sportklettern Erdgeschoß,Main Wall
+26.1,9-,#000000,,Wieder zu leicht!,,2026-03-12 19:18:34 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/zlaggables/sportclimbing/357528/ascents,N/A ,Sportklettern Erdgeschoß,Main Wall
 26.3,6,#ff0000,,Rapumpfel??,,2019-03-14 23:00:00 UTC,https://url.vertical-life.info/4jL3WitFxGDmjSM59,Daniel Krommen,Sportklettern Erdgeschoß,Main Wall
 27.1,8-,#9400d3,,Für die Kleinen,,2025-09-27 12:00:00 UTC,https://url.vertical-life.info/5IcZ87RZnV9PATeAY,Silas Pollmann,Sportklettern Erdgeschoß,Main Wall
 27.2,7-,#ffffff,,Aufgeben befreit,,2025-09-30 12:00:00 UTC,https://url.vertical-life.info/KWbxhPmlZr3GTbxde,Dominik Schuler,Sportklettern Erdgeschoß,Main Wall
@@ -92,7 +92,7 @@ location,difficulty,color_1,color_2,name,notes,set_at,link,routesetter,area,sect
 36.2,7-,#0000ff,,Biomatrix,,2026-02-16 12:00:00 UTC,https://url.vertical-life.info/C16LEE0X4qTtYkozD,Dominik Schuler,Sportklettern Empore,Empore
 36.3,4,#ffd700,,Low Gravity Day,,2026-02-21 21:17:55 UTC,https://url.vertical-life.info/hNbM7TglMWetuiWU8,Silas Pollmann,Sportklettern Empore,Empore
 37.1,6-,#ff69b4,,Open Source,,2026-02-16 12:00:00 UTC,https://url.vertical-life.info/Qc0xV41AMMIcvkfJX,Dominik Schuler,Sportklettern Empore,Empore
-37.2,5-,#ffffff,#000000,Steinzeit,,2026-04-07 11:43:22 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing#route-359648,Jochen Schäfer,Sportklettern Empore,Empore
+37.2,5-,#ffffff,#000000,Steinzeit,,2026-04-07 11:43:22 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/zlaggables/sportclimbing/359648/ascents,Jochen Schäfer,Sportklettern Empore,Empore
 38.1,4,#ffa500,,Untertauchen,,2025-07-03 16:35:01 UTC,https://url.vertical-life.info/RXPJtpJdtcTFUczz9,Silas Pollmann,Sportklettern Empore,Empore
 38.2,7-,#9400d3,,Yoga-Meister,Nur Lila,2025-07-11 11:05:24 UTC,https://url.vertical-life.info/MFGLwQ3AehFEdAS38,Julius Dammann,Sportklettern Empore,Empore
 38.3,6,#9400d3,#ffffff,Yoga-Schüler,Lila und lila mit weißem Kreuz,2025-07-11 11:07:31 UTC,https://url.vertical-life.info/1Koyt7XVbRvdSyUg6,Julius Dammann,Sportklettern Empore,Empore
@@ -124,7 +124,7 @@ location,difficulty,color_1,color_2,name,notes,set_at,link,routesetter,area,sect
 48.3,8,#ff69b4,#ffffff,Egotrip,,2026-01-27 12:00:00 UTC,https://url.vertical-life.info/SkGepOdmXCxVM6mfg,Julius Dammann,Sportklettern Erdgeschoß,Main Wall
 49.1,5,#ffffff,#ff0000,Morgenröte,,2026-01-20 12:00:00 UTC,https://url.vertical-life.info/W3EmcNOQ61J2HZuzV,Julius Dammann,Sportklettern Erdgeschoß,Main Wall
 49.2,7+/8-,#9400d3,,Big Bad Voodoo,,2026-01-21 13:21:33 UTC,https://url.vertical-life.info/Uv9kl5FBockyCsTHO,Julius Dammann,Sportklettern Erdgeschoß,Main Wall
-49.3,8-,#ffa500,,Kids Cup Route 3,Maarten,2026-04-11 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing#route-360598,N/A ,Sportklettern Erdgeschoß,Main Wall
+49.3,8-,#ffa500,,Kids Cup Route 3,Maarten,2026-04-11 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/zlaggables/sportclimbing/360598/ascents,N/A ,Sportklettern Erdgeschoß,Main Wall
 50.1,8,#32cd32,,Tango Mango,,2026-01-24 12:00:00 UTC,https://url.vertical-life.info/AFxjjKCusqlA6UYGk,Silas Pollmann,Sportklettern Erdgeschoß,Main Wall
 50.2,6+,#808080,,The Repetition,,2026-01-27 12:00:00 UTC,https://url.vertical-life.info/x2aZIHPGke09UD3bN,Silas Pollmann,Sportklettern Erdgeschoß,Main Wall
 51.1,8+,#ff69b4,,Projekt ?,Mit Kante,2026-02-14 12:00:00 UTC,https://url.vertical-life.info/hRUh6CpqSIV6eZe9N,Julius Dammann,Sportklettern Empore,Empore
@@ -136,7 +136,7 @@ location,difficulty,color_1,color_2,name,notes,set_at,link,routesetter,area,sect
 52.3,6+,#9400d3,,Highway To Hell,Mit Kante!,2026-02-14 12:00:00 UTC,https://url.vertical-life.info/DNfT487OE1OTNRlgQ,Dominik Schuler,Sportklettern Empore,Empore
 53.1,4+,#ff0000,,Vogelflug,,2026-02-05 12:00:00 UTC,https://url.vertical-life.info/tHm1LWScDKHJ2uYJW,N/A ,Sportklettern Empore,Empore
 53.2,7,#32cd32,,Hin-Fällig,,2026-02-06 10:20:34 UTC,https://url.vertical-life.info/L9fBHF9CnOPokADlw,Silas Pollmann,Sportklettern Empore,Empore
-53.3,6,#808080,,Elefantenhaut,,2026-04-18 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing#route-360770,Jochen Schäfer,Sportklettern Empore,Empore
+53.3,6,#808080,,Elefantenhaut,,2026-04-18 12:00:00 UTC,https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/zlaggables/sportclimbing/360770/ascents,Jochen Schäfer,Sportklettern Empore,Empore
 54.1,4,#0000ff,,Tipsi,,2026-02-05 12:00:00 UTC,https://url.vertical-life.info/AurVAtR85cAEjnxlT,Julius Dammann,Sportklettern Empore,Empore
 54.2,3,#ffff00,,Wo Einhorn?!,,2026-02-05 12:00:00 UTC,https://url.vertical-life.info/vhynQOR5P2B8MmahL,Julius Dammann,Sportklettern Empore,Empore
 54.3,7+,#ffa500,#000000,Putzteufel,,2026-02-07 12:00:00 UTC,https://url.vertical-life.info/vAlTB0oTwcYjxrnpO,Julius Dammann,Sportklettern Empore,Empore

@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SOURCE_URL = 'https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing';
+const GYM_BASE = 'https://www.8a.nu/gyms/badminton-kletterhalle-tivoli';
 const SNAPSHOT_DIR = path.join('data', 'snapshots');
 const SOURCE_FILE_PREFIX = 'tivoli-routes-';
 const SYNC_METADATA_JSON_PATH = path.join('data', 'latest-route-sync.json');
@@ -55,7 +56,7 @@ async function main() {
 
     const merged = {
       ...route,
-      link: existing.link || route.link,
+      link: existing.link?.includes('/zlaggables/') ? existing.link : route.link,
       routesetter: route.routesetter || existing.routesetter || 'N/A ',
       area: existing.area || route.area,
       sector: existing.sector || route.sector
@@ -237,7 +238,7 @@ function normalizeRoute(route) {
     name,
     notes,
     set_at: setAt,
-    link: `${SOURCE_URL}#route-${route.id}`,
+    link: `${GYM_BASE}/zlaggables/sportclimbing/${route.id}/ascents`,
     routesetter,
     area,
     sector
