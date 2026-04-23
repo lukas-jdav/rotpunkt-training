@@ -2,8 +2,50 @@
 
 ## Git-Workflow
 
-- **Direkt auf `main` committen und pushen** — kein Branch, kein PR.
-- Nur wenn der User explizit einen PR verlangt, einen erstellen.
+**1 Branch = 1 Thema = 1 Pull Request**
+
+Jede Änderung beginnt so:
+
+```bash
+git checkout main
+git pull
+git checkout -b <typ>/<thema>
+```
+
+Branch-Namensschema:
+
+| Präfix | Verwendung |
+|---|---|
+| `feat/` | Neue Funktion |
+| `fix/` | Fehlerbehebung |
+| `ui/` | Reine UI/Styling-Änderungen |
+| `refactor/` | Strukturänderungen ohne neue Funktion |
+| `chore/` | Version, Doku, Meta |
+
+Commits: **ein Commit = ein Thema**
+
+```
+feat: add archive logic for removed routes
+ui: new-route badge in training list
+chore: bump version to v2.3
+```
+
+Niemals gemischte Sammel-Commits wie "update app" oder "fix and feature".
+
+**Pull Requests:**
+
+- Genau ein Thema pro PR
+- Klarer Titel, kurze Beschreibung (was + warum)
+- Nie Feature + UI + Refactor in einer PR
+- Nie Version + Feature in einer PR
+
+**`main` bleibt stabil:**
+
+- Kein direktes Arbeiten oder Pushen auf `main`
+- Änderungen nur per PR
+- Kein Force-Push auf `main`
+
+---
 
 ## Technischer Stack
 
@@ -11,6 +53,8 @@
 - Globaler Scope: Reihenfolge der Script-Tags in `index.html` ist funktional relevant
 - Firebase Auth + Firestore für Cloud-Sync (optional, funktioniert auch rein lokal)
 - GitHub Pages deployed automatisch von `main`
+
+---
 
 ## Dateistruktur
 
@@ -28,6 +72,8 @@ ui.js               Alle render*-Funktionen, appendEntryRow()
 app.js              init(), bindEvents(), Event-Handler
 tivoli-routes-data.js   Rohdaten der Hallenkletterrouten (CSV als JS-Konstante)
 ```
+
+---
 
 ## Versionierung
 
