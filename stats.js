@@ -217,6 +217,41 @@ function renderStats() {
       </div>
     </div>
   `;
+
+  const archivedEntries = appState.routeEntries
+    .filter(e => e.archived && e.status === 'done')
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+  if (archivedEntries.length > 0) {
+    const archiveSection = document.createElement('div');
+    archiveSection.className = 'section archive-section';
+    archiveSection.innerHTML = `
+      <details class="archive-details">
+        <summary class="archive-summary">
+          <span>Mein Kletter-Archiv</span>
+          <span class="archive-count">${archivedEntries.length} Route${archivedEntries.length !== 1 ? 'n' : ''} aus abgebauten Seilen</span>
+        </summary>
+        <div class="archive-note">Abgeschlossene Routen, die nicht mehr in der Halle hängen.</div>
+        <table class="archive-table">
+          <thead><tr><th>Datum</th><th>Grad</th><th>Route</th><th>Begehung</th></tr></thead>
+          <tbody>
+            ${archivedEntries.map(e => `
+              <tr>
+                <td>${escapeHtml(e.date ? formatDate(e.date) : '—')}</td>
+                <td><span class="route-grade-badge">${escapeHtml(e.grade)}</span></td>
+                <td>
+                  <div class="route-name-main">${escapeHtml(e.name)}</div>
+                  ${e.location ? `<div style="font-size:11px;color:var(--gray-400);">${escapeHtml(e.location)}</div>` : ''}
+                </td>
+                <td><span class="tracker-pill pill-${e.ascentType === 'flash' ? 'flash' : e.ascentType === 'toprope' ? 'toprope' : 'rotpunkt'}">${e.ascentType === 'flash' ? 'Flash' : e.ascentType === 'toprope' ? 'Toprope' : 'Rotpunkt'}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </details>
+    `;
+    panel.appendChild(archiveSection);
+  }
 }
 
 function renderAscentRow(label, count, total, pillClass, barColor) {
