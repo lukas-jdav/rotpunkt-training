@@ -2,11 +2,20 @@ function init() {
   migrateLegacyStorage();
   appState.profile = loadProfile();
   appState.routeEntries = loadRouteEntries();
+  initGradeFilter();
   initFirebase();
   bindEvents();
   resetRouteForm();
   applyTheme(getCurrentTheme());
   renderApp();
+}
+
+function initGradeFilter() {
+  const { progressState } = getComputedState();
+  const grades = [];
+  if (progressState.current) grades.push(progressState.current.grade);
+  if (progressState.canStartNext && progressState.next) grades.push(progressState.next.grade);
+  appState.filters.grades = grades;
 }
 
 function bindEvents() {
