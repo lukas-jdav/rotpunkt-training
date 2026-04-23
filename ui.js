@@ -215,12 +215,10 @@ function renderRouteBoard(progressState) {
   table.innerHTML = `
     <thead>
       <tr>
-        <th>Check</th>
         <th>Grad</th>
         <th>Route</th>
         <th>Infos</th>
         <th>Bereich</th>
-        <th>Status</th>
         <th>Aktionen</th>
       </tr>
     </thead>
@@ -233,20 +231,12 @@ function renderRouteBoard(progressState) {
     const row = document.createElement('tr');
     row.className = 'route-row-' + selectionFromEntry(entry);
 
-    const statusMeta = getRouteStatusMeta(entry);
     const locked = isEntryLocked(entry, progressState);
-    const quickChecked = entry.status === 'done';
     const infoCellHtml = buildInfoCellHtml(entry);
     const totalAttempts = (entry.attemptLog || []).reduce((sum, s) => sum + s.count, 0);
     const todayAttempts = (entry.attemptLog || []).find(s => s.date === getTodayValue())?.count || 0;
 
     row.innerHTML = `
-      <td>
-        <label class="route-quick-toggle ${quickChecked ? 'checked' : ''} ${locked ? 'locked' : ''}">
-          <input type="checkbox" ${quickChecked ? 'checked' : ''} ${locked ? 'disabled' : ''} data-action="toggle-done" data-entry-id="${escapeHtml(entry.id)}">
-          <span>${quickChecked ? 'Ja' : 'Nein'}</span>
-        </label>
-      </td>
       <td><span class="route-grade-badge">${escapeHtml(entry.grade)}</span></td>
       <td>
         <div class="route-name-main">
@@ -259,10 +249,6 @@ function renderRouteBoard(progressState) {
       </td>
       <td>${infoCellHtml}</td>
       <td><div class="route-location-text">${escapeHtml(entry.location || '—')}</div></td>
-      <td>
-        <span class="tracker-pill ${statusMeta.pillClass}">${escapeHtml(statusMeta.label)}</span>
-        ${locked ? '<div class="route-lock-note">Gesperrt oberhalb des aktuellen Grades</div>' : ''}
-      </td>
       <td></td>
     `;
 
@@ -308,6 +294,12 @@ function renderRouteBoard(progressState) {
     `;
     actionsCell.appendChild(actions);
     actionsCell.appendChild(counter);
+    if (locked) {
+      const lockNote = document.createElement('div');
+      lockNote.className = 'route-lock-note';
+      lockNote.textContent = 'Gesperrt oberhalb des aktuellen Grades';
+      actionsCell.appendChild(lockNote);
+    }
     tbody.appendChild(row);
   });
 

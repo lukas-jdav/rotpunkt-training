@@ -365,10 +365,11 @@ function getStatusPriority(entry) {
 
 function sortEntries(entries) {
   return [...entries].sort((left, right) => {
+    const ld = left.setDate || '￿';
+    const rd = right.setDate || '￿';
+    if (ld !== rd) return ld < rd ? -1 : 1;
     const byGrade = Number(left.grade) - Number(right.grade);
     if (byGrade !== 0) return byGrade;
-    const byStatus = getStatusPriority(left) - getStatusPriority(right);
-    if (byStatus !== 0) return byStatus;
     return left.name.localeCompare(right.name, 'de', { sensitivity: 'base' });
   });
 }
