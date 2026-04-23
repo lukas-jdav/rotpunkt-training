@@ -81,6 +81,11 @@ function renderSettingsModal() {
   ui.settingsGithubToken.value = appState.githubSync.token;
   ui.settingsGithubStatus.textContent = getGithubSyncStatusText();
   ui.settingsGithubTrigger.disabled = !appState.githubSync.token || appState.githubSync.status === 'running';
+  ui.settingsRouteSyncUpdated.textContent = getRouteSyncUpdatedText();
+  ui.settingsRouteSyncSummary.textContent = getRouteSyncSummaryText();
+  ui.settingsRouteSyncBrowser.textContent = getRouteSyncBrowserText();
+  ui.settingsRouteSyncEnable.disabled = appState.routeSync.permission === 'granted';
+  ui.settingsRouteSyncCheck.disabled = appState.routeSync.status === 'checking';
 }
 
 function getGithubSyncStatusText() {
@@ -88,6 +93,127 @@ function getGithubSyncStatusText() {
   if (appState.githubSync.status === 'success') return appState.githubSync.message || 'Workflow started';
   if (appState.githubSync.status === 'error') return appState.githubSync.message || 'GitHub request failed';
   return appState.githubSync.message || 'Not configured yet';
+}
+
+function getRouteSyncUpdatedText() {
+  const generatedAt = appState.routeSync.summary?.generatedAt;
+  if (!generatedAt) return 'No sync data yet';
+  return formatRouteSyncDateTime(generatedAt);
+}
+
+function getRouteSyncSummaryText() {
+  if (appState.routeSync.status === 'checking') return 'Checking for route updates …';
+  if (appState.routeSync.message && appState.routeSync.status === 'error') return appState.routeSync.message;
+
+  const summary = appState.routeSync.summary;
+  if (!summary) return 'No sync data yet';
+  if (!summary.hasChanges) return 'No recent route changes';
+
+  const bits = [];
+  if (summary.summary?.added) bits.push(`${summary.summary.added} new`);
+  if (summary.summary?.updated) bits.push(`${summary.summary.updated} updated`);
+  if (summary.summary?.removed) bits.push(`${summary.summary.removed} archived`);
+  if (appState.routeSync.requiresReload) bits.push('reload available');
+  return bits.join(' · ') || 'Recent route changes available';
+}
+
+function getRouteSyncBrowserText() {
+  if (appState.routeSync.permission === 'unsupported') return 'Not supported in this browser';
+  if (appState.routeSync.permission === 'granted') return 'Enabled';
+  if (appState.routeSync.permission === 'denied') return 'Blocked in browser settings';
+  return 'Not enabled';
+}
+
+function renderRouteSyncNotice() {
+  const summary = appState.routeSync.summary;
+  const hasVisibleNotice = summary
+    && summary.hasChanges
+    && summary.changeId
+    && (summary.changeId !== appState.routeSync.lastSeenChangeId || appState.routeSync.requiresReload);
+
+  if (!hasVisibleNotice) {
+    ui.routeSyncNotice.hidden = true;
+    ui.routeSyncNotice.innerHTML = '';
+    return;
+  }
+
+  const bits = [];
+  if (summary.summary?.added) bits.push(`${summary.summary.added} new`);
+  if (summary.summary?.updated) bits.push(`${summary.summary.updated} updated`);
+  if (summary.summary?.removed) bits.push(`${summary.summary.removed} archived`);
+
+  const highlights = getRouteSyncHighlights(summary);
+  const actions = [];
+  if (appState.routeSync.requiresReload) {
+    actions.push('<button type="button" class="secondary-btn" data-route-sync-action="reload">Reload app</button>');
+  }
+  if (appState.routeSync.permission !== 'granted' && appState.routeSync.permission !== 'unsupported') {
+    actions.push('<button type="button" class="secondary-btn" data-route-sync-action="enable-browser">Enable browser notifications</button>');
+  }
+  actions.push('<button type="button" class="primary-btn" data-route-sync-action="dismiss">Mark as seen</button>');
+
+  ui.routeSyncNotice.hidden = false;
+  ui.routeSyncNotice.innerHTML = `
+    <section class="route-sync-card${appState.routeSync.requiresReload ? ' route-sync-card-live' : ''}">
+      <div class="route-sync-card-head">
+        <div>
+          <div class="eyebrow">Route update</div>
+          <h2 class="route-sync-title">${appState.routeSync.requiresReload ? 'Neue Tivoli-Routen sind verfügbar' : 'Letzte Tivoli-Routenänderungen'}</h2>
+          <p class="route-sync-subtitle">${escapeHtml(bits.join(' · ') || 'Recent route changes')} · ${escapeHtml(formatRouteSyncDateTime(summary.generatedAt))}</p>
+        </div>
+        ${appState.routeSync.requiresReload ? '<span class="status-pill">Reload empfohlen</span>' : ''}
+      </div>
+      ${highlights.length ? `<ul class="route-sync-list">${highlights.map(item => `<li>${item}</li>`).join('')}</ul>` : '<p class="route-sync-empty">The latest sync changed route data, but no detailed items were included.</p>'}
+      <div class="tracker-actions route-sync-actions">
+        ${actions.join('')}
+      </div>
+    </section>
+  `;
+}
+
+function getRouteSyncHighlights(summary) {
+  const items = [];
+  (summary.changes?.added || []).slice(0, 4).forEach(route => {
+    items.push(`<strong>New</strong> · ${escapeHtml(formatRouteSyncRoute(route))}`);
+  });
+  (summary.changes?.updated || []).slice(0, 3).forEach(change => {
+    const fields = formatChangedFields(change.changedFields || []);
+    items.push(`<strong>Updated</strong> · ${escapeHtml(formatRouteSyncRoute(change.after))}${fields ? ` · ${escapeHtml(fields)}` : ''}`);
+  });
+  (summary.changes?.removed || []).slice(0, 3).forEach(route => {
+    items.push(`<strong>Archived</strong> · ${escapeHtml(formatRouteSyncRoute(route))}`);
+  });
+  return items.slice(0, 7);
+}
+
+function formatRouteSyncRoute(route) {
+  const location = String(route?.location || '').trim();
+  const name = String(route?.name || '').trim();
+  const difficulty = String(route?.difficulty || '').trim();
+  return [location, name].filter(Boolean).join(' ') + (difficulty ? ` (${difficulty})` : '');
+}
+
+function formatChangedFields(fields) {
+  const labels = {
+    difficulty: 'grade',
+    color_1: 'main color',
+    color_2: 'accent color',
+    notes: 'notes',
+    set_at: 'set date',
+    routesetter: 'setter',
+    area: 'area',
+    sector: 'sector'
+  };
+  return fields.map(field => labels[field] || field).join(', ');
+}
+
+function formatRouteSyncDateTime(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value || '');
+  return new Intl.DateTimeFormat('de-DE', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  }).format(date);
 }
 
 // ── Metrics (Status-Tab) ──────────────────────────────────────────────────────
@@ -368,6 +494,7 @@ function buildInfoCellHtml(entry) {
 
 function renderApp() {
   const computed = getComputedState();
+  renderRouteSyncNotice();
   renderMetrics(computed);
   renderRoadmap(computed.summaries, computed.progressState);
   renderGradeFilterChips(computed.summaries);

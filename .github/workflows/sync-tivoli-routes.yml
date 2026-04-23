@@ -40,7 +40,7 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md scripts/sync-tivoli-routes.mjs tivoli-routes-data.js data/snapshots/tivoli-routes-*.csv
+          git add README.md scripts/sync-tivoli-routes.mjs tivoli-routes-data.js data/latest-route-sync.json data/latest-route-sync.js data/snapshots/tivoli-routes-*.csv
           git commit -m "Sync Tivoli routes"
           git push
 

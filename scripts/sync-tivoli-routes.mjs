@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 const SOURCE_URL = 'https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing';
 const SNAPSHOT_DIR = path.join('data', 'snapshots');
 const SOURCE_FILE_PREFIX = 'tivoli-routes-';
+const SYNC_METADATA_JSON_PATH = path.join('data', 'latest-route-sync.json');
+const SYNC_METADATA_JS_PATH = path.join('data', 'latest-route-sync.js');
 const CSV_HEADERS = [
   'location',
   'difficulty',
@@ -23,6 +25,8 @@ const collator = new Intl.Collator('de', { numeric: true, sensitivity: 'base' })
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const jsDataPath = path.join(repoRoot, 'tivoli-routes-data.js');
+const syncMetadataJsonPath = path.join(repoRoot, SYNC_METADATA_JSON_PATH);
+const syncMetadataJsPath = path.join(repoRoot, SYNC_METADATA_JS_PATH);
 
 main().catch(error => {
   console.error('[sync-tivoli-routes] Fehler:', error.message);
@@ -80,6 +84,17 @@ async function main() {
   const jsChanged = normalizeNewlines(currentState.jsSource) !== normalizeNewlines(jsBody);
   const todayStamp = formatDateStamp(new Date());
   const csvSnapshotPath = path.join(repoRoot, SNAPSHOT_DIR, `${SOURCE_FILE_PREFIX}${todayStamp}.csv`);
+  const metadataState = await readCurrentSyncMetadata();
+  const syncMetadata = buildSyncMetadata({
+    totalRoutes: mergedRoutes.length,
+    added,
+    updated,
+    removed
+  });
+  const syncMetadataJson = JSON.stringify(syncMetadata, null, 2) + '\n';
+  const syncMetadataJs = `window.TIVOLI_ROUTE_SYNC = ${JSON.stringify(syncMetadata, null, 2)};\n`;
+  const metadataChanged = normalizeNewlines(metadataState.jsonSource) !== normalizeNewlines(syncMetadataJson)
+    || normalizeNewlines(metadataState.jsSource) !== normalizeNewlines(syncMetadataJs);
 
   if (jsChanged) {
     await mkdir(path.dirname(csvSnapshotPath), { recursive: true });
@@ -87,12 +102,21 @@ async function main() {
     await writeFile(csvSnapshotPath, csvBody + '\n', 'utf8');
   }
 
+  if (metadataChanged) {
+    await mkdir(path.dirname(syncMetadataJsonPath), { recursive: true });
+    await writeFile(syncMetadataJsonPath, syncMetadataJson, 'utf8');
+    await writeFile(syncMetadataJsPath, syncMetadataJs, 'utf8');
+  }
+
   printSummary({
     totalRoutes: mergedRoutes.length,
     added,
     updated,
     removed,
-    updatedFiles: jsChanged ? [path.basename(jsDataPath), path.basename(csvSnapshotPath)] : []
+    updatedFiles: [
+      ...(jsChanged ? [path.basename(jsDataPath), path.basename(csvSnapshotPath)] : []),
+      ...(metadataChanged ? [path.basename(syncMetadataJsonPath), path.basename(syncMetadataJsPath)] : [])
+    ]
   });
 }
 
@@ -254,6 +278,15 @@ async function readCurrentState() {
   return { jsSource, rows };
 }
 
+async function readCurrentSyncMetadata() {
+  const [jsonSource, jsSource] = await Promise.all([
+    readOptionalFile(syncMetadataJsonPath),
+    readOptionalFile(syncMetadataJsPath)
+  ]);
+
+  return { jsonSource, jsSource };
+}
+
 function extractRawCsvFromJs(source) {
   const match = source.match(/String\.raw`([\s\S]*)`;/);
   if (!match) {
@@ -319,6 +352,33 @@ function buildCsv(rows) {
   return rows.map(columns => columns.map(escapeCsvValue).join(',')).join('\n');
 }
 
+function buildSyncMetadata({ totalRoutes, added, updated, removed }) {
+  const generatedAt = new Date().toISOString();
+  const hasChanges = added.length > 0 || updated.length > 0 || removed.length > 0;
+
+  return {
+    generatedAt,
+    sourceUrl: SOURCE_URL,
+    totalRoutes,
+    hasChanges,
+    changeId: hasChanges ? createChangeId(generatedAt, { added, updated, removed }) : '',
+    summary: {
+      added: added.length,
+      updated: updated.length,
+      removed: removed.length
+    },
+    changes: {
+      added: added.map(toRoutePreview),
+      updated: updated.map(({ before, after }) => ({
+        before: toRoutePreview(before),
+        after: toRoutePreview(after),
+        changedFields: getChangedFields(before, after)
+      })),
+      removed: removed.map(toRoutePreview)
+    }
+  };
+}
+
 function escapeCsvValue(value) {
   const stringValue = String(value ?? '');
   if (/[",\n]/.test(stringValue)) {
@@ -340,6 +400,34 @@ function buildLooseRouteKey(route) {
     String(route.location || '').trim().toLowerCase(),
     String(route.name || '').trim().toLowerCase()
   ].join('||');
+}
+
+function toRoutePreview(route) {
+  return {
+    location: String(route.location || ''),
+    name: String(route.name || ''),
+    difficulty: String(route.difficulty || ''),
+    area: String(route.area || ''),
+    sector: String(route.sector || ''),
+    set_at: String(route.set_at || ''),
+    routesetter: String(route.routesetter || ''),
+    color_1: String(route.color_1 || ''),
+    color_2: String(route.color_2 || '')
+  };
+}
+
+function getChangedFields(previous, next) {
+  const fields = ['difficulty', 'color_1', 'color_2', 'notes', 'set_at', 'routesetter', 'area', 'sector'];
+  return fields.filter(field => String(previous[field] || '') !== String(next[field] || ''));
+}
+
+function createChangeId(generatedAt, { added, updated, removed }) {
+  return [
+    generatedAt,
+    added.map(buildLooseRouteKey).join('|'),
+    updated.map(({ after }) => buildLooseRouteKey(after)).join('|'),
+    removed.map(buildLooseRouteKey).join('|')
+  ].join('::');
 }
 
 function compareRoutes(left, right) {
@@ -377,6 +465,15 @@ function escapeForRawTemplate(value) {
 
 function normalizeNewlines(value) {
   return String(value).replace(/\r\n/g, '\n');
+}
+
+async function readOptionalFile(filePath) {
+  try {
+    return await readFile(filePath, 'utf8');
+  } catch (error) {
+    if (error && error.code === 'ENOENT') return '';
+    throw error;
+  }
 }
 
 function printSummary({ totalRoutes, added, updated, removed, updatedFiles }) {

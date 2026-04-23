@@ -61,6 +61,8 @@
 </nav>
 
 <section id="tab-dashboard" class="tab-panel active">
+  <div id="route-sync-notice" class="route-sync-notice" hidden aria-live="polite"></div>
+
   <div class="section">
     <h2 class="section-title">Trainingsliste</h2>
     <div class="route-toolbar">
@@ -350,9 +352,31 @@
       </div>
 
       <div class="settings-card">
+        <h3>Route Updates</h3>
+        <p>Daily route changes from the GitHub sync. Browser notifications work when this app is open.</p>
+        <div class="cloud-status-line">
+          <div class="cloud-status-label">Last update</div>
+          <div id="settings-route-sync-updated" class="cloud-status-value">No sync data yet</div>
+        </div>
+        <div class="cloud-status-line">
+          <div class="cloud-status-label">Changes</div>
+          <div id="settings-route-sync-summary" class="cloud-status-value">No recent route changes</div>
+        </div>
+        <div class="cloud-status-line">
+          <div class="cloud-status-label">Browser alerts</div>
+          <div id="settings-route-sync-browser" class="cloud-status-value">Not enabled</div>
+        </div>
+        <div class="tracker-actions">
+          <button id="settings-route-sync-enable" type="button" class="secondary-btn">Enable browser notifications</button>
+          <button id="settings-route-sync-check" type="button" class="secondary-btn">Check for updates now</button>
+        </div>
+      </div>
+
+      <div class="settings-card">
         <h3>Version &amp; Verlauf</h3>
-        <p class="version-current">Aktuelle Version: <strong>v2.3</strong> · 23. April 2026</p>
+        <p class="version-current">Aktuelle Version: <strong>v2.4</strong> · 23. April 2026</p>
         <ul class="version-list">
+          <li><span class="version-tag">v2.4</span> <span class="version-date">Apr 2026</span> Route update notifications with browser alerts and daily GitHub sync summary</li>
           <li><span class="version-tag">v2.3</span> <span class="version-date">Apr 2026</span> Kletter-Archiv: abgebaute Routen bleiben erhalten · „Neu"-Badge für frisch geschraubte Routen</li>
           <li><span class="version-tag">v2.2</span> <span class="version-date">Apr 2026</span> Trainingsliste überarbeitet: 5 Spalten, Sortierung nach Schraubdatum</li>
           <li><span class="version-tag">v2.1</span> <span class="version-date">Apr 2026</span> Versuchs-Tracking mit Session-Logs und Statistik-Charts</li>
@@ -376,11 +400,12 @@
 <div class="footer">
   <span>Sektion Aachen · JDAV Leistungsgruppe</span>
   <span>Konzept: Andi · App: Lukas</span>
-  <span class="footer-version">v2.3 · 23. Apr 2026</span>
+  <span class="footer-version">v2.4 · 23. Apr 2026</span>
 </div>
 
 
 <script src="tivoli-routes-data.js"></script>
+<script src="data/latest-route-sync.js"></script>
 <script src="config.js"></script>
 <script src="utils.js"></script>
 <script src="routes.js"></script>

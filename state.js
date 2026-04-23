@@ -12,7 +12,17 @@ const appState = {
   githubSync: {
     token: '',
     status: 'idle',
-    message: 'Noch nicht eingerichtet'
+    message: 'Not configured yet'
+  },
+  routeSync: {
+    summary: window.TIVOLI_ROUTE_SYNC || null,
+    browserNotificationsEnabled: false,
+    permission: 'default',
+    lastSeenChangeId: '',
+    lastBrowserNotificationId: '',
+    requiresReload: false,
+    status: 'idle',
+    message: ''
   }
 };
 
@@ -29,6 +39,7 @@ const ui = {
   settingsModal: document.getElementById('settings-modal'),
   settingsClose: document.getElementById('settings-close'),
   authUi: document.getElementById('auth-ui'),
+  routeSyncNotice: document.getElementById('route-sync-notice'),
   routeBoard: document.getElementById('route-board'),
   routeLogForm: document.getElementById('route-log-form'),
   formFeedback: document.getElementById('form-feedback'),
@@ -59,6 +70,11 @@ const ui = {
   settingsGithubClear: document.getElementById('settings-github-clear'),
   settingsGithubTrigger: document.getElementById('settings-github-trigger'),
   settingsGithubOpen: document.getElementById('settings-github-open'),
+  settingsRouteSyncUpdated: document.getElementById('settings-route-sync-updated'),
+  settingsRouteSyncSummary: document.getElementById('settings-route-sync-summary'),
+  settingsRouteSyncBrowser: document.getElementById('settings-route-sync-browser'),
+  settingsRouteSyncEnable: document.getElementById('settings-route-sync-enable'),
+  settingsRouteSyncCheck: document.getElementById('settings-route-sync-check'),
   settingsResetProgress: document.getElementById('settings-reset-progress'),
   statsPanel: document.getElementById('status-stats-panel')
 };

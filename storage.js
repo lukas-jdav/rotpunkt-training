@@ -72,6 +72,32 @@ function persistGithubSyncSettings() {
   }));
 }
 
+function loadRouteNotificationSettings() {
+  try {
+    const raw = localStorage.getItem(APP_CONFIG.storageKeys.routeNotifications);
+    const parsed = raw ? JSON.parse(raw) : {};
+    return {
+      browserNotificationsEnabled: Boolean(parsed.browserNotificationsEnabled),
+      lastSeenChangeId: typeof parsed.lastSeenChangeId === 'string' ? parsed.lastSeenChangeId : '',
+      lastBrowserNotificationId: typeof parsed.lastBrowserNotificationId === 'string' ? parsed.lastBrowserNotificationId : ''
+    };
+  } catch (error) {
+    return {
+      browserNotificationsEnabled: false,
+      lastSeenChangeId: '',
+      lastBrowserNotificationId: ''
+    };
+  }
+}
+
+function persistRouteNotificationSettings() {
+  localStorage.setItem(APP_CONFIG.storageKeys.routeNotifications, JSON.stringify({
+    browserNotificationsEnabled: Boolean(appState.routeSync.browserNotificationsEnabled),
+    lastSeenChangeId: String(appState.routeSync.lastSeenChangeId || ''),
+    lastBrowserNotificationId: String(appState.routeSync.lastBrowserNotificationId || '')
+  }));
+}
+
 function persistProfile(allowCloud = true) {
   localStorage.setItem(APP_CONFIG.storageKeys.profile, JSON.stringify(appState.profile));
   if (allowCloud) writeCloudSnapshot().catch(() => {});

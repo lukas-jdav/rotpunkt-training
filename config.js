@@ -5,7 +5,8 @@ const APP_CONFIG = {
     profile: 'jdavRotpunkt.profile',
     meta: 'jdavRotpunkt.meta',
     theme: 'jdavRotpunkt.theme',
-    githubSync: 'jdavRotpunkt.githubSync'
+    githubSync: 'jdavRotpunkt.githubSync',
+    routeNotifications: 'jdavRotpunkt.routeNotifications'
   },
   legacyKeys: {
     routes: 'jdavRotpunktRouteLog.v3.flash.defaultOpen',
@@ -33,10 +34,14 @@ const APP_CONFIG = {
     repo: 'rotpunkt-training',
     workflowId: 'sync-tivoli-routes.yml',
     ref: 'main'
+  },
+  routeNotifications: {
+    summaryJsonPath: 'data/latest-route-sync.json',
+    pollIntervalMs: 15 * 60 * 1000
   }
 };
 
-const APP_VERSION = 'v2.3';
+const APP_VERSION = 'v2.4';
 const APP_BUILD_DATE = '2026-04-23';
 
 const SUN_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';

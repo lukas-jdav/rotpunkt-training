@@ -1,3 +1,5 @@
+let routeSyncPollHandle = null;
+
 function init() {
   migrateLegacyStorage();
   appState.profile = loadProfile();
@@ -5,12 +7,19 @@ function init() {
     ...appState.githubSync,
     ...loadGithubSyncSettings()
   };
+  appState.routeSync = {
+    ...appState.routeSync,
+    ...loadRouteNotificationSettings(),
+    permission: getBrowserNotificationPermission()
+  };
   appState.routeEntries = loadRouteEntries();
   initGradeFilter();
   initFirebase();
   bindEvents();
   resetRouteForm();
   applyTheme(getCurrentTheme());
+  handleRouteSyncSummary(window.TIVOLI_ROUTE_SYNC || null, { requiresReload: false, source: 'initial' });
+  startRouteSyncPolling();
   renderApp();
 }
 
@@ -126,8 +135,36 @@ function bindEvents() {
   ui.settingsGithubClear.addEventListener('click', clearGithubSyncToken);
   ui.settingsGithubTrigger.addEventListener('click', triggerGithubRouteSync);
   ui.settingsGithubOpen.addEventListener('click', openGithubWorkflowPage);
+  ui.settingsRouteSyncEnable.addEventListener('click', enableBrowserNotifications);
+  ui.settingsRouteSyncCheck.addEventListener('click', () => checkForRouteSyncUpdates({ manual: true }));
+
+  ui.routeSyncNotice.addEventListener('click', event => {
+    const button = event.target.closest('button[data-route-sync-action]');
+    if (!button) return;
+
+    if (button.dataset.routeSyncAction === 'dismiss') {
+      markRouteSyncSummarySeen();
+      renderApp();
+      return;
+    }
+
+    if (button.dataset.routeSyncAction === 'reload') {
+      window.location.reload();
+      return;
+    }
+
+    if (button.dataset.routeSyncAction === 'enable-browser') {
+      enableBrowserNotifications();
+    }
+  });
 
   ui.settingsResetProgress.addEventListener('click', resetProgressSafely);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      checkForRouteSyncUpdates();
+    }
+  });
 }
 
 function switchTab(tabId) {
@@ -215,6 +252,161 @@ async function triggerGithubRouteSync() {
 function openGithubWorkflowPage() {
   const { owner, repo, workflowId } = APP_CONFIG.githubSync;
   window.open(`https://github.com/${owner}/${repo}/actions/workflows/${workflowId}`, '_blank', 'noopener');
+}
+
+function getBrowserNotificationPermission() {
+  if (!('Notification' in window)) return 'unsupported';
+  return Notification.permission;
+}
+
+function startRouteSyncPolling() {
+  if (!canPollRouteSyncSummary()) return;
+  if (routeSyncPollHandle) window.clearInterval(routeSyncPollHandle);
+  routeSyncPollHandle = window.setInterval(() => {
+    checkForRouteSyncUpdates();
+  }, APP_CONFIG.routeNotifications.pollIntervalMs);
+}
+
+function canPollRouteSyncSummary() {
+  return window.location.protocol === 'http:' || window.location.protocol === 'https:';
+}
+
+async function checkForRouteSyncUpdates({ manual = false } = {}) {
+  if (!canPollRouteSyncSummary()) {
+    if (manual) {
+      appState.routeSync.status = 'error';
+      appState.routeSync.message = 'Live update checks need the app to run over HTTP or HTTPS.';
+      renderSettingsModal();
+    }
+    return;
+  }
+
+  appState.routeSync.status = 'checking';
+  if (manual) appState.routeSync.message = 'Checking GitHub route updates …';
+  renderSettingsModal();
+
+  try {
+    const response = await fetch(`${APP_CONFIG.routeNotifications.summaryJsonPath}?ts=${Date.now()}`, {
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const summary = await response.json();
+    handleRouteSyncSummary(summary, {
+      requiresReload: hasNewRouteSyncSummary(summary),
+      source: manual ? 'manual' : 'poll'
+    });
+
+    appState.routeSync.status = 'idle';
+    appState.routeSync.message = manual
+      ? (hasPendingRouteSyncNotice() ? 'A newer route update is available.' : 'No newer route update found.')
+      : '';
+    renderApp();
+  } catch (error) {
+    appState.routeSync.status = 'error';
+    appState.routeSync.message = manual
+      ? 'Route update check failed.'
+      : 'Background route update check failed.';
+    console.error('Route sync check failed:', error);
+    renderSettingsModal();
+  }
+}
+
+function handleRouteSyncSummary(summary, { requiresReload = false, source = 'initial' } = {}) {
+  if (!summary || typeof summary !== 'object') return;
+
+  const previousChangeId = appState.routeSync.summary?.changeId || '';
+  const nextChangeId = String(summary.changeId || '');
+  const summaryChanged = nextChangeId && nextChangeId !== previousChangeId;
+
+  appState.routeSync.summary = summary;
+  appState.routeSync.requiresReload = Boolean(appState.routeSync.requiresReload || requiresReload);
+  appState.routeSync.permission = getBrowserNotificationPermission();
+  if (source === 'initial' && !appState.routeSync.message) {
+    appState.routeSync.message = '';
+  }
+
+  if (summaryChanged || source === 'initial') {
+    maybeTriggerRouteSyncNotification();
+  }
+}
+
+function hasNewRouteSyncSummary(summary) {
+  const currentId = String(appState.routeSync.summary?.changeId || '');
+  const nextId = String(summary?.changeId || '');
+  return Boolean(nextId && nextId !== currentId);
+}
+
+function hasPendingRouteSyncNotice() {
+  const summary = appState.routeSync.summary;
+  if (!summary || !summary.hasChanges || !summary.changeId) return false;
+  return summary.changeId !== appState.routeSync.lastSeenChangeId;
+}
+
+function markRouteSyncSummarySeen() {
+  const changeId = String(appState.routeSync.summary?.changeId || '');
+  if (!changeId) return;
+  appState.routeSync.lastSeenChangeId = changeId;
+  appState.routeSync.requiresReload = false;
+  persistRouteNotificationSettings();
+}
+
+async function enableBrowserNotifications() {
+  if (!('Notification' in window)) {
+    appState.routeSync.permission = 'unsupported';
+    appState.routeSync.message = 'Browser notifications are not supported here.';
+    renderSettingsModal();
+    return;
+  }
+
+  try {
+    const permission = await Notification.requestPermission();
+    appState.routeSync.permission = permission;
+    appState.routeSync.browserNotificationsEnabled = permission === 'granted';
+    appState.routeSync.message = permission === 'granted'
+      ? 'Browser notifications enabled.'
+      : 'Browser notifications were not allowed.';
+    persistRouteNotificationSettings();
+    maybeTriggerRouteSyncNotification();
+  } catch (error) {
+    appState.routeSync.permission = getBrowserNotificationPermission();
+    appState.routeSync.message = 'Could not enable browser notifications.';
+    console.error('Notification permission request failed:', error);
+  }
+
+  renderSettingsModal();
+}
+
+function maybeTriggerRouteSyncNotification() {
+  const summary = appState.routeSync.summary;
+  if (!summary || !summary.hasChanges || !summary.changeId) return;
+  if (!appState.routeSync.browserNotificationsEnabled || appState.routeSync.permission !== 'granted') return;
+  if (appState.routeSync.lastBrowserNotificationId === summary.changeId) return;
+
+  const counts = [];
+  if (summary.summary?.added) counts.push(`${summary.summary.added} new`);
+  if (summary.summary?.updated) counts.push(`${summary.summary.updated} updated`);
+  if (summary.summary?.removed) counts.push(`${summary.summary.removed} archived`);
+
+  try {
+    const notification = new Notification('Tivoli routes changed', {
+      body: counts.length ? counts.join(' · ') : 'New route changes are available.',
+      tag: `route-sync-${summary.changeId}`
+    });
+
+    notification.onclick = () => {
+      window.focus();
+      window.location.reload();
+    };
+
+    appState.routeSync.lastBrowserNotificationId = summary.changeId;
+    persistRouteNotificationSettings();
+  } catch (error) {
+    console.error('Browser notification failed:', error);
+  }
 }
 
 function updateEntryStatus(entryId, selection) {
