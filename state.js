@@ -8,7 +8,12 @@ const appState = {
     status: 'open'
   },
   syncStatus: 'local',
-  authReady: false
+  authReady: false,
+  githubSync: {
+    token: '',
+    status: 'idle',
+    message: 'Noch nicht eingerichtet'
+  }
 };
 
 const FIREBASE_STATE = {
@@ -48,6 +53,12 @@ const ui = {
   settingsLoginStatus: document.getElementById('settings-login-status'),
   settingsSyncStatus: document.getElementById('settings-sync-status'),
   settingsStorageStatus: document.getElementById('settings-storage-status'),
+  settingsGithubToken: document.getElementById('settings-github-token'),
+  settingsGithubStatus: document.getElementById('settings-github-status'),
+  settingsGithubSave: document.getElementById('settings-github-save'),
+  settingsGithubClear: document.getElementById('settings-github-clear'),
+  settingsGithubTrigger: document.getElementById('settings-github-trigger'),
+  settingsGithubOpen: document.getElementById('settings-github-open'),
   settingsResetProgress: document.getElementById('settings-reset-progress'),
   statsPanel: document.getElementById('status-stats-panel')
 };

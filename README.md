@@ -24,6 +24,8 @@ Der Sync liest die oeffentliche 8a.nu-Topo-Seite fuer Tivoli aus, aktualisiert `
 
 Fuer GitHub gibt es ausserdem den Workflow `.github/workflows/sync-tivoli-routes.yml`, der den Sync taeglich ausfuehrt und Aenderungen automatisch nach `main` committed.
 
+In der App kann der gleiche Workflow zusaetzlich manuell ueber den Einstellungsdialog ausgelost werden. Dafuer wird ein GitHub-Token lokal im Browser gespeichert.
+
 ## GitHub
 
 Dieses Projekt ist fuer ein einfaches Hosting ueber GitHub Pages vorbereitet.

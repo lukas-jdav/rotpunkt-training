@@ -1,6 +1,10 @@
 function init() {
   migrateLegacyStorage();
   appState.profile = loadProfile();
+  appState.githubSync = {
+    ...appState.githubSync,
+    ...loadGithubSyncSettings()
+  };
   appState.routeEntries = loadRouteEntries();
   initGradeFilter();
   initFirebase();
@@ -118,6 +122,11 @@ function bindEvents() {
     renderSettingsModal();
   });
 
+  ui.settingsGithubSave.addEventListener('click', saveGithubSyncToken);
+  ui.settingsGithubClear.addEventListener('click', clearGithubSyncToken);
+  ui.settingsGithubTrigger.addEventListener('click', triggerGithubRouteSync);
+  ui.settingsGithubOpen.addEventListener('click', openGithubWorkflowPage);
+
   ui.settingsResetProgress.addEventListener('click', resetProgressSafely);
 }
 
@@ -139,6 +148,73 @@ function openSettingsModal() {
 function closeSettingsModal() {
   ui.settingsModal.classList.remove('open');
   ui.settingsModal.setAttribute('aria-hidden', 'true');
+}
+
+function saveGithubSyncToken() {
+  appState.githubSync.token = String(ui.settingsGithubToken.value || '').trim();
+  persistGithubSyncSettings();
+  appState.githubSync.status = appState.githubSync.token ? 'success' : 'idle';
+  appState.githubSync.message = appState.githubSync.token
+    ? 'Token lokal im Browser gespeichert'
+    : 'Token entfernt';
+  renderSettingsModal();
+}
+
+function clearGithubSyncToken() {
+  appState.githubSync.token = '';
+  persistGithubSyncSettings();
+  appState.githubSync.status = 'idle';
+  appState.githubSync.message = 'Token entfernt';
+  renderSettingsModal();
+}
+
+async function triggerGithubRouteSync() {
+  const token = String(ui.settingsGithubToken.value || appState.githubSync.token || '').trim();
+  if (!token) {
+    appState.githubSync.status = 'error';
+    appState.githubSync.message = 'Bitte zuerst einen GitHub-Token speichern';
+    renderSettingsModal();
+    return;
+  }
+
+  appState.githubSync.token = token;
+  persistGithubSyncSettings();
+  appState.githubSync.status = 'running';
+  appState.githubSync.message = 'Workflow wird ausgelöst …';
+  renderSettingsModal();
+
+  const { owner, repo, workflowId, ref } = APP_CONFIG.githubSync;
+
+  try {
+    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowId}/dispatches`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/vnd.github+json',
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ ref })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || `HTTP ${response.status}`);
+    }
+
+    appState.githubSync.status = 'success';
+    appState.githubSync.message = 'GitHub-Workflow gestartet';
+    renderSettingsModal();
+  } catch (error) {
+    appState.githubSync.status = 'error';
+    appState.githubSync.message = 'Start fehlgeschlagen. Token/Rechte prüfen.';
+    console.error('GitHub workflow dispatch failed:', error);
+    renderSettingsModal();
+  }
+}
+
+function openGithubWorkflowPage() {
+  const { owner, repo, workflowId } = APP_CONFIG.githubSync;
+  window.open(`https://github.com/${owner}/${repo}/actions/workflows/${workflowId}`, '_blank', 'noopener');
 }
 
 function updateEntryStatus(entryId, selection) {

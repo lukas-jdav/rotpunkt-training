@@ -78,6 +78,16 @@ function renderSettingsModal() {
     : 'Nicht angemeldet';
   ui.settingsSyncStatus.textContent = getSyncStatusText();
   ui.settingsStorageStatus.textContent = getTrackedEntryCount() + ' Routen im aktiven Speicher';
+  ui.settingsGithubToken.value = appState.githubSync.token;
+  ui.settingsGithubStatus.textContent = getGithubSyncStatusText();
+  ui.settingsGithubTrigger.disabled = !appState.githubSync.token || appState.githubSync.status === 'running';
+}
+
+function getGithubSyncStatusText() {
+  if (appState.githubSync.status === 'running') return 'Workflow wird ausgelöst …';
+  if (appState.githubSync.status === 'success') return appState.githubSync.message || 'Workflow gestartet';
+  if (appState.githubSync.status === 'error') return appState.githubSync.message || 'GitHub-Aufruf fehlgeschlagen';
+  return appState.githubSync.message || 'Noch nicht eingerichtet';
 }
 
 // ── Metrics (Status-Tab) ──────────────────────────────────────────────────────

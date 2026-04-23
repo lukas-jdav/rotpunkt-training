@@ -54,6 +54,24 @@ function loadRouteEntries() {
   }
 }
 
+function loadGithubSyncSettings() {
+  try {
+    const raw = localStorage.getItem(APP_CONFIG.storageKeys.githubSync);
+    const parsed = raw ? JSON.parse(raw) : {};
+    return {
+      token: typeof parsed.token === 'string' ? parsed.token : ''
+    };
+  } catch (error) {
+    return { token: '' };
+  }
+}
+
+function persistGithubSyncSettings() {
+  localStorage.setItem(APP_CONFIG.storageKeys.githubSync, JSON.stringify({
+    token: String(appState.githubSync.token || '')
+  }));
+}
+
 function persistProfile(allowCloud = true) {
   localStorage.setItem(APP_CONFIG.storageKeys.profile, JSON.stringify(appState.profile));
   if (allowCloud) writeCloudSnapshot().catch(() => {});

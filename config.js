@@ -4,7 +4,8 @@ const APP_CONFIG = {
     routes: 'jdavRotpunkt.routes',
     profile: 'jdavRotpunkt.profile',
     meta: 'jdavRotpunkt.meta',
-    theme: 'jdavRotpunkt.theme'
+    theme: 'jdavRotpunkt.theme',
+    githubSync: 'jdavRotpunkt.githubSync'
   },
   legacyKeys: {
     routes: 'jdavRotpunktRouteLog.v3.flash.defaultOpen',
@@ -26,6 +27,12 @@ const APP_CONFIG = {
     storageBucket: 'jdav-rotpunkt-training.firebasestorage.app',
     messagingSenderId: '447221192678',
     appId: '1:447221192678:web:05a71d1f72d199b0902827'
+  },
+  githubSync: {
+    owner: 'lukas-jdav',
+    repo: 'rotpunkt-training',
+    workflowId: 'sync-tivoli-routes.yml',
+    ref: 'main'
   }
 };
 
