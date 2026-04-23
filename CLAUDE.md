@@ -2,7 +2,8 @@
 
 ## Git-Workflow
 
-**Immer direkt auf `main` committen und pushen. Niemals einen Branch erstellen, niemals einen PR erstellen — es sei denn, der User fordert das ausdrücklich in der Nachricht.**
+- **Direkt auf `main` committen und pushen** — kein Branch, kein PR.
+- Nur wenn der User explizit einen PR verlangt, einen erstellen.
 
 ## Technischer Stack
 
