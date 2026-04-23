@@ -107,7 +107,6 @@ function normalizeEntry(entry) {
     status: normalizedStatus,
     ascentType: normalizedAscentType,
     source: entry.source === 'hall' ? 'hall' : 'custom',
-    archived: Boolean(entry.archived) || false,
     attemptLog: Array.isArray(entry.attemptLog)
       ? entry.attemptLog.map(s => ({ date: String(s.date || ''), count: Math.max(0, Number(s.count) || 0) })).filter(s => s.count > 0)
       : Number(entry.attempts) > 0 ? [{ date: '', count: Number(entry.attempts) }] : []
@@ -133,7 +132,6 @@ function serializeEntry(entry) {
     status: entry.status,
     ascentType: entry.ascentType,
     source: entry.source,
-    archived: entry.archived,
     attemptLog: entry.attemptLog
   };
 }
@@ -168,12 +166,10 @@ function mergeRouteEntries(storedEntries) {
         ascentType: entry.ascentType,
         date: entry.status === 'done' ? entry.date : '',
         updatedAt: entry.updatedAt || hallEntry.updatedAt,
-        attemptLog: entry.attemptLog || [],
-        archived: entry.archived || false
+        attemptLog: entry.attemptLog || []
       });
     } else {
-      const autoArchive = entry.source === 'hall' && entry.status === 'done';
-      customEntries.push({ ...entry, source: 'custom', archived: entry.archived || autoArchive });
+      customEntries.push({ ...entry, source: 'custom' });
     }
   });
 
@@ -210,15 +206,8 @@ function isTrackedGrade(grade) {
   return Number(normalizedGrade) >= Number(appState.profile.startGrade || APP_CONFIG.defaultProfile.startGrade);
 }
 
-function isRouteNew(entry) {
-  if (!entry.setDate) return false;
-  const diffDays = (Date.now() - new Date(entry.setDate + 'T00:00:00').getTime()) / (1000 * 60 * 60 * 24);
-  return diffDays <= 28;
-}
-
 function getTrackedEntries() {
   return appState.routeEntries.filter(entry => {
-    if (entry.archived) return false;
     if (!isTrackedGrade(entry.grade)) return false;
     if (!appState.profile.vorstiegOnly) return true;
     return isVorstiegMandatory(entry) || isVorstiegOptional(entry);
