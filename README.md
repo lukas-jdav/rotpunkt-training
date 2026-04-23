@@ -11,7 +11,7 @@ Die App kann direkt im Browser ueber `index.html` geoeffnet werden.
 - `index.html` startet die App fuer GitHub Pages und lokal.
 - `legacy-redirect.html` ist ein Alt-Link und leitet auf die aktuelle App in `index.html` weiter.
 - `tivoli-routes-data.js` enthaelt die Routendaten.
-- `Tivoli Sports Klettern-routes-current-2026-04-13.csv` ist die Quell-CSV.
+- `data/snapshots/` enthaelt die datierten CSV-Snapshots der letzten Tivoli-Imports.
 - `scripts/sync-tivoli-routes.mjs` synchronisiert die Tivoli-Routen aus der oeffentlichen 8a.nu-Topo-Seite.
 
 ## Routen-Sync
@@ -20,7 +20,7 @@ Die Routendaten koennen mit Node aktualisiert werden:
 
 `node scripts/sync-tivoli-routes.mjs`
 
-Der Sync liest die oeffentliche 8a.nu-Topo-Seite fuer Tivoli aus, aktualisiert `tivoli-routes-data.js` und schreibt bei Aenderungen einen aktuellen CSV-Snapshot mit Tagesdatum.
+Der Sync liest die oeffentliche 8a.nu-Topo-Seite fuer Tivoli aus, aktualisiert `tivoli-routes-data.js` und schreibt bei Aenderungen einen aktuellen CSV-Snapshot nach `data/snapshots/tivoli-routes-YYYY-MM-DD.csv`.
 
 Fuer GitHub gibt es ausserdem den Workflow `.github/workflows/sync-tivoli-routes.yml`, der den Sync taeglich ausfuehrt und Aenderungen automatisch nach `main` committed.
 

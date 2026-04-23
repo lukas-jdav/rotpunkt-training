@@ -329,23 +329,23 @@
       </div>
 
       <div class="settings-card">
-        <h3>GitHub-Sync</h3>
+        <h3>GitHub Sync</h3>
         <div class="settings-field">
-          <label for="settings-github-token">GitHub Token</label>
-          <input id="settings-github-token" type="password" placeholder="Feingranularer Token für Workflow-Start">
+          <label for="settings-github-token">Fine-grained personal access token</label>
+          <input id="settings-github-token" type="password" placeholder="GitHub token for workflow dispatch">
         </div>
-        <p>Der Token wird nur lokal in diesem Browser gespeichert und nicht in die Cloud synchronisiert. Er braucht Rechte zum Starten von GitHub Actions im Repository.</p>
+        <p>The token is stored only in this browser and is not synced to the cloud. It needs permission to trigger GitHub Actions in this repository.</p>
         <div class="cloud-status-line">
           <div class="cloud-status-label">Workflow</div>
-          <div id="settings-github-status" class="cloud-status-value">Noch nicht eingerichtet</div>
+          <div id="settings-github-status" class="cloud-status-value">Not configured yet</div>
         </div>
         <div class="tracker-actions">
-          <button id="settings-github-save" type="button" class="secondary-btn">Token speichern</button>
-          <button id="settings-github-clear" type="button" class="secondary-btn">Token löschen</button>
+          <button id="settings-github-save" type="button" class="secondary-btn">Save token</button>
+          <button id="settings-github-clear" type="button" class="secondary-btn">Clear token</button>
         </div>
         <div class="tracker-actions">
-          <button id="settings-github-trigger" type="button" class="primary-btn">Tivoli-Sync jetzt starten</button>
-          <button id="settings-github-open" type="button" class="secondary-btn">Workflow öffnen</button>
+          <button id="settings-github-trigger" type="button" class="primary-btn">Run Tivoli sync now</button>
+          <button id="settings-github-open" type="button" class="secondary-btn">Open workflow</button>
         </div>
       </div>
 

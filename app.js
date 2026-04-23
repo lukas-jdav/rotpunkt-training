@@ -155,8 +155,8 @@ function saveGithubSyncToken() {
   persistGithubSyncSettings();
   appState.githubSync.status = appState.githubSync.token ? 'success' : 'idle';
   appState.githubSync.message = appState.githubSync.token
-    ? 'Token lokal im Browser gespeichert'
-    : 'Token entfernt';
+    ? 'Token saved in this browser'
+    : 'Token cleared';
   renderSettingsModal();
 }
 
@@ -164,7 +164,7 @@ function clearGithubSyncToken() {
   appState.githubSync.token = '';
   persistGithubSyncSettings();
   appState.githubSync.status = 'idle';
-  appState.githubSync.message = 'Token entfernt';
+  appState.githubSync.message = 'Token cleared';
   renderSettingsModal();
 }
 
@@ -172,7 +172,7 @@ async function triggerGithubRouteSync() {
   const token = String(ui.settingsGithubToken.value || appState.githubSync.token || '').trim();
   if (!token) {
     appState.githubSync.status = 'error';
-    appState.githubSync.message = 'Bitte zuerst einen GitHub-Token speichern';
+    appState.githubSync.message = 'Please save a GitHub token first';
     renderSettingsModal();
     return;
   }
@@ -180,7 +180,7 @@ async function triggerGithubRouteSync() {
   appState.githubSync.token = token;
   persistGithubSyncSettings();
   appState.githubSync.status = 'running';
-  appState.githubSync.message = 'Workflow wird ausgelöst …';
+  appState.githubSync.message = 'Dispatching workflow …';
   renderSettingsModal();
 
   const { owner, repo, workflowId, ref } = APP_CONFIG.githubSync;
@@ -202,11 +202,11 @@ async function triggerGithubRouteSync() {
     }
 
     appState.githubSync.status = 'success';
-    appState.githubSync.message = 'GitHub-Workflow gestartet';
+    appState.githubSync.message = 'GitHub workflow started';
     renderSettingsModal();
   } catch (error) {
     appState.githubSync.status = 'error';
-    appState.githubSync.message = 'Start fehlgeschlagen. Token/Rechte prüfen.';
+    appState.githubSync.message = 'Dispatch failed. Check token and permissions.';
     console.error('GitHub workflow dispatch failed:', error);
     renderSettingsModal();
   }

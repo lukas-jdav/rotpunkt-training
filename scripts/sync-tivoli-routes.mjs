@@ -3,7 +3,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SOURCE_URL = 'https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing';
-const SOURCE_FILE_PREFIX = 'Tivoli Sports Klettern-routes-current-';
+const SNAPSHOT_DIR = path.join('data', 'snapshots');
+const SOURCE_FILE_PREFIX = 'tivoli-routes-';
 const CSV_HEADERS = [
   'location',
   'difficulty',
@@ -78,7 +79,7 @@ async function main() {
 
   const jsChanged = normalizeNewlines(currentState.jsSource) !== normalizeNewlines(jsBody);
   const todayStamp = formatDateStamp(new Date());
-  const csvSnapshotPath = path.join(repoRoot, `${SOURCE_FILE_PREFIX}${todayStamp}.csv`);
+  const csvSnapshotPath = path.join(repoRoot, SNAPSHOT_DIR, `${SOURCE_FILE_PREFIX}${todayStamp}.csv`);
 
   if (jsChanged) {
     await mkdir(path.dirname(csvSnapshotPath), { recursive: true });

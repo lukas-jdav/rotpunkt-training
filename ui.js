@@ -84,10 +84,10 @@ function renderSettingsModal() {
 }
 
 function getGithubSyncStatusText() {
-  if (appState.githubSync.status === 'running') return 'Workflow wird ausgelöst …';
-  if (appState.githubSync.status === 'success') return appState.githubSync.message || 'Workflow gestartet';
-  if (appState.githubSync.status === 'error') return appState.githubSync.message || 'GitHub-Aufruf fehlgeschlagen';
-  return appState.githubSync.message || 'Noch nicht eingerichtet';
+  if (appState.githubSync.status === 'running') return 'Dispatching workflow …';
+  if (appState.githubSync.status === 'success') return appState.githubSync.message || 'Workflow started';
+  if (appState.githubSync.status === 'error') return appState.githubSync.message || 'GitHub request failed';
+  return appState.githubSync.message || 'Not configured yet';
 }
 
 // ── Metrics (Status-Tab) ──────────────────────────────────────────────────────
