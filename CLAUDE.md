@@ -2,8 +2,17 @@
 
 ## Git-Workflow
 
-- **Direkt auf `main` committen und pushen** — kein Branch, kein PR.
-- Nur wenn der User explizit einen PR verlangt, einen erstellen.
+- Für normale manuelle Entwicklungsarbeit gilt: **1 Branch = 1 Thema = 1 Pull Request**.
+- Branch-Namen möglichst thematisch und knapp halten, z. B. `feat/...`, `fix/...`, `ui/...`, `refactor/...`, `chore/...`.
+- **`main` bleibt der stabile Stand** für die App.
+- Keine gemischten Sammel-Änderungen in einem Thema-Branch.
+
+### Ausnahme: automatischer Tivoli-Sync
+
+- Der tägliche Tivoli-Routenabgleich läuft über GitHub Actions.
+- Dieser Workflow darf Änderungen an `tivoli-routes-data.js` und den CSV-Snapshots **direkt nach `main` committen**, wenn sich die öffentliche Quelle geändert hat.
+- Die App darf diesen GitHub-Workflow zusätzlich manuell auslösen.
+- Diese Ausnahme gilt nur für den automatisierten Routendaten-Sync, nicht für normale Feature-, UI- oder Refactor-Arbeit.
 
 ## Technischer Stack
 
