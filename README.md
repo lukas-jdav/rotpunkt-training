@@ -9,7 +9,7 @@ Die App kann direkt im Browser ueber `index.html` geoeffnet werden.
 ## Projektstruktur
 
 - `index.html` startet die App fuer GitHub Pages und lokal.
-- `jdav-rotpunkt-training-app_V1.html` enthaelt die eigentliche App.
+- `legacy-redirect.html` ist ein Alt-Link und leitet auf die aktuelle App in `index.html` weiter.
 - `tivoli-routes-data.js` enthaelt die Routendaten.
 - `Tivoli Sports Klettern-routes-current-2026-04-13.csv` ist die Quell-CSV.
 
