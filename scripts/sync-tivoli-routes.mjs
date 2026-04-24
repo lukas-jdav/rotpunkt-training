@@ -56,7 +56,7 @@ async function main() {
 
     const merged = {
       ...route,
-      link: existing.link?.includes('/zlaggables/') ? existing.link : route.link,
+      link: isVlLink(route.link) ? route.link : (existing.link || route.link),
       routesetter: route.routesetter || existing.routesetter || 'N/A ',
       area: existing.area || route.area,
       sector: existing.sector || route.sector
@@ -148,6 +148,18 @@ function extractRoutesFromNuxtData(html) {
     throw new Error('Route-Liste in pinia.gymZlaggables.routes nicht gefunden');
   }
 
+  if (routes.length > 0) {
+    const sample = routes[0];
+    console.log('[sync-tivoli-routes] Route-Felder (Beispiel):', Object.keys(sample).join(', '));
+    const linkFields = Object.keys(sample).filter(k => {
+      const v = sample[k];
+      return typeof v === 'string' && (v.includes('http') || v.includes('link') || v.includes('url'));
+    });
+    if (linkFields.length > 0) {
+      console.log('[sync-tivoli-routes] Link-ähnliche Felder:', linkFields.map(k => `${k}=${JSON.stringify(sample[k])}`).join(', '));
+    }
+  }
+
   return routes;
 }
 
@@ -219,6 +231,23 @@ function decodeNuxtPayload(payload, rootIndex) {
   return decodeByIndex(rootIndex);
 }
 
+function isVlLink(url) {
+  return typeof url === 'string' && url.includes('vertical-life.info');
+}
+
+function extractVlLink(route) {
+  // 8a.nu/Vertical-Life store the shareable VL link in the route object.
+  // Field name discovered via debug logging — check candidates in order.
+  const vl = route.virtual_gym_route_link
+    || route.vl_link
+    || route.share_url
+    || route.short_url
+    || route.climb_link;
+  if (vl && typeof vl === 'string' && vl.startsWith('http')) return vl;
+  // Fallback: link to the route on the 8a.nu topo page.
+  return `${SOURCE_URL}#route-${route.id}`;
+}
+
 function normalizeRoute(route) {
   const location = String(route.route_card_label || '').trim();
   const name = String(route.name || '').trim();
@@ -238,7 +267,7 @@ function normalizeRoute(route) {
     name,
     notes,
     set_at: setAt,
-    link: `${GYM_BASE}/zlaggables/sportclimbing/${route.id}/ascents`,
+    link: extractVlLink(route),
     routesetter,
     area,
     sector
