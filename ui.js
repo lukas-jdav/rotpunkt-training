@@ -591,6 +591,7 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
       }
 
       case 'infos':
+        td.className = 'col-infos';
         td.innerHTML = buildInfoCellHtml(entry);
         break;
 
