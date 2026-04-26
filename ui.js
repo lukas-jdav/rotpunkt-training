@@ -636,9 +636,12 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
 }
 
 function buildInfoCellHtml(entry) {
-  const colorDots = [entry.primaryColor, entry.secondaryColor]
+  const colorChips = [entry.primaryColor, entry.secondaryColor]
     .filter(Boolean)
-    .map(c => `<span class="route-color-dot" style="background-color:${escapeHtml(c)}"></span>`)
+    .map(c => {
+      const name = colorName(c);
+      return `<span class="route-mini-badge route-color-chip"><span class="route-color-dot" style="background-color:${escapeHtml(c)}"></span>${name ? escapeHtml(name) : ''}</span>`;
+    })
     .join('');
 
   const french = entry.rawDifficulty ? toFrenchGrade(entry.rawDifficulty) : null;
@@ -647,7 +650,7 @@ function buildInfoCellHtml(entry) {
   const row1Left = entry.rawDifficulty
     ? `<span class="route-mini-badge">${escapeHtml(entry.rawDifficulty)}${frenchHtml}</span>`
     : '';
-  const row1Right = colorDots ? `<span class="route-colors">${colorDots}</span>` : '';
+  const row1Right = colorChips;
 
   const row2Left = entry.routeCode
     ? `<span class="route-mini-badge">Seil ${escapeHtml(entry.routeCode)}</span>`
