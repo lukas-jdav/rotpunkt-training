@@ -2,10 +2,12 @@
 
 ## Git-Workflow
 
-- Für normale manuelle Entwicklungsarbeit gilt: **1 Branch = 1 Thema = 1 Pull Request**.
-- Branch-Namen möglichst thematisch und knapp halten, z. B. `feat/...`, `fix/...`, `ui/...`, `refactor/...`, `chore/...`.
+- Für normale manuelle Entwicklungsarbeit gilt: Änderungen direkt auf `main` committen und pushen, sofern Lukas nichts anderes anweist.
+- **Keine Pull Requests als Standardweg erstellen**, weil automatische Codex Reviews im Repository unerwünscht sind.
+- **Keine Codex Reviews anfordern oder triggern**: nicht `@codex review` kommentieren, keine Codex-Reviewer anfragen und keine PRs nur zur Review-Erzeugung öffnen.
+- Wenn ausnahmsweise ein PR nötig ist, vorher mit Lukas abstimmen und sicherstellen, dass kein Codex Review ausgelöst werden soll.
 - **`main` bleibt der stabile Stand** für die App.
-- Keine gemischten Sammel-Änderungen in einem Thema-Branch.
+- Keine gemischten Sammel-Änderungen in einem Commit.
 
 ### Ausnahme: automatischer Tivoli-Sync
 
