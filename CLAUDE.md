@@ -21,6 +21,12 @@
 - Firebase Auth + Firestore für Cloud-Sync (optional, funktioniert auch rein lokal)
 - GitHub Pages deployed automatisch von `main`
 
+## UI-Qualität
+
+- Jede UI- oder CSS-Änderung muss in Light Mode und Dark Mode lesbar bleiben.
+- Bei Dark-Mode-Styles keine hell klingenden Variablennamen blind als Textfarbe verwenden: `--gray-50` ist im Dark Theme ein dunkler Hintergrundwert, nicht heller Text.
+- Für Text im Dark Mode bevorzugt `--gray-800`, `--gray-600` oder bewusst gesetzte helle Farben verwenden und neue Hinweis-/Kartenkomponenten explizit gegen dunkle Hintergründe prüfen.
+
 ## Dateistruktur
 
 ```

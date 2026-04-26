@@ -1394,7 +1394,11 @@
 [data-theme="dark"] .route-sync-list li {
   background: rgba(15, 23, 42, 0.5);
   border-color: rgba(148, 163, 184, 0.16);
-  color: var(--gray-50);
+  color: var(--gray-800);
+}
+
+[data-theme="dark"] .route-sync-list li strong {
+  color: #fff;
 }
 
 /* ── Neu-Badge ───────────────────────────────────────────────────────────── */
