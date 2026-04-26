@@ -143,6 +143,7 @@ function shouldPersistEntry(entry) {
 }
 
 function createEntryKey(entry) {
+  if (entry.id) return entry.id;
   return [
     String(entry.grade || '').trim(),
     String(entry.name || '').trim().toLowerCase(),
