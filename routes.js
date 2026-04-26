@@ -170,7 +170,7 @@ function mergeRouteEntries(storedEntries) {
         date: entry.status === 'done' ? entry.date : '',
         updatedAt: entry.updatedAt || hallEntry.updatedAt,
         attemptLog: entry.attemptLog || [],
-        archived: entry.archived || false
+        archived: false
       });
     } else {
       const autoArchive = entry.source === 'hall' && entry.status === 'done';
