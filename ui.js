@@ -503,6 +503,7 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
 
     switch (col.key) {
       case 'grad':
+        td.className = 'col-grad';
         td.innerHTML = `<span class="route-grade-badge">${escapeHtml(entry.grade)}</span>`;
         break;
 
