@@ -413,6 +413,7 @@ function sortEntries(entries, sortBy, sortDir) {
       case 'versuche':
         diff = getTotalAttempts(left) - getTotalAttempts(right);
         break;
+      case 'infos':
       case 'gesetzt': {
         const ld = left.setDate || '';
         const rd = right.setDate || '';

@@ -25,7 +25,7 @@ const APP_CONFIG = {
   tableColumns: [
     { key: 'grad',     label: 'Grad',         sortable: true,  hideable: false },
     { key: 'aktionen', label: 'Aktionen',      sortable: false, hideable: false },
-    { key: 'infos',    label: 'Infos',         sortable: false, hideable: true  },
+    { key: 'infos',    label: 'Infos',         sortable: true,  hideable: true  },
     { key: 'route',    label: 'Route',         sortable: true,  hideable: false },
     { key: 'bereich',  label: 'Bereich',       sortable: true,  hideable: true  },
     { key: 'versuche', label: 'Versuche',      sortable: true,  hideable: true, defaultHidden: true },
