@@ -80,12 +80,20 @@ function renderSettingsModal() {
   ui.settingsStorageStatus.textContent = getTrackedEntryCount() + ' Routen im aktiven Speicher';
   ui.settingsGithubToken.value = appState.githubSync.token;
   ui.settingsGithubStatus.textContent = getGithubSyncStatusText();
-  ui.settingsGithubTrigger.disabled = !appState.githubSync.token || appState.githubSync.status === 'running';
+  const githubRunning = appState.githubSync.status === 'running';
+  ui.settingsGithubTrigger.disabled = !appState.githubSync.token || githubRunning;
+  ui.settingsGithubTrigger.innerHTML = githubRunning
+    ? '<span class="btn-spinner"></span>Dispatching…'
+    : 'Run Tivoli sync now';
   ui.settingsRouteSyncUpdated.textContent = getRouteSyncUpdatedText();
   ui.settingsRouteSyncSummary.textContent = getRouteSyncSummaryText();
   ui.settingsRouteSyncBrowser.textContent = getRouteSyncBrowserText();
   ui.settingsRouteSyncEnable.disabled = appState.routeSync.permission === 'granted';
-  ui.settingsRouteSyncCheck.disabled = appState.routeSync.status === 'checking';
+  const routeChecking = appState.routeSync.status === 'checking';
+  ui.settingsRouteSyncCheck.disabled = routeChecking;
+  ui.settingsRouteSyncCheck.innerHTML = routeChecking
+    ? '<span class="btn-spinner"></span>Checking…'
+    : 'Check for updates now';
 }
 
 function getGithubSyncStatusText() {
@@ -587,6 +595,48 @@ function buildInfoCellHtml(entry) {
   }
 
   return `<div class="route-info-stack">${bits.join('')}</div>`;
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+
+let _toastTimer = null;
+
+function showToast(message) {
+  clearTimeout(_toastTimer);
+  ui.toast.textContent = message;
+  ui.toast.classList.add('toast-visible');
+  _toastTimer = setTimeout(() => {
+    ui.toast.classList.remove('toast-visible');
+  }, 2000);
+}
+
+// ── Confirm dialog ────────────────────────────────────────────────────────────
+
+function showConfirmDialog(title, body, confirmLabel) {
+  return new Promise(resolve => {
+    ui.confirmTitle.textContent = title;
+    ui.confirmBody.textContent = body;
+    ui.confirmOk.textContent = confirmLabel;
+    ui.confirmModal.classList.add('open');
+    ui.confirmModal.setAttribute('aria-hidden', 'false');
+
+    function close(result) {
+      ui.confirmModal.classList.remove('open');
+      ui.confirmModal.setAttribute('aria-hidden', 'true');
+      ui.confirmOk.removeEventListener('click', onOk);
+      ui.confirmCancel.removeEventListener('click', onCancel);
+      ui.confirmModal.removeEventListener('click', onOverlay);
+      resolve(result);
+    }
+
+    function onOk() { close(true); }
+    function onCancel() { close(false); }
+    function onOverlay(e) { if (e.target === ui.confirmModal) close(false); }
+
+    ui.confirmOk.addEventListener('click', onOk);
+    ui.confirmCancel.addEventListener('click', onCancel);
+    ui.confirmModal.addEventListener('click', onOverlay);
+  });
 }
 
 // ── renderApp (Koordinator) ───────────────────────────────────────────────────

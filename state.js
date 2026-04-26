@@ -77,5 +77,11 @@ const ui = {
   settingsRouteSyncEnable: document.getElementById('settings-route-sync-enable'),
   settingsRouteSyncCheck: document.getElementById('settings-route-sync-check'),
   settingsResetProgress: document.getElementById('settings-reset-progress'),
-  statsPanel: document.getElementById('status-stats-panel')
+  statsPanel: document.getElementById('status-stats-panel'),
+  toast: document.getElementById('toast'),
+  confirmModal: document.getElementById('confirm-modal'),
+  confirmTitle: document.getElementById('confirm-modal-title'),
+  confirmBody: document.getElementById('confirm-modal-body'),
+  confirmOk: document.getElementById('confirm-ok'),
+  confirmCancel: document.getElementById('confirm-cancel')
 };

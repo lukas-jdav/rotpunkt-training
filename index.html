@@ -374,8 +374,9 @@
 
       <div class="settings-card">
         <h3>Version &amp; Verlauf</h3>
-        <p class="version-current">Aktuelle Version: <strong>v2.5.3</strong> · 23. April 2026</p>
+        <p class="version-current">Aktuelle Version: <strong>v2.6.0</strong> · 26. April 2026</p>
         <ul class="version-list">
+          <li><span class="version-tag">v2.6.0</span> <span class="version-date">Apr 2026</span> Toast-Feedback nach Statusänderungen · Lade-Spinner auf Sync-Buttons · Bestätigungs-Dialog ersetzt window.prompt/confirm</li>
           <li><span class="version-tag">v2.5.3</span> <span class="version-date">Apr 2026</span> Route-Links: Sync extrahiert VL-Links direkt aus 8a.nu-Daten; 500-Fehler durch falsches URL-Format behoben</li>
           <li><span class="version-tag">v2.5.2</span> <span class="version-date">Apr 2026</span> Route-Links auf 8a.nu-Detailseiten umgestellt (zlaggables-Format)</li>
           <li><span class="version-tag">v2.5.1</span> <span class="version-date">Apr 2026</span> Vertical-Life-Links im Browser repariert (kein Popup-Block mehr)</li>
@@ -404,9 +405,24 @@
 <div class="footer">
   <span>Sektion Aachen · JDAV Leistungsgruppe</span>
   <span>Konzept: Andi · App: Lukas</span>
-  <span class="footer-version">v2.5.3 · 23. Apr 2026</span>
+  <span class="footer-version">v2.6.0 · 26. Apr 2026</span>
 </div>
 
+
+<div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
+
+<div id="confirm-modal" class="modal" aria-hidden="true">
+  <div class="modal-card confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+    <div class="confirm-body">
+      <h2 id="confirm-modal-title" class="confirm-title"></h2>
+      <p id="confirm-modal-body" class="confirm-text"></p>
+    </div>
+    <div class="confirm-actions">
+      <button id="confirm-cancel" type="button" class="secondary-btn">Abbrechen</button>
+      <button id="confirm-ok" type="button" class="danger-btn"></button>
+    </div>
+  </div>
+</div>
 
 <script src="tivoli-routes-data.js"></script>
 <script src="data/latest-route-sync.js"></script>

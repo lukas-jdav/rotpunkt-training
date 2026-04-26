@@ -131,10 +131,14 @@ function bindEvents() {
     }
 
     if (button.dataset.action === 'delete-entry') {
-      if (!window.confirm('Diese Zusatzroute wirklich löschen?')) return;
-      appState.routeEntries = appState.routeEntries.filter(entry => entry.id !== entryId);
-      persistAll();
-      renderApp();
+      showConfirmDialog('Route löschen', 'Diese Zusatzroute wirklich löschen? Das kann nicht rückgängig gemacht werden.', 'Löschen').then(confirmed => {
+        if (!confirmed) return;
+        appState.routeEntries = appState.routeEntries.filter(entry => entry.id !== entryId);
+        persistAll();
+        renderApp();
+        showToast('Route gelöscht');
+      });
+      return;
     }
   });
 
@@ -532,25 +536,35 @@ function updateEntryStatus(entryId, selection) {
 
   persistRoutes();
   renderApp();
+
+  const toastMessages = {
+    rotpunkt: 'Rotpunkt eingetragen ✓',
+    flash: 'Flash eingetragen ✓',
+    open: 'Status zurückgesetzt'
+  };
+  showToast(toastMessages[nextStatus.status] || 'Gespeichert ✓');
 }
 
 function changeAttempts(entryId, delta) {
   const today = getTodayValue();
+  let newTotal = 0;
   appState.routeEntries = appState.routeEntries.map(entry => {
     if (entry.id !== entryId) return entry;
     const log = [...(entry.attemptLog || [])];
     const idx = log.findIndex(s => s.date === today);
     if (idx === -1) {
-      if (delta > 0) log.push({ date: today, count: delta });
+      if (delta > 0) { log.push({ date: today, count: delta }); newTotal = delta; }
     } else {
       const next = Math.max(0, log[idx].count + delta);
       if (next === 0) log.splice(idx, 1);
       else log[idx] = { date: today, count: next };
+      newTotal = next;
     }
     return { ...entry, attemptLog: log, updatedAt: Date.now() };
   });
   persistRoutes();
   renderApp();
+  if (delta > 0) showToast(`Versuch ${newTotal} heute`);
 }
 
 function onRouteFormSubmit(event) {
@@ -620,20 +634,24 @@ function resetProgressSafely() {
   const trackedEntries = getTrackedEntries();
   if (!trackedEntries.length) return;
 
-  const response = window.prompt('Zum Bestätigen bitte RESET eingeben.');
-  if (response !== 'RESET') return;
-
-  appState.routeEntries = appState.routeEntries.map(entry => ({
-    ...entry,
-    status: 'open',
-    ascentType: '',
-    date: '',
-    updatedAt: Date.now()
-  }));
-
-  persistRoutes();
-  renderApp();
-  closeSettingsModal();
+  showConfirmDialog(
+    'Fortschritt zurücksetzen',
+    `Wirklich alle ${trackedEntries.length} Einträge auf „offen" zurücksetzen? Das kann nicht rückgängig gemacht werden.`,
+    'Zurücksetzen'
+  ).then(confirmed => {
+    if (!confirmed) return;
+    appState.routeEntries = appState.routeEntries.map(entry => ({
+      ...entry,
+      status: 'open',
+      ascentType: '',
+      date: '',
+      updatedAt: Date.now()
+    }));
+    persistRoutes();
+    renderApp();
+    closeSettingsModal();
+    showToast('Fortschritt zurückgesetzt');
+  });
 }
 
 init();
