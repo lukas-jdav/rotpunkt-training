@@ -659,8 +659,7 @@
   .col-numeric, .col-date { white-space: nowrap; }
   .route-table th[data-col="grad"] { width: 1px; padding-left: 8px; padding-right: 8px; }
   .col-grad { width: 1px; white-space: nowrap; text-align: center; }
-  .route-table th[data-col="infos"] { width: 1px; }
-  .col-infos { width: 1px; }
+  .col-infos { white-space: nowrap; }
   .route-attempts-badge { font-weight: 700; color: var(--gray-700); }
   .route-date-text { color: var(--gray-600); font-size: 13px; }
 
@@ -721,9 +720,10 @@
   }
 
   .info-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    align-items: start;
   }
 
   .info-row {

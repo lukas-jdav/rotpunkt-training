@@ -642,28 +642,23 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
 }
 
 function buildInfoCellHtml(entry) {
-  const colorChips = [entry.primaryColor, entry.secondaryColor]
-    .filter(Boolean)
-    .map(c => {
-      const name = colorName(c);
-      return `<span class="route-mini-badge route-color-chip"><span class="route-color-dot" style="background-color:${escapeHtml(c)}"></span>${name ? escapeHtml(name) : ''}</span>`;
-    })
-    .join('');
+  const items = [];
 
-  const row2Left = entry.routeCode
-    ? `<span class="route-mini-badge">Seil ${escapeHtml(entry.routeCode)}</span>`
+  [entry.primaryColor, entry.secondaryColor].filter(Boolean).forEach(c => {
+    const name = colorName(c);
+    items.push(`<span class="route-mini-badge route-color-chip"><span class="route-color-dot" style="background-color:${escapeHtml(c)}"></span>${name ? escapeHtml(name) : ''}</span>`);
+  });
+
+  if (entry.routeCode) {
+    items.push(`<span class="route-mini-badge">Seil ${escapeHtml(entry.routeCode)}</span>`);
+  }
+  if (entry.link) {
+    items.push(`<button class="route-meta-link" type="button" data-action="open-route-link" data-url="${escapeHtml(entry.link)}">Vertical-Life ↗</button>`);
+  }
+
+  const gridHtml = items.length
+    ? `<div class="info-grid">${items.join('')}</div>`
     : '';
-  const row2Right = entry.link
-    ? `<button class="route-meta-link" type="button" data-action="open-route-link" data-url="${escapeHtml(entry.link)}">Vertical-Life ↗</button>`
-    : '';
-
-  const hasRow2 = row2Left || row2Right;
-
-  const gridHtml = (colorChips || hasRow2) ? `
-    <div class="info-grid">
-      ${colorChips ? `<div class="info-row">${colorChips}</div>` : ''}
-      ${hasRow2 ? `<div class="info-row">${row2Left}${row2Right}</div>` : ''}
-    </div>` : '';
 
   const newBadge = isRouteNew(entry) ? `<span class="badge-new">Neu</span>` : '';
 
