@@ -86,6 +86,27 @@ function normalizeColor(value) {
   return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(color) ? color.toLowerCase() : '';
 }
 
+const _COLOR_NAMES = {
+  '#000000': 'schwarz',
+  '#0000ff': 'blau',
+  '#008000': 'grün',
+  '#32cd32': 'hellgrün',
+  '#3cb03c': 'grün',
+  '#808080': 'grau',
+  '#9400d3': 'lila',
+  '#cfab8f': 'beige',
+  '#ff0000': 'rot',
+  '#ff69b4': 'pink',
+  '#ffa500': 'orange',
+  '#ffd700': 'gelb',
+  '#ffff00': 'gelb',
+  '#ffffff': 'weiß'
+};
+
+function colorName(hex) {
+  return _COLOR_NAMES[String(hex || '').toLowerCase()] || null;
+}
+
 function createEntryId() {
   if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
   return String(Date.now()) + Math.random().toString(16).slice(2);
