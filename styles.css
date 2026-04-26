@@ -723,20 +723,17 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 5px;
-    align-items: start;
+    align-items: stretch;
   }
 
-  .info-row {
+  .info-grid .route-mini-badge,
+  .info-grid .route-meta-link {
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .info-date {
-    font-size: 11px;
-    color: var(--gray-400);
-    margin-top: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
   }
 
   .route-status-actions {
