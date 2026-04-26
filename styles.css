@@ -745,6 +745,7 @@
   }
 
   .route-colors { display: inline-flex; align-items: center; gap: 6px; }
+  .grade-french { opacity: 0.65; font-weight: 500; }
   .route-meta-link { color: var(--blue); text-decoration: none; font-size: 12px; font-weight: 600; background: none; border: none; padding: 0; cursor: pointer; font-family: inherit; }
   .route-meta-link:hover { text-decoration: underline; }
 

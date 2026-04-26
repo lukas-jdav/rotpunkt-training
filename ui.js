@@ -625,16 +625,20 @@ function buildInfoCellHtml(entry) {
   const bits = [];
 
   if (isRouteNew(entry)) bits.push(`<span class="badge-new">Neu</span>`);
-  if (entry.rawDifficulty) bits.push(`<span class="route-mini-badge">VL ${escapeHtml(entry.rawDifficulty)}</span>`);
-  if (entry.routeCode) bits.push(`<span class="route-mini-badge">Linie ${escapeHtml(entry.routeCode)}</span>`);
+  const colorDots = [entry.primaryColor, entry.secondaryColor]
+    .filter(Boolean)
+    .map(c => `<span class="route-color-dot" style="background-color:${escapeHtml(c)}"></span>`)
+    .join('');
 
-  if (entry.primaryColor || entry.secondaryColor) {
-    const colors = [entry.primaryColor, entry.secondaryColor]
-      .filter(Boolean)
-      .map(color => `<span class="route-color-dot" style="background-color:${escapeHtml(color)}"></span>`)
-      .join('');
-    bits.push(`<span class="route-colors">${colors}</span>`);
+  if (entry.rawDifficulty) {
+    const french = toFrenchGrade(entry.rawDifficulty);
+    const frenchHtml = french ? ` <span class="grade-french">· ${escapeHtml(french)}</span>` : '';
+    bits.push(`<span class="route-mini-badge">${escapeHtml(entry.rawDifficulty)}${frenchHtml}${colorDots ? ' ' + colorDots : ''}</span>`);
+  } else if (colorDots) {
+    bits.push(`<span class="route-mini-badge">${colorDots}</span>`);
   }
+
+  if (entry.routeCode) bits.push(`<span class="route-mini-badge">Linie ${escapeHtml(entry.routeCode)}</span>`);
 
   if (entry.link) {
     bits.push(`<button class="route-meta-link" type="button" data-action="open-route-link" data-url="${escapeHtml(entry.link)}">Vertical-Life ↗</button>`);

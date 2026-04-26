@@ -61,6 +61,26 @@ function normalizeHallGrade(value) {
   return match ? match[0] : '';
 }
 
+const _UIAA_TO_FRENCH = {
+  '3': '3', '4-': '3+', '4': '4a', '4+': '4c',
+  '5-': '5a', '5': '5b', '5+': '5c',
+  '6-': '6a', '6': '6b', '6+': '6c',
+  '7-': '7a', '7': '7b', '7+': '7c',
+  '8-': '8a', '8': '8b', '8+': '8c',
+  '9-': '9a', '9': '9b', '9+': '9c',
+  '10-': '9c+', '10': '9c+'
+};
+
+function toFrenchGrade(uiaa) {
+  const key = String(uiaa || '').trim();
+  if (key.includes('/')) {
+    const parts = key.split('/');
+    const f = parts.map(p => _UIAA_TO_FRENCH[p.trim()]).filter(Boolean);
+    return f.length ? f.join('/') : null;
+  }
+  return _UIAA_TO_FRENCH[key] || null;
+}
+
 function normalizeColor(value) {
   const color = String(value || '').trim();
   return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(color) ? color.toLowerCase() : '';
