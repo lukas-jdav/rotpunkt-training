@@ -109,8 +109,8 @@ function normalizeEntry(entry) {
     source: entry.source === 'hall' ? 'hall' : 'custom',
     archived: Boolean(entry.archived) || false,
     attemptLog: Array.isArray(entry.attemptLog)
-      ? entry.attemptLog.map(s => ({ date: String(s.date || ''), count: Math.max(0, Number(s.count) || 0) })).filter(s => s.count > 0)
-      : Number(entry.attempts) > 0 ? [{ date: '', count: Number(entry.attempts) }] : []
+      ? entry.attemptLog.map(s => ({ date: String(s.date || ''), count: Math.max(0, Number(s.count) || 0), notes: String(s.notes || '') })).filter(s => s.count > 0)
+      : Number(entry.attempts) > 0 ? [{ date: '', count: Number(entry.attempts), notes: '' }] : []
   };
 }
 

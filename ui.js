@@ -280,9 +280,30 @@ function renderRoadmap(summaries, progressState) {
 
 // ── Grade Filter Chips ────────────────────────────────────────────────────────
 
+function getActivePreset() {
+  const { search, grades, status } = appState.filters;
+  if (search) return null;
+  const start = Number(appState.profile.startGrade);
+  const focusGrades = [String(start), String(start + 1)].sort();
+  const currentGrades = [...grades].sort();
+  if (status === 'open' && JSON.stringify(currentGrades) === JSON.stringify(focusGrades)) return 'focus';
+  if (status === 'open' && grades.length === 0) return 'projects';
+  if (status === 'all' && grades.length === 0) return 'all';
+  return null;
+}
+
+function renderFilterPresets() {
+  const active = getActivePreset();
+  ui.filterPresets.querySelectorAll('[data-preset]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.preset === active);
+  });
+}
+
 function renderGradeFilterChips(summaries) {
   const availableGrades = getAvailableGrades(summaries);
   sanitizeSelectedGrades(availableGrades);
+
+  renderFilterPresets();
 
   ui.routeGradeChips.innerHTML = '';
 
@@ -513,6 +534,8 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
           delBtn.textContent = 'Löschen';
           actions.appendChild(delBtn);
         }
+        const today = getTodayValue();
+        const todayLog = (entry.attemptLog || []).find(s => s.date === today);
         const todayLabel = todayAttempts === 0 ? 'Heute: 0' : 'Heute: ' + todayAttempts;
         const counter = document.createElement('div');
         counter.className = 'attempt-counter';
@@ -521,6 +544,30 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
           <span class="attempt-count">${escapeHtml(todayLabel)}</span>
           <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="1">+</button>
         `;
+
+        const pastSessions = (entry.attemptLog || []).filter(s => s.date !== today && s.count > 0);
+
+        if (todayAttempts > 0) {
+          const noteArea = document.createElement('textarea');
+          noteArea.className = 'attempt-note-area';
+          noteArea.placeholder = 'Notiz zur Session…';
+          noteArea.dataset.action = 'save-note';
+          noteArea.dataset.entryId = entry.id;
+          noteArea.value = todayLog?.notes || '';
+          counter.appendChild(noteArea);
+        }
+
+        if (pastSessions.length > 0) {
+          const hist = document.createElement('details');
+          hist.className = 'attempt-history';
+          const rows = pastSessions
+            .slice().reverse()
+            .map(s => `<div class="attempt-hist-row"><span class="attempt-hist-date">${escapeHtml(s.date ? formatDate(s.date) : '—')}</span><span class="attempt-hist-count">${s.count}×</span>${s.notes ? `<span class="attempt-hist-note">${escapeHtml(s.notes)}</span>` : ''}</div>`)
+            .join('');
+          hist.innerHTML = `<summary class="attempt-hist-summary">${pastSessions.length} frühere Session${pastSessions.length !== 1 ? 's' : ''}</summary>${rows}`;
+          counter.appendChild(hist);
+        }
+
         td.appendChild(actions);
         td.appendChild(counter);
         if (locked) {

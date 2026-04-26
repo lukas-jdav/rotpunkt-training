@@ -51,7 +51,12 @@ function bindEvents() {
   });
 
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && ui.settingsModal.classList.contains('open')) closeSettingsModal();
+    if (event.key !== 'Escape') return;
+    if (ui.confirmModal.classList.contains('open')) {
+      ui.confirmCancel.click();
+    } else if (ui.settingsModal.classList.contains('open')) {
+      closeSettingsModal();
+    }
   });
 
   ui.authUi.addEventListener('click', async event => {
@@ -86,6 +91,12 @@ function bindEvents() {
     if (!button) return;
     applyFilterPreset(button.dataset.preset);
   });
+
+  ui.routeBoard.addEventListener('blur', event => {
+    const textarea = event.target.closest('textarea[data-action="save-note"]');
+    if (!textarea) return;
+    saveAttemptNote(textarea.dataset.entryId, textarea.value);
+  }, true);
 
   ui.routeBoard.addEventListener('change', event => {
     const checkbox = event.target.closest('input[data-action="toggle-done"]');
@@ -575,6 +586,17 @@ function updateEntryStatus(entryId, selection) {
     open: 'Status zurückgesetzt'
   };
   showToast(toastMessages[nextStatus.status] || 'Gespeichert ✓');
+}
+
+function saveAttemptNote(entryId, note) {
+  const today = getTodayValue();
+  const trimmed = note.trim();
+  appState.routeEntries = appState.routeEntries.map(entry => {
+    if (entry.id !== entryId) return entry;
+    const log = entry.attemptLog.map(s => s.date === today ? { ...s, notes: trimmed } : s);
+    return { ...entry, attemptLog: log, updatedAt: Date.now() };
+  });
+  persistRoutes();
 }
 
 function changeAttempts(entryId, delta) {

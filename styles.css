@@ -511,10 +511,15 @@
     transition: background 120ms, color 120ms, border-color 120ms;
   }
 
-  .filter-preset-btn:hover {
+  .filter-preset-btn:hover,
+  .filter-preset-btn.active {
     background: var(--blue-light);
     border-color: var(--blue-border);
     color: var(--blue);
+  }
+
+  .filter-preset-btn.active {
+    font-weight: 700;
   }
 
   .grade-filter-btn {
@@ -1057,7 +1062,8 @@
     color: var(--gray-600);
   }
 
-  [data-theme="dark"] .filter-preset-btn:hover {
+  [data-theme="dark"] .filter-preset-btn:hover,
+  [data-theme="dark"] .filter-preset-btn.active {
     background: var(--gray-200);
     color: var(--gray-800);
   }
@@ -1364,6 +1370,73 @@
   background: var(--gray-100);
   color: var(--gray-900);
 }
+
+  .attempt-note-area {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+    padding: 6px 8px;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--gray-700);
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    resize: vertical;
+    min-height: 44px;
+    max-height: 120px;
+    box-sizing: border-box;
+    line-height: 1.4;
+  }
+
+  .attempt-note-area:focus {
+    outline: none;
+    border-color: var(--dav-green-border);
+    background: white;
+  }
+
+  .attempt-history {
+    margin-top: 6px;
+    font-size: 12px;
+  }
+
+  .attempt-hist-summary {
+    color: var(--gray-400);
+    cursor: pointer;
+    user-select: none;
+    font-size: 11px;
+    list-style: none;
+    padding: 2px 0;
+  }
+
+  .attempt-hist-summary::-webkit-details-marker { display: none; }
+
+  .attempt-hist-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    padding: 4px 0;
+    border-top: 1px solid var(--gray-100);
+    align-items: baseline;
+  }
+
+  .attempt-hist-date { color: var(--gray-400); font-size: 11px; min-width: 60px; }
+  .attempt-hist-count { color: var(--gray-600); font-weight: 600; }
+  .attempt-hist-note { color: var(--gray-600); font-style: italic; font-size: 11px; flex-basis: 100%; }
+
+  [data-theme="dark"] .attempt-note-area {
+    background: var(--gray-100);
+    border-color: var(--gray-200);
+    color: var(--gray-800);
+  }
+
+  [data-theme="dark"] .attempt-note-area:focus {
+    background: var(--gray-200);
+  }
+
+  [data-theme="dark"] .attempt-hist-row {
+    border-top-color: var(--gray-200);
+  }
 
 /* ── Route-Sync-Hinweise ─────────────────────────────────────────────────── */
 
