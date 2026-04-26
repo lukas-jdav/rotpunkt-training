@@ -51,8 +51,7 @@ function parseHallRouteData(rawCsv) {
       name,
       location: [
         String(row.area || '').trim(),
-        String(row.sector || '').trim(),
-        row.location ? 'Linie ' + String(row.location).trim() : ''
+        String(row.sector || '').trim()
       ].filter(Boolean).join(' · '),
       notes: buildHallRouteNotes(row),
       link: String(row.link || '').trim(),

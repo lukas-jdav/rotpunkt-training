@@ -507,6 +507,9 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
         break;
 
       case 'aktionen': {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'aktionen-inner';
+
         const actions = document.createElement('div');
         actions.className = 'route-status-actions';
         [
@@ -534,9 +537,15 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
           delBtn.textContent = 'Löschen';
           actions.appendChild(delBtn);
         }
+        wrapper.appendChild(actions);
+
         const today = getTodayValue();
         const todayLog = (entry.attemptLog || []).find(s => s.date === today);
         const todayLabel = todayAttempts === 0 ? 'Heute: 0' : 'Heute: ' + todayAttempts;
+
+        const attemptSection = document.createElement('div');
+        attemptSection.className = 'attempt-section';
+
         const counter = document.createElement('div');
         counter.className = 'attempt-counter';
         counter.innerHTML = `
@@ -544,19 +553,20 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
           <span class="attempt-count">${escapeHtml(todayLabel)}</span>
           <button type="button" class="attempt-btn" data-action="change-attempts" data-entry-id="${escapeHtml(entry.id)}" data-delta="1">+</button>
         `;
-
-        const pastSessions = (entry.attemptLog || []).filter(s => s.date !== today && s.count > 0);
+        attemptSection.appendChild(counter);
 
         if (todayAttempts > 0) {
           const noteArea = document.createElement('textarea');
           noteArea.className = 'attempt-note-area';
           noteArea.placeholder = 'Notiz zur Session…';
+          noteArea.rows = 2;
           noteArea.dataset.action = 'save-note';
           noteArea.dataset.entryId = entry.id;
           noteArea.value = todayLog?.notes || '';
-          counter.appendChild(noteArea);
+          attemptSection.appendChild(noteArea);
         }
 
+        const pastSessions = (entry.attemptLog || []).filter(s => s.date !== today && s.count > 0);
         if (pastSessions.length > 0) {
           const hist = document.createElement('details');
           hist.className = 'attempt-history';
@@ -565,11 +575,11 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
             .map(s => `<div class="attempt-hist-row"><span class="attempt-hist-date">${escapeHtml(s.date ? formatDate(s.date) : '—')}</span><span class="attempt-hist-count">${s.count}×</span>${s.notes ? `<span class="attempt-hist-note">${escapeHtml(s.notes)}</span>` : ''}</div>`)
             .join('');
           hist.innerHTML = `<summary class="attempt-hist-summary">${pastSessions.length} frühere Session${pastSessions.length !== 1 ? 's' : ''}</summary>${rows}`;
-          counter.appendChild(hist);
+          attemptSection.appendChild(hist);
         }
 
-        td.appendChild(actions);
-        td.appendChild(counter);
+        wrapper.appendChild(attemptSection);
+        td.appendChild(wrapper);
         if (locked) {
           const lockNote = document.createElement('div');
           lockNote.className = 'route-lock-note';
@@ -589,9 +599,9 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
             ${escapeHtml(entry.name)}
             ${appState.profile.vorstiegOnly && isVorstiegOptional(entry) ? '<span class="route-optional-badge">Optional</span>' : ''}
           </div>
-          <div class="route-name-sub">${escapeHtml(getRouteDateLabel(entry))}</div>
+          ${entry.location ? `<div class="route-name-sub">${escapeHtml(entry.location)}</div>` : ''}
+          ${entry.notes ? `<div class="route-name-sub">${escapeHtml(entry.notes)}</div>` : ''}
           ${totalAttempts > 0 ? `<div class="route-attempt-info">${totalAttempts} ${totalAttempts === 1 ? 'Versuch' : 'Versuche'} gesamt${todayAttempts > 0 ? ' · heute ' + todayAttempts : ''}</div>` : ''}
-          ${entry.notes ? `<div class="route-notes-text">${escapeHtml(entry.notes)}</div>` : ''}
         `;
         break;
 
@@ -622,29 +632,42 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
 }
 
 function buildInfoCellHtml(entry) {
-  const bits = [];
-
-  if (isRouteNew(entry)) bits.push(`<span class="badge-new">Neu</span>`);
   const colorDots = [entry.primaryColor, entry.secondaryColor]
     .filter(Boolean)
     .map(c => `<span class="route-color-dot" style="background-color:${escapeHtml(c)}"></span>`)
     .join('');
 
-  if (entry.rawDifficulty) {
-    const french = toFrenchGrade(entry.rawDifficulty);
-    const frenchHtml = french ? ` <span class="grade-french">· ${escapeHtml(french)}</span>` : '';
-    bits.push(`<span class="route-mini-badge">${escapeHtml(entry.rawDifficulty)}${frenchHtml}${colorDots ? ' ' + colorDots : ''}</span>`);
-  } else if (colorDots) {
-    bits.push(`<span class="route-mini-badge">${colorDots}</span>`);
-  }
+  const french = entry.rawDifficulty ? toFrenchGrade(entry.rawDifficulty) : null;
+  const frenchHtml = french ? ` <span class="grade-french">· ${escapeHtml(french)}</span>` : '';
 
-  if (entry.routeCode) bits.push(`<span class="route-mini-badge">Linie ${escapeHtml(entry.routeCode)}</span>`);
+  const row1Left = entry.rawDifficulty
+    ? `<span class="route-mini-badge">${escapeHtml(entry.rawDifficulty)}${frenchHtml}</span>`
+    : '';
+  const row1Right = colorDots ? `<span class="route-colors">${colorDots}</span>` : '';
 
-  if (entry.link) {
-    bits.push(`<button class="route-meta-link" type="button" data-action="open-route-link" data-url="${escapeHtml(entry.link)}">Vertical-Life ↗</button>`);
-  }
+  const row2Left = entry.routeCode
+    ? `<span class="route-mini-badge">Seil ${escapeHtml(entry.routeCode)}</span>`
+    : '';
+  const row2Right = entry.link
+    ? `<button class="route-meta-link" type="button" data-action="open-route-link" data-url="${escapeHtml(entry.link)}">Vertical-Life ↗</button>`
+    : '';
 
-  return `<div class="route-info-stack">${bits.join('')}</div>`;
+  const hasRow1 = row1Left || row1Right;
+  const hasRow2 = row2Left || row2Right;
+
+  const gridHtml = (hasRow1 || hasRow2) ? `
+    <div class="info-grid">
+      ${hasRow1 ? `<div class="info-row">${row1Left}${row1Right}</div>` : ''}
+      ${hasRow2 ? `<div class="info-row">${row2Left}${row2Right}</div>` : ''}
+    </div>` : '';
+
+  const dateHtml = entry.setDate
+    ? `<div class="info-date">${escapeHtml(formatDate(entry.setDate))}</div>`
+    : '';
+
+  const newBadge = isRouteNew(entry) ? `<span class="badge-new">Neu</span>` : '';
+
+  return `<div class="route-info-stack">${newBadge}${gridHtml}${dateHtml}</div>`;
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
