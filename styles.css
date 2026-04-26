@@ -700,9 +700,13 @@
 
   .route-info-stack,
   .route-status-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .route-status-actions .delete-btn {
+    grid-column: 1 / -1;
   }
 
   .route-mini-badge,
