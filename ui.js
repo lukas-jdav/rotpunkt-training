@@ -502,10 +502,13 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
     const td = document.createElement('td');
 
     switch (col.key) {
-      case 'grad':
+      case 'grad': {
+        const grFrench = entry.rawDifficulty ? toFrenchGrade(entry.rawDifficulty) : null;
+        const grFrenchHtml = grFrench ? `<span class="grade-french"> · ${escapeHtml(grFrench)}</span>` : '';
         td.className = 'col-grad';
-        td.innerHTML = `<span class="route-grade-badge">${escapeHtml(entry.grade)}</span>`;
+        td.innerHTML = `<span class="route-grade-badge">${escapeHtml(entry.rawDifficulty || entry.grade)}${grFrenchHtml}</span>`;
         break;
+      }
 
       case 'aktionen': {
         const wrapper = document.createElement('div');
@@ -647,14 +650,6 @@ function buildInfoCellHtml(entry) {
     })
     .join('');
 
-  const french = entry.rawDifficulty ? toFrenchGrade(entry.rawDifficulty) : null;
-  const frenchHtml = french ? ` <span class="grade-french">· ${escapeHtml(french)}</span>` : '';
-
-  const row1Left = entry.rawDifficulty
-    ? `<span class="route-mini-badge">${escapeHtml(entry.rawDifficulty)}${frenchHtml}</span>`
-    : '';
-  const row1Right = colorChips;
-
   const row2Left = entry.routeCode
     ? `<span class="route-mini-badge">Seil ${escapeHtml(entry.routeCode)}</span>`
     : '';
@@ -662,12 +657,11 @@ function buildInfoCellHtml(entry) {
     ? `<button class="route-meta-link" type="button" data-action="open-route-link" data-url="${escapeHtml(entry.link)}">Vertical-Life ↗</button>`
     : '';
 
-  const hasRow1 = row1Left || row1Right;
   const hasRow2 = row2Left || row2Right;
 
-  const gridHtml = (hasRow1 || hasRow2) ? `
+  const gridHtml = (colorChips || hasRow2) ? `
     <div class="info-grid">
-      ${hasRow1 ? `<div class="info-row">${row1Left}${row1Right}</div>` : ''}
+      ${colorChips ? `<div class="info-row">${colorChips}</div>` : ''}
       ${hasRow2 ? `<div class="info-row">${row2Left}${row2Right}</div>` : ''}
     </div>` : '';
 
