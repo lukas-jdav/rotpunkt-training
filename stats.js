@@ -99,6 +99,30 @@ function computeStats() {
   const activeWeeks = Object.keys(completedByWeek).length;
   const avgPerWeek = activeWeeks > 0 ? (totalDone / activeWeeks).toFixed(1) : '—';
 
+  // Trend: current week vs average of prior 4 weeks
+  const currentWeekKey = getISOWeekKey(today.toISOString().slice(0, 10));
+  const currentWeekCount = completedByWeek[currentWeekKey] || 0;
+  const prior4 = recentWeeks.slice(-5, -1); // 4 weeks before current
+  const prior4Avg = prior4.length > 0
+    ? prior4.reduce((s, k) => s + (completedByWeek[k] || 0), 0) / prior4.length
+    : null;
+  const trendDelta = prior4Avg !== null ? currentWeekCount - prior4Avg : null;
+  const trendDir = trendDelta === null ? null : trendDelta > 0.4 ? 'up' : trendDelta < -0.4 ? 'down' : 'flat';
+
+  // By location (wall/area success rate)
+  const locationMap = {};
+  appState.routeEntries.filter(e => !e.archived).forEach(e => {
+    const loc = e.location || '';
+    if (!loc) return;
+    if (!locationMap[loc]) locationMap[loc] = { total: 0, done: 0 };
+    locationMap[loc].total += 1;
+    if (e.status === 'done') locationMap[loc].done += 1;
+  });
+  const byLocation = Object.entries(locationMap)
+    .map(([loc, v]) => ({ loc, ...v, rate: v.total > 0 ? v.done / v.total : 0 }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 8);
+
   const totalAttempts = appState.routeEntries.reduce(
     (sum, e) => sum + (e.attemptLog || []).reduce((s2, sess) => s2 + sess.count, 0), 0
   );
@@ -109,7 +133,9 @@ function computeStats() {
     ascentCounts, totalDone, weekRows, maxWeekCount,
     maxGrade, maxGradeCount, avgPerWeek, activeWeeks,
     totalAttempts, attemptedRoutes, avgAttemptsPerRoute,
-    attemptWeekRows, maxAttemptWeekCount
+    attemptWeekRows, maxAttemptWeekCount,
+    currentWeekCount, trendDelta, trendDir,
+    byLocation
   };
 }
 
@@ -182,8 +208,11 @@ function renderStats() {
 
         <div class="card" style="grid-column:1/-1;">
           <div class="eyebrow">Abschlüsse pro Woche</div>
-          <h3 class="progress-card-title">Letzte 8 Wochen</h3>
-          ${stats.weekRows.every(r => r.count === 0) ? '<p style="color:var(--gray-400);font-size:13px;">Noch keine abgeschlossenen Routen mit Datum vorhanden.</p>' : ''}
+          <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
+            <h3 class="progress-card-title" style="margin:0;">Letzte 8 Wochen</h3>
+            ${stats.trendDir ? `<span class="trend-badge trend-${stats.trendDir}">${stats.trendDir === 'up' ? '↑' : stats.trendDir === 'down' ? '↓' : '→'} ${stats.trendDir === 'flat' ? 'Schnitt' : (Math.abs(stats.trendDelta).toFixed(1) + (stats.trendDir === 'up' ? ' über Schnitt' : ' unter Schnitt'))}</span>` : ''}
+          </div>
+          ${stats.weekRows.every(r => r.count === 0) ? '<p style="color:var(--gray-400);font-size:13px;margin-top:8px;">Noch keine abgeschlossenen Routen mit Datum vorhanden.</p>' : ''}
           <div class="stats-week-list">
             ${stats.weekRows.map(row => `
               <div class="stats-week-row">
@@ -213,6 +242,23 @@ function renderStats() {
             `).join('')}
           </div>
         </div>
+
+        ${stats.byLocation.length > 0 ? `
+        <div class="card" style="grid-column:1/-1;">
+          <div class="eyebrow">Wand / Bereich</div>
+          <h3 class="progress-card-title">Erfolgsrate nach Bereich</h3>
+          <div class="stats-week-list">
+            ${stats.byLocation.map(row => `
+              <div class="stats-week-row">
+                <div class="stats-week-label">${escapeHtml(row.loc)}</div>
+                <div class="stats-week-bar-wrap">
+                  <div class="stats-week-bar stats-week-bar--location" style="width:${Math.round(row.rate * 100)}%"></div>
+                </div>
+                <div class="stats-week-count">${row.done}/${row.total}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>` : ''}
 
       </div>
     </div>

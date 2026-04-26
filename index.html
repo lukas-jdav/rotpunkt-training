@@ -76,6 +76,11 @@
       </select>
       <div id="route-grade-chips" class="grade-filter-shell" aria-label="Gradfilter"></div>
     </div>
+    <div class="filter-presets" id="filter-presets">
+      <button class="filter-preset-btn" data-preset="focus">Aktueller Fokus</button>
+      <button class="filter-preset-btn" data-preset="projects">Offene Projekte</button>
+      <button class="filter-preset-btn" data-preset="all">Alle anzeigen</button>
+    </div>
     <div id="route-board" aria-live="polite"></div>
   </div>
 
@@ -132,7 +137,7 @@
           </div>
           <div id="form-feedback" class="form-feedback" aria-live="polite"></div>
           <div class="tracker-actions">
-            <button type="submit" class="primary-btn">Route speichern</button>
+            <button id="route-submit" type="submit" class="primary-btn" disabled>Route speichern</button>
             <button type="reset" class="secondary-btn">Felder leeren</button>
           </div>
         </form>
@@ -374,8 +379,9 @@
 
       <div class="settings-card">
         <h3>Version &amp; Verlauf</h3>
-        <p class="version-current">Aktuelle Version: <strong>v2.6.0</strong> · 26. April 2026</p>
+        <p class="version-current">Aktuelle Version: <strong>v2.7.0</strong> · 26. April 2026</p>
         <ul class="version-list">
+          <li><span class="version-tag">v2.7.0</span> <span class="version-date">Apr 2026</span> Formularvalidierung mit Live-Prüfung · Trend-Indikator in Statistik · Wand-Erfolgsrate · Filter-Presets · Schraubdatum aus Infospalte entfernt</li>
           <li><span class="version-tag">v2.6.0</span> <span class="version-date">Apr 2026</span> Toast-Feedback nach Statusänderungen · Lade-Spinner auf Sync-Buttons · Bestätigungs-Dialog ersetzt window.prompt/confirm</li>
           <li><span class="version-tag">v2.5.3</span> <span class="version-date">Apr 2026</span> Route-Links: Sync extrahiert VL-Links direkt aus 8a.nu-Daten; 500-Fehler durch falsches URL-Format behoben</li>
           <li><span class="version-tag">v2.5.2</span> <span class="version-date">Apr 2026</span> Route-Links auf 8a.nu-Detailseiten umgestellt (zlaggables-Format)</li>
@@ -405,7 +411,7 @@
 <div class="footer">
   <span>Sektion Aachen · JDAV Leistungsgruppe</span>
   <span>Konzept: Andi · App: Lukas</span>
-  <span class="footer-version">v2.6.0 · 26. Apr 2026</span>
+  <span class="footer-version">v2.7.0 · 26. Apr 2026</span>
 </div>
 
 

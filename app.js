@@ -81,6 +81,12 @@ function bindEvents() {
     renderGradeFilterChips(computed.summaries);
   });
 
+  ui.filterPresets.addEventListener('click', event => {
+    const button = event.target.closest('[data-preset]');
+    if (!button) return;
+    applyFilterPreset(button.dataset.preset);
+  });
+
   ui.routeBoard.addEventListener('change', event => {
     const checkbox = event.target.closest('input[data-action="toggle-done"]');
     if (!checkbox) return;
@@ -213,6 +219,8 @@ function bindEvents() {
 
   ui.routeLogForm.addEventListener('submit', onRouteFormSubmit);
   ui.routeLogForm.addEventListener('reset', () => requestAnimationFrame(resetRouteForm));
+  ui.routeLogForm.addEventListener('input', updateRouteSubmitState);
+  ui.routeLogForm.addEventListener('change', updateRouteSubmitState);
 
   ui.settingsStartGrade.addEventListener('change', event => {
     appState.profile.startGrade = event.target.value;
@@ -510,6 +518,30 @@ function maybeTriggerRouteSyncNotification() {
   }
 }
 
+function applyFilterPreset(preset) {
+  appState.filters.search = '';
+  ui.routeSearch.value = '';
+
+  if (preset === 'focus') {
+    const start = Number(appState.profile.startGrade);
+    appState.filters.grades = [String(start), String(start + 1)].filter(g => !Number.isNaN(Number(g)));
+    appState.filters.status = 'open';
+    ui.routeStatusFilter.value = 'open';
+  } else if (preset === 'projects') {
+    appState.filters.grades = [];
+    appState.filters.status = 'open';
+    ui.routeStatusFilter.value = 'open';
+  } else {
+    appState.filters.grades = [];
+    appState.filters.status = 'all';
+    ui.routeStatusFilter.value = 'all';
+  }
+
+  const computed = getComputedState();
+  renderRouteBoard(computed.progressState);
+  renderGradeFilterChips(computed.summaries);
+}
+
 function updateEntryStatus(entryId, selection) {
   const progressState = getComputedState().progressState;
   const targetEntry = appState.routeEntries.find(entry => entry.id === entryId);
@@ -613,11 +645,19 @@ function onRouteFormSubmit(event) {
   document.getElementById('route-name').focus();
 }
 
+function updateRouteSubmitState() {
+  const date = document.getElementById('route-date').value.trim();
+  const grade = document.getElementById('route-grade').value.trim();
+  const name = document.getElementById('route-name').value.trim();
+  ui.routeSubmit.disabled = !(date && grade && name);
+}
+
 function resetRouteForm() {
   ui.routeLogForm.reset();
   document.getElementById('route-date').value = getTodayValue();
   document.getElementById('route-status').value = 'open';
   clearFeedback();
+  updateRouteSubmitState();
 }
 
 function showFeedback(message, type) {

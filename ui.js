@@ -580,7 +580,6 @@ function buildInfoCellHtml(entry) {
   if (isRouteNew(entry)) bits.push(`<span class="badge-new">Neu</span>`);
   if (entry.rawDifficulty) bits.push(`<span class="route-mini-badge">VL ${escapeHtml(entry.rawDifficulty)}</span>`);
   if (entry.routeCode) bits.push(`<span class="route-mini-badge">Linie ${escapeHtml(entry.routeCode)}</span>`);
-  if (entry.setDate) bits.push(`<span class="route-mini-badge">Geschraubt ${escapeHtml(formatDate(entry.setDate))}</span>`);
 
   if (entry.primaryColor || entry.secondaryColor) {
     const colors = [entry.primaryColor, entry.secondaryColor]

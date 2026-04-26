@@ -492,6 +492,31 @@
     background: white;
   }
 
+  .filter-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .filter-preset-btn {
+    border: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    color: var(--gray-600);
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 120ms, color 120ms, border-color 120ms;
+  }
+
+  .filter-preset-btn:hover {
+    background: var(--blue-light);
+    border-color: var(--blue-border);
+    color: var(--blue);
+  }
+
   .grade-filter-btn {
     border: 1px solid var(--gray-200);
     background: var(--gray-50);
@@ -1026,6 +1051,17 @@
     border-color: var(--gray-200);
   }
 
+  [data-theme="dark"] .filter-preset-btn {
+    background: var(--gray-100);
+    border-color: var(--gray-200);
+    color: var(--gray-600);
+  }
+
+  [data-theme="dark"] .filter-preset-btn:hover {
+    background: var(--gray-200);
+    color: var(--gray-800);
+  }
+
   [data-theme="dark"] .status-card,
   [data-theme="dark"] .route-row-open,
   [data-theme="dark"] .route-row-toprope,
@@ -1241,6 +1277,25 @@
   .stats-week-bar--attempts {
     background: linear-gradient(90deg, #2563EB 0%, #93C5FD 100%);
   }
+
+  .stats-week-bar--location {
+    background: linear-gradient(90deg, var(--dav-green) 0%, #6EE7B7 100%);
+  }
+
+  .trend-badge {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 100px;
+  }
+
+  .trend-up   { background: #D1FAE5; color: #065F46; }
+  .trend-down { background: #FEE2E2; color: #991B1B; }
+  .trend-flat { background: var(--gray-100); color: var(--gray-600); }
+
+  [data-theme="dark"] .trend-up   { background: #064E3B; color: #6EE7B7; }
+  [data-theme="dark"] .trend-down { background: #7F1D1D; color: #FCA5A5; }
+  [data-theme="dark"] .trend-flat { background: var(--gray-200); color: var(--gray-600); }
 
   .route-attempt-info {
     font-size: 12px;
