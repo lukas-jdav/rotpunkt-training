@@ -604,6 +604,7 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
             ${appState.profile.vorstiegOnly && isVorstiegOptional(entry) ? '<span class="route-optional-badge">Optional</span>' : ''}
           </div>
           ${locationDisplay ? `<div class="route-name-sub">${escapeHtml(locationDisplay)}</div>` : ''}
+          ${entry.setDate ? `<div class="route-name-sub">${escapeHtml(formatDate(entry.setDate))}</div>` : ''}
           ${entry.notes ? `<div class="route-name-sub">${escapeHtml(entry.notes)}</div>` : ''}
           ${totalAttempts > 0 ? `<div class="route-attempt-info">${totalAttempts} ${totalAttempts === 1 ? 'Versuch' : 'Versuche'} gesamt${todayAttempts > 0 ? ' · heute ' + todayAttempts : ''}</div>` : ''}
         `;
@@ -669,13 +670,9 @@ function buildInfoCellHtml(entry) {
       ${hasRow2 ? `<div class="info-row">${row2Left}${row2Right}</div>` : ''}
     </div>` : '';
 
-  const dateHtml = entry.setDate
-    ? `<div class="info-date">${escapeHtml(formatDate(entry.setDate))}</div>`
-    : '';
-
   const newBadge = isRouteNew(entry) ? `<span class="badge-new">Neu</span>` : '';
 
-  return `<div class="route-info-stack">${newBadge}${gridHtml}${dateHtml}</div>`;
+  return `<div class="route-info-stack">${newBadge}${gridHtml}</div>`;
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
