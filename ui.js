@@ -593,17 +593,21 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
         td.innerHTML = buildInfoCellHtml(entry);
         break;
 
-      case 'route':
+      case 'route': {
+        const locationDisplay = entry.location
+          ? entry.location.replace(/\s*·\s*Linie\s+\S+$/, '').trim()
+          : '';
         td.innerHTML = `
           <div class="route-name-main">
             ${escapeHtml(entry.name)}
             ${appState.profile.vorstiegOnly && isVorstiegOptional(entry) ? '<span class="route-optional-badge">Optional</span>' : ''}
           </div>
-          ${entry.location ? `<div class="route-name-sub">${escapeHtml(entry.location)}</div>` : ''}
+          ${locationDisplay ? `<div class="route-name-sub">${escapeHtml(locationDisplay)}</div>` : ''}
           ${entry.notes ? `<div class="route-name-sub">${escapeHtml(entry.notes)}</div>` : ''}
           ${totalAttempts > 0 ? `<div class="route-attempt-info">${totalAttempts} ${totalAttempts === 1 ? 'Versuch' : 'Versuche'} gesamt${todayAttempts > 0 ? ' · heute ' + todayAttempts : ''}</div>` : ''}
         `;
         break;
+      }
 
       case 'bereich':
         td.innerHTML = `<div class="route-location-text">${escapeHtml(entry.location || '—')}</div>`;
