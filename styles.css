@@ -721,9 +721,10 @@
 
   .info-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto auto;
     gap: 5px;
     align-items: stretch;
+    justify-content: center;
   }
 
   .info-grid .route-mini-badge,
@@ -731,9 +732,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    box-sizing: border-box;
-    text-align: center;
   }
 
   .route-status-actions {
