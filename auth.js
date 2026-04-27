@@ -115,34 +115,10 @@ async function signInWithGoogle() {
     console.warn('Persistence konnte nicht gesetzt werden:', error);
   }
 
-  const preferRedirect = window.matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
-
-  if (preferRedirect) {
-    try {
-      await FIREBASE_STATE.auth.signInWithRedirect(provider);
-      return;
-    } catch (error) {
-      console.error('Redirect-Login:', error);
-      showAuthError(getReadableAuthError(error));
-      return;
-    }
-  }
-
   try {
     await FIREBASE_STATE.auth.signInWithPopup(provider);
   } catch (error) {
     console.error('Popup-Login:', error);
-    const fallbackCodes = new Set(['auth/popup-blocked', 'auth/popup-closed-by-user', 'auth/cancelled-popup-request', 'auth/web-storage-unsupported']);
-    if (fallbackCodes.has(error && error.code)) {
-      try {
-        await FIREBASE_STATE.auth.signInWithRedirect(provider);
-        return;
-      } catch (redirectError) {
-        console.error('Redirect-Fallback:', redirectError);
-        showAuthError(getReadableAuthError(redirectError));
-        return;
-      }
-    }
     showAuthError(getReadableAuthError(error));
   }
 }
