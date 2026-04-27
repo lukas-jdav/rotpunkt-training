@@ -9,10 +9,19 @@ function initFirebase() {
     FIREBASE_STATE.db = firebase.firestore();
     appState.authReady = true;
 
-    FIREBASE_STATE.auth.getRedirectResult().catch(error => {
-      console.error('Redirect-Result:', error);
-      alert(getReadableAuthError(error));
-    });
+    FIREBASE_STATE.auth.getRedirectResult()
+      .then(result => {
+        if (result && result.user) {
+          appState.currentUser = result.user;
+          renderAuthUI();
+        }
+      })
+      .catch(error => {
+        if (error && error.code) {
+          console.error('Redirect-Result-Fehler:', error.code, error.message);
+          alert(getReadableAuthError(error));
+        }
+      });
 
     FIREBASE_STATE.auth.onAuthStateChanged(async user => {
       appState.currentUser = user;
@@ -117,8 +126,10 @@ function getReadableAuthError(error) {
   if (code === 'auth/popup-blocked') return 'Der Popup-Login wurde blockiert. Es wird automatisch auf Redirect umgestellt.';
   if (code === 'auth/popup-closed-by-user') return 'Das Login-Fenster wurde geschlossen, bevor die Anmeldung abgeschlossen war.';
   if (code === 'auth/cancelled-popup-request') return 'Es läuft bereits ein anderer Login-Versuch. Bitte versuche es erneut.';
-  if (code === 'auth/unauthorized-domain') return 'Die aktuelle Domain ist in Firebase noch nicht für Google-Login freigeschaltet. In Firebase Authentication → Settings → Authorized domains muss lukas-jdav.github.io eingetragen sein.';
+  if (code === 'auth/unauthorized-domain') return 'Domain nicht autorisiert. In der Firebase Console unter Authentication → Settings → Authorized domains muss "lukas-jdav.github.io" eingetragen sein.';
   if (code === 'auth/web-storage-unsupported') return 'Der Browser unterstützt den nötigen Web-Speicher für den Login nicht vollständig.';
   if (code === 'auth/network-request-failed') return 'Die Anmeldung ist an einem Netzwerkproblem gescheitert.';
-  return (error && (error.message || error.code)) || 'Unbekannter Fehler beim Google-Login.';
+  if (code === 'auth/operation-not-allowed') return 'Google-Login ist in Firebase nicht aktiviert. Authentication → Sign-in method → Google aktivieren.';
+  const msg = error && (error.message || error.code) ? String(error.message || error.code) : '';
+  return (code ? `[${code}] ` : '') + (msg || 'Unbekannter Fehler beim Google-Login.');
 }
