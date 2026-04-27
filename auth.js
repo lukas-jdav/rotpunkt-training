@@ -1,3 +1,31 @@
+function showAuthError(message) {
+  const text = message ? String(message) : 'Unbekannter Fehler beim Google-Login.';
+  console.error('Auth-Fehler:', text);
+  if (!ui || !ui.authUi) return;
+  const existing = ui.authUi.querySelector('.auth-error');
+  if (existing) existing.remove();
+  const note = document.createElement('p');
+  note.className = 'auth-error';
+  note.setAttribute('role', 'alert');
+  note.style.color = '#b91c1c';
+  note.style.background = 'rgba(254, 226, 226, 0.95)';
+  note.style.border = '1px solid #b91c1c';
+  note.style.borderRadius = '6px';
+  note.style.padding = '6px 10px';
+  note.style.margin = '6px 0 0';
+  note.style.fontSize = '0.85rem';
+  note.style.maxWidth = '320px';
+  note.style.whiteSpace = 'normal';
+  note.textContent = text;
+  ui.authUi.appendChild(note);
+}
+
+function clearAuthError() {
+  if (!ui || !ui.authUi) return;
+  const existing = ui.authUi.querySelector('.auth-error');
+  if (existing) existing.remove();
+}
+
 function initFirebase() {
   try {
     if (!window.firebase || APP_CONFIG.firebaseConfig.apiKey === 'DEINE_API_KEY') {
@@ -13,18 +41,18 @@ function initFirebase() {
       .then(result => {
         if (result && result.user) {
           appState.currentUser = result.user;
+          clearAuthError();
           renderAuthUI();
         }
       })
       .catch(error => {
-        if (error && error.code) {
-          console.error('Redirect-Result-Fehler:', error.code, error.message);
-          alert(getReadableAuthError(error));
-        }
+        console.error('Redirect-Result-Fehler:', error);
+        showAuthError(getReadableAuthError(error));
       });
 
     FIREBASE_STATE.auth.onAuthStateChanged(async user => {
       appState.currentUser = user;
+      if (user) clearAuthError();
       renderAuthUI();
       if (!user) {
         appState.syncStatus = 'local';
@@ -66,12 +94,15 @@ function initFirebase() {
   } catch (error) {
     console.warn('Firebase init error:', error);
     appState.authReady = false;
+    showAuthError(getReadableAuthError(error));
   }
 }
 
 async function signInWithGoogle() {
+  clearAuthError();
+
   if (!FIREBASE_STATE.auth) {
-    alert('Google-Login ist momentan nicht verfügbar. Bitte Seite neu laden.');
+    showAuthError('Google-Login ist momentan nicht verfügbar. Bitte Seite neu laden.');
     return;
   }
 
@@ -92,7 +123,7 @@ async function signInWithGoogle() {
       return;
     } catch (error) {
       console.error('Redirect-Login:', error);
-      alert(getReadableAuthError(error));
+      showAuthError(getReadableAuthError(error));
       return;
     }
   }
@@ -108,16 +139,17 @@ async function signInWithGoogle() {
         return;
       } catch (redirectError) {
         console.error('Redirect-Fallback:', redirectError);
-        alert(getReadableAuthError(redirectError));
+        showAuthError(getReadableAuthError(redirectError));
         return;
       }
     }
-    alert(getReadableAuthError(error));
+    showAuthError(getReadableAuthError(error));
   }
 }
 
 function signOut() {
   if (!FIREBASE_STATE.auth) return;
+  clearAuthError();
   FIREBASE_STATE.auth.signOut();
 }
 
