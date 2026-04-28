@@ -654,7 +654,7 @@ function buildInfoCellHtml(entry) {
   });
 
   const linkHtml = entry.link
-    ? `<button class="route-meta-link route-meta-link-wide" type="button" data-action="open-route-link" data-url="${escapeHtml(entry.link)}">Vertical-Life ↗</button>`
+    ? `<a class="route-meta-link route-meta-link-wide" href="${escapeHtml(entry.link)}" target="_blank" rel="noreferrer noopener">Vertical-Life ↗</a>`
     : '';
 
   const gridItems = badgeItems.join('') + linkHtml;

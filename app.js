@@ -108,11 +108,6 @@ function bindEvents() {
     const button = event.target.closest('button[data-action]');
     if (!button) return;
 
-    if (button.dataset.action === 'open-route-link') {
-      openRouteLink(button.dataset.url);
-      return;
-    }
-
     if (button.dataset.action === 'toggle-col-panel') {
       appState._colPanelOpen = !appState._colPanelOpen;
       renderRouteBoard(getComputedState().progressState);
