@@ -765,7 +765,7 @@
   }
 
   .route-mini-badge { padding: 6px 8px; background: var(--gray-100); color: var(--gray-600); border: 1px solid var(--gray-200); }
-  .route-grade-badge { justify-content: center; min-width: 22px; padding: 6px 8px; white-space: nowrap; background: var(--dav-green-light); color: var(--dav-green); border: 1px solid var(--dav-green-border); }
+  .route-grade-badge { flex-direction: column; justify-content: center; min-width: 22px; padding: 6px 8px; background: var(--dav-green-light); color: var(--dav-green); border: 1px solid var(--dav-green-border); }
   .tracker-pill { gap: 6px; padding: 4px 8px; }
   .pill-rotpunkt { background: var(--dav-green-light); color: var(--dav-green); border: 1px solid var(--dav-green-border); }
   .pill-toprope { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border); }

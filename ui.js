@@ -504,7 +504,7 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
     switch (col.key) {
       case 'grad': {
         const grFrench = entry.rawDifficulty ? toFrenchGrade(entry.rawDifficulty) : null;
-        const grFrenchHtml = grFrench ? `<span class="grade-french"> · ${escapeHtml(grFrench)}</span>` : '';
+        const grFrenchHtml = grFrench ? `<br><span class="grade-french">${escapeHtml(grFrench)}</span>` : '';
         td.className = 'col-grad';
         td.innerHTML = `<span class="route-grade-badge">${escapeHtml(entry.rawDifficulty || entry.grade)}${grFrenchHtml}</span>`;
         break;
