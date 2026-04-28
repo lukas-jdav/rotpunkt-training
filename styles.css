@@ -721,6 +721,15 @@
     align-items: stretch;
   }
 
+  @media (max-width: 640px) {
+    .route-info-grid {
+      grid-template-columns: 1fr;
+    }
+    .route-info-stack {
+      width: 180px;
+    }
+  }
+
   .route-meta-link-wide { grid-column: 1 / -1; }
 
   .route-info-grid .route-mini-badge,
