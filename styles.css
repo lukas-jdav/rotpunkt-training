@@ -707,7 +707,6 @@
     gap: 4px;
     align-items: stretch;
     width: fit-content;
-    margin: 0 auto;
   }
 
   .aktionen-inner {
@@ -715,7 +714,6 @@
     flex-direction: column;
     align-items: stretch;
     width: fit-content;
-    margin: 0 auto;
     gap: 6px;
   }
 
@@ -724,7 +722,6 @@
     grid-template-columns: 1fr 1fr;
     gap: 5px;
     align-items: stretch;
-    justify-content: center;
   }
 
   .info-grid .route-mini-badge,
