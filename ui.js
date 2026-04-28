@@ -644,14 +644,14 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
 function buildInfoCellHtml(entry) {
   const items = [];
 
+  if (entry.routeCode) {
+    items.push(`<span class="route-mini-badge">Seil ${escapeHtml(entry.routeCode)}</span>`);
+  }
+
   [entry.primaryColor, entry.secondaryColor].filter(Boolean).forEach(c => {
     const name = colorName(c);
     items.push(`<span class="route-mini-badge route-color-chip"><span class="route-color-dot" style="background-color:${escapeHtml(c)}"></span>${name ? escapeHtml(name) : ''}</span>`);
   });
-
-  if (entry.routeCode) {
-    items.push(`<span class="route-mini-badge">Seil ${escapeHtml(entry.routeCode)}</span>`);
-  }
   if (entry.link) {
     items.push(`<button class="route-meta-link" type="button" data-action="open-route-link" data-url="${escapeHtml(entry.link)}">Vertical-Life ↗</button>`);
   }
