@@ -1,28 +1,16 @@
 {
-  "generatedAt": "2026-04-28T09:18:24.449Z",
+  "generatedAt": "2026-04-29T09:07:39.556Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
   "totalRoutes": 141,
-  "hasChanges": true,
-  "changeId": "2026-04-28T09:18:24.449Z::40.2||neon::::",
+  "hasChanges": false,
+  "changeId": "",
   "summary": {
-    "added": 1,
+    "added": 0,
     "updated": 0,
     "removed": 0
   },
   "changes": {
-    "added": [
-      {
-        "location": "40.2",
-        "name": "Neon",
-        "difficulty": "6+",
-        "area": "Sportklettern Empore",
-        "sector": "Empore",
-        "set_at": "2026-04-27 13:37:49 UTC",
-        "routesetter": "Laurin Ebert",
-        "color_1": "#ffa500",
-        "color_2": ""
-      }
-    ],
+    "added": [],
     "updated": [],
     "removed": []
   }
