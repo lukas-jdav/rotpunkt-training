@@ -553,10 +553,7 @@ function updateEntryStatus(entryId, selection) {
   const targetEntry = appState.routeEntries.find(entry => entry.id === entryId);
   if (!targetEntry) return;
 
-  if (isEntryLocked(targetEntry, progressState)) {
-    renderApp();
-    return;
-  }
+  if (isEntryLocked(targetEntry, progressState)) return;
 
   const nextStatus = statusFromSelection(selection);
   appState.routeEntries = appState.routeEntries.map(entry => {
@@ -573,7 +570,16 @@ function updateEntryStatus(entryId, selection) {
   });
 
   persistRoutes();
-  renderApp();
+
+  // Zeile visuell aktualisieren ohne die ganze Tabelle neu zu rendern
+  const id = CSS.escape(entryId);
+  document.querySelectorAll(`.status-btn[data-action="set-status"][data-entry-id="${id}"]`)
+    .forEach(btn => btn.classList.toggle('active', btn.dataset.status === selection));
+  const row = document.querySelector(`.status-btn[data-entry-id="${id}"]`)?.closest('tr');
+  if (row) {
+    row.classList.remove('route-row-open', 'route-row-toprope', 'route-row-flash', 'route-row-rotpunkt');
+    row.classList.add('route-row-' + selection);
+  }
 
   const toastMessages = {
     rotpunkt: 'Rotpunkt eingetragen ✓',
