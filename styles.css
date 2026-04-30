@@ -703,28 +703,27 @@
     border-color: var(--gray-200);
   }
 
-  .route-info-stack,
+  .route-info-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    width: 115px;
+  }
+
   .aktionen-inner {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    gap: 6px;
     width: 150px;
   }
 
-  .route-info-stack { gap: 4px; }
-  .aktionen-inner { gap: 6px; }
-
   .route-info-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 5px;
     align-items: stretch;
-  }
-
-  @media (max-width: 640px) {
-    .route-info-grid {
-      grid-template-columns: 1fr;
-    }
   }
 
   .route-meta-link-wide { grid-column: 1 / -1; }
