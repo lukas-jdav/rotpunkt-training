@@ -605,6 +605,7 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
         td.innerHTML = `
           <div class="route-name-main">
             ${escapeHtml(entry.name)}
+            ${isRouteNew(entry) ? '<span class="badge-new">Neu</span>' : ''}
             ${appState.profile.vorstiegOnly && isVorstiegOptional(entry) ? '<span class="route-optional-badge">Optional</span>' : ''}
           </div>
           ${locationDisplay ? `<div class="route-name-sub">${escapeHtml(locationDisplay)}</div>` : ''}
@@ -660,9 +661,7 @@ function buildInfoCellHtml(entry) {
   const gridItems = badgeItems.join('') + linkHtml;
   const gridHtml = gridItems ? `<div class="route-info-grid">${gridItems}</div>` : '';
 
-  const newBadge = isRouteNew(entry) ? `<span class="badge-new">Neu</span>` : '';
-
-  return `<div class="route-info-stack">${gridHtml}${newBadge}</div>`;
+  return `<div class="route-info-stack">${gridHtml}</div>`;
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
