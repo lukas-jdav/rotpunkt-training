@@ -80,6 +80,7 @@ const ui = {
   settingsRouteSyncEnable: document.getElementById('settings-route-sync-enable'),
   settingsRouteSyncCheck: document.getElementById('settings-route-sync-check'),
   settingsResetProgress: document.getElementById('settings-reset-progress'),
+  settingsColWidths: document.getElementById('settings-col-widths'),
   statsPanel: document.getElementById('status-stats-panel'),
   toast: document.getElementById('toast'),
   confirmModal: document.getElementById('confirm-modal'),

@@ -69,6 +69,28 @@ function getSyncStatusText() {
 
 // ── Settings Modal ────────────────────────────────────────────────────────────
 
+function renderColSettings() {
+  if (!ui.settingsColWidths) return;
+  const prefs = appState.profile.tablePrefs;
+  const widths = prefs.columnWidths || {};
+  const hidden = prefs.hiddenColumns || [];
+
+  ui.settingsColWidths.innerHTML = APP_CONFIG.tableColumns.map(col => {
+    const w = widths[col.key] || '';
+    const checkboxHtml = col.hideable
+      ? `<input type="checkbox" data-col-toggle="${col.key}" ${hidden.includes(col.key) ? '' : 'checked'} style="accent-color:var(--dav-green);flex-shrink:0;">`
+      : `<span style="width:16px;display:inline-block;flex-shrink:0;"></span>`;
+    return `<div class="col-settings-row">
+      <label style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;cursor:${col.hideable ? 'pointer' : 'default'};">
+        ${checkboxHtml}<span class="col-settings-label">${col.label}</span>
+      </label>
+      <input type="number" class="col-settings-input" min="40" max="800" placeholder="auto"
+        value="${w}" data-col-width="${col.key}" aria-label="${col.label} Breite in Pixeln">
+      <span class="col-settings-unit">px</span>
+    </div>`;
+  }).join('');
+}
+
 function renderSettingsModal() {
   ui.settingsStartGrade.value = appState.profile.startGrade;
   ui.settingsVorstiegOnly.checked = appState.profile.vorstiegOnly;
@@ -88,6 +110,7 @@ function renderSettingsModal() {
   ui.settingsRouteSyncUpdated.textContent = getRouteSyncUpdatedText();
   ui.settingsRouteSyncSummary.textContent = getRouteSyncSummaryText();
   ui.settingsRouteSyncBrowser.textContent = getRouteSyncBrowserText();
+  renderColSettings();
   ui.settingsRouteSyncEnable.disabled = appState.routeSync.permission === 'granted';
   const routeChecking = appState.routeSync.status === 'checking';
   ui.settingsRouteSyncCheck.disabled = routeChecking;
@@ -434,10 +457,12 @@ function renderRouteBoard(progressState) {
   const thead = document.createElement('thead');
   const headerRow = document.createElement('tr');
 
+  const colWidths = prefs.columnWidths || {};
   activeColumns.forEach(col => {
     const th = document.createElement('th');
     th.dataset.col = col.key;
     th.draggable = true;
+    if (colWidths[col.key]) th.style.width = colWidths[col.key] + 'px';
 
     const handle = document.createElement('span');
     handle.className = 'col-drag-handle';

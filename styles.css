@@ -1082,6 +1082,34 @@
     padding-bottom: 0;
   }
 
+  .col-settings-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .col-settings-row:last-child { border-bottom: none; }
+  .col-settings-label { font-size: 13px; }
+  .col-settings-input {
+    width: 60px;
+    padding: 4px 6px;
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: inherit;
+    background: white;
+    color: var(--gray-800);
+    text-align: right;
+  }
+  .col-settings-unit { font-size: 12px; color: var(--gray-400); flex-shrink: 0; }
+
+  [data-theme="dark"] .col-settings-input {
+    background: var(--gray-100);
+    color: var(--gray-800);
+    border-color: var(--gray-200);
+  }
+
   .cloud-status-label { color: var(--gray-400); font-size: 13px; }
   .cloud-status-value { font-weight: 600; text-align: right; }
   .danger-zone { border-color: var(--accent-border); background: linear-gradient(180deg, #fff 0%, #fff8f5 100%); }

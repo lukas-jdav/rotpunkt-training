@@ -18,6 +18,7 @@ const APP_CONFIG = {
     tablePrefs: {
       columnOrder: ['grad', 'aktionen', 'infos', 'route'],
       hiddenColumns: [],
+      columnWidths: {},
       sortBy: null,
       sortDir: 'asc'
     }
@@ -26,7 +27,7 @@ const APP_CONFIG = {
     { key: 'grad',     label: 'Grad',         sortable: true,  hideable: false },
     { key: 'aktionen', label: 'Aktionen',      sortable: false, hideable: false },
     { key: 'infos',    label: 'Infos',         sortable: true,  hideable: true  },
-    { key: 'route',    label: 'Route / Bereich', sortable: true,  hideable: false },
+    { key: 'route',    label: 'Route / Bereich', sortable: true,  hideable: true  },
     { key: 'versuche', label: 'Versuche',      sortable: true,  hideable: true, defaultHidden: true },
     { key: 'gesetzt',  label: 'Gesetzt am',    sortable: true,  hideable: true, defaultHidden: true },
     { key: 'zuletzt',  label: 'Zuletzt aktiv', sortable: true,  hideable: true, defaultHidden: true }
