@@ -406,7 +406,7 @@ function renderRouteBoard(progressState) {
 
   const title = document.createElement('div');
   title.className = 'route-table-title';
-  title.textContent = 'Direkte Trainingsliste';
+  title.textContent = 'Direkte Routenliste';
 
   const headRight = document.createElement('div');
   headRight.className = 'route-table-head-right';

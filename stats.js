@@ -229,7 +229,7 @@ function renderStats() {
         <div class="card" style="grid-column:1/-1;">
           <div class="eyebrow">Versuche pro Woche</div>
           <h3 class="progress-card-title">Letzte 8 Wochen</h3>
-          ${!hasAttempts ? '<p style="color:var(--gray-400);font-size:13px;">Noch keine Versuche eingetragen. Nutze die −/+ Buttons in der Trainingsliste.</p>' : ''}
+          ${!hasAttempts ? '<p style="color:var(--gray-400);font-size:13px;">Noch keine Versuche eingetragen. Nutze die −/+ Buttons in der Routenliste.</p>' : ''}
           <div class="stats-week-list">
             ${stats.attemptWeekRows.map(row => `
               <div class="stats-week-row">
