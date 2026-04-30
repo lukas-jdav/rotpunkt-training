@@ -719,6 +719,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 5px;
     align-items: stretch;
+    justify-items: start;
   }
 
   @media (max-width: 640px) {
@@ -730,7 +731,7 @@
     }
   }
 
-  .route-meta-link-wide { grid-column: 1 / -1; }
+  .route-meta-link-wide { grid-column: 1 / -1; justify-self: stretch; }
 
   .route-info-grid .route-mini-badge,
   .route-info-grid .route-meta-link {
