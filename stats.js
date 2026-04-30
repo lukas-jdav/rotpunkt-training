@@ -243,22 +243,6 @@ function renderStats() {
           </div>
         </div>
 
-        ${stats.byLocation.length > 0 ? `
-        <div class="card" style="grid-column:1/-1;">
-          <div class="eyebrow">Wand / Bereich</div>
-          <h3 class="progress-card-title">Erfolgsrate nach Bereich</h3>
-          <div class="stats-week-list">
-            ${stats.byLocation.map(row => `
-              <div class="stats-week-row">
-                <div class="stats-week-label">${escapeHtml(row.loc)}</div>
-                <div class="stats-week-bar-wrap">
-                  <div class="stats-week-bar stats-week-bar--location" style="width:${Math.round(row.rate * 100)}%"></div>
-                </div>
-                <div class="stats-week-count">${row.done}/${row.total}</div>
-              </div>
-            `).join('')}
-          </div>
-        </div>` : ''}
 
       </div>
     </div>
