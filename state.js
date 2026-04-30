@@ -42,6 +42,7 @@ const ui = {
   authUi: document.getElementById('auth-ui'),
   routeSyncNotice: document.getElementById('route-sync-notice'),
   routeBoard: document.getElementById('route-board'),
+  newRoutesSection: document.getElementById('new-routes-section'),
   routeLogForm: document.getElementById('route-log-form'),
   routeSubmit: document.getElementById('route-submit'),
   formFeedback: document.getElementById('form-feedback'),

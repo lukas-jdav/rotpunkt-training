@@ -708,12 +708,62 @@ function showConfirmDialog(title, body, confirmLabel) {
 
 // ── renderApp (Koordinator) ───────────────────────────────────────────────────
 
+function renderNewRoutes() {
+  if (!ui.newRoutesSection) return;
+
+  const newEntries = appState.routeEntries
+    .filter(e => !e.archived && isRouteNew(e))
+    .sort((a, b) => (b.setDate || '').localeCompare(a.setDate || ''));
+
+  if (newEntries.length === 0) {
+    ui.newRoutesSection.innerHTML = '';
+    ui.newRoutesSection.className = '';
+    return;
+  }
+
+  ui.newRoutesSection.className = 'section archive-section';
+  ui.newRoutesSection.innerHTML = `
+    <details class="archive-details">
+      <summary class="archive-summary">
+        <span>Neue Routen</span>
+        <span class="archive-count">${newEntries.length} Route${newEntries.length !== 1 ? 'n' : ''} aus den letzten 28 Tagen</span>
+      </summary>
+      <div class="archive-note">Routen, die in den letzten 28 Tagen geschraubt wurden.</div>
+      <table class="archive-table">
+        <thead><tr><th>Datum</th><th>Grad</th><th>Route</th><th>Seil / Farbe</th></tr></thead>
+        <tbody>
+          ${newEntries.map(e => {
+            const colors = [e.primaryColor, e.secondaryColor].filter(Boolean);
+            const colorChips = colors.map(c => {
+              const name = colorName(c);
+              return `<span class="route-mini-badge route-color-chip"><span class="route-color-dot" style="background-color:${escapeHtml(c)}"></span>${name ? escapeHtml(name) : ''}</span>`;
+            }).join(' ');
+            const ropeBadge = e.routeCode ? `<span class="route-mini-badge">Seil ${escapeHtml(e.routeCode)}</span>` : '';
+            return `
+              <tr>
+                <td>${escapeHtml(e.setDate ? formatDate(e.setDate) : '—')}</td>
+                <td><span class="route-grade-badge">${escapeHtml(e.grade || '?')}</span></td>
+                <td>
+                  <div class="route-name-main">${escapeHtml(e.name)}</div>
+                  ${e.location ? `<div style="font-size:11px;color:var(--gray-400);">${escapeHtml(e.location)}</div>` : ''}
+                </td>
+                <td style="display:flex; gap:4px; flex-wrap:wrap;">${ropeBadge}${colorChips}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </details>
+  `;
+}
+
 function renderApp() {
   const computed = getComputedState();
   renderRouteSyncNotice();
   renderMetrics(computed);
   renderRoadmap(computed.summaries, computed.progressState);
   renderGradeFilterChips(computed.summaries);
+  renderNewRoutes();
   renderRouteBoard(computed.progressState);
   renderStats();
   renderAuthUI();
