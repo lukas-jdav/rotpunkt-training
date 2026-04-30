@@ -662,7 +662,7 @@ function buildInfoCellHtml(entry) {
 
   const newBadge = isRouteNew(entry) ? `<span class="badge-new">Neu</span>` : '';
 
-  return `<div class="route-info-stack">${newBadge}${gridHtml}</div>`;
+  return `<div class="route-info-stack">${gridHtml}${newBadge}</div>`;
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
