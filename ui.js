@@ -754,7 +754,7 @@ function renderNewRoutes() {
         <span class="archive-count">${newEntries.length} Route${newEntries.length !== 1 ? 'n' : ''} aus den letzten 28 Tagen</span>
       </summary>
       <div class="archive-note">Routen, die in den letzten 28 Tagen geschraubt wurden.</div>
-      <table class="archive-table">
+      <div style="overflow-x:auto;"><table class="archive-table">
         <thead><tr><th>Datum</th><th>Grad</th><th>Route</th><th>Seil / Farbe</th></tr></thead>
         <tbody>
           ${newEntries.map(e => {
@@ -777,7 +777,7 @@ function renderNewRoutes() {
             `;
           }).join('')}
         </tbody>
-      </table>
+      </table></div>
     </details>
   `;
 }
