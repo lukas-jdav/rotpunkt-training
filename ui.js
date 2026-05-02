@@ -69,28 +69,6 @@ function getSyncStatusText() {
 
 // ── Settings Modal ────────────────────────────────────────────────────────────
 
-function renderColSettings() {
-  if (!ui.settingsColWidths) return;
-  const prefs = appState.profile.tablePrefs;
-  const widths = prefs.columnWidths || {};
-  const hidden = prefs.hiddenColumns || [];
-
-  ui.settingsColWidths.innerHTML = APP_CONFIG.tableColumns.map(col => {
-    const w = widths[col.key] || '';
-    const checkboxHtml = col.hideable
-      ? `<input type="checkbox" data-col-toggle="${col.key}" ${hidden.includes(col.key) ? '' : 'checked'} style="accent-color:var(--dav-green);flex-shrink:0;">`
-      : `<span style="width:16px;display:inline-block;flex-shrink:0;"></span>`;
-    return `<div class="col-settings-row">
-      <label style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;cursor:${col.hideable ? 'pointer' : 'default'};">
-        ${checkboxHtml}<span class="col-settings-label">${col.label}</span>
-      </label>
-      <input type="number" class="col-settings-input" min="40" max="800" placeholder="auto"
-        value="${w}" data-col-width="${col.key}" aria-label="${col.label} Breite in Pixeln">
-      <span class="col-settings-unit">px</span>
-    </div>`;
-  }).join('');
-}
-
 function renderSettingsModal() {
   ui.settingsStartGrade.value = appState.profile.startGrade;
   ui.settingsVorstiegOnly.checked = appState.profile.vorstiegOnly;
@@ -110,7 +88,7 @@ function renderSettingsModal() {
   ui.settingsRouteSyncUpdated.textContent = getRouteSyncUpdatedText();
   ui.settingsRouteSyncSummary.textContent = getRouteSyncSummaryText();
   ui.settingsRouteSyncBrowser.textContent = getRouteSyncBrowserText();
-  renderColSettings();
+  ui.settingsCloudSave.disabled = !appState.currentUser || appState.syncStatus === 'syncing';
   ui.settingsRouteSyncEnable.disabled = appState.routeSync.permission === 'granted';
   const routeChecking = appState.routeSync.status === 'checking';
   ui.settingsRouteSyncCheck.disabled = routeChecking;
@@ -432,18 +410,57 @@ function renderRouteBoard(progressState) {
   const colPanel = document.createElement('div');
   colPanel.className = 'col-mgr-panel' + (appState._colPanelOpen ? '' : ' hidden');
 
-  APP_CONFIG.tableColumns.filter(c => c.hideable).forEach(col => {
-    const isVisible = !prefs.hiddenColumns.includes(col.key);
-    const label = document.createElement('label');
-    label.className = 'col-mgr-item';
-    const cb = document.createElement('input');
-    cb.type = 'checkbox';
-    cb.checked = isVisible;
-    cb.dataset.action = 'toggle-column';
-    cb.dataset.col = col.key;
-    label.appendChild(cb);
-    label.appendChild(document.createTextNode(' ' + col.label));
-    colPanel.appendChild(label);
+  const panelTitle = document.createElement('div');
+  panelTitle.className = 'col-mgr-panel-title';
+  panelTitle.textContent = 'Spalten anpassen';
+  colPanel.appendChild(panelTitle);
+
+  const colWidthsNow = prefs.columnWidths || {};
+  APP_CONFIG.tableColumns.forEach(col => {
+    const w = colWidthsNow[col.key] || '';
+    const row = document.createElement('div');
+    row.className = 'col-settings-row';
+
+    const labelEl = document.createElement('label');
+    labelEl.style.cssText = 'display:flex;align-items:center;gap:8px;flex:1;min-width:0;cursor:' + (col.hideable ? 'pointer' : 'default') + ';';
+
+    if (col.hideable) {
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = !prefs.hiddenColumns.includes(col.key);
+      cb.style.cssText = 'accent-color:var(--dav-green);flex-shrink:0;';
+      cb.dataset.action = 'toggle-column';
+      cb.dataset.col = col.key;
+      labelEl.appendChild(cb);
+    } else {
+      const spacer = document.createElement('span');
+      spacer.style.cssText = 'width:16px;display:inline-block;flex-shrink:0;';
+      labelEl.appendChild(spacer);
+    }
+
+    const labelText = document.createElement('span');
+    labelText.className = 'col-settings-label';
+    labelText.textContent = col.label;
+    labelEl.appendChild(labelText);
+
+    const widthInput = document.createElement('input');
+    widthInput.type = 'number';
+    widthInput.className = 'col-settings-input';
+    widthInput.min = '40';
+    widthInput.max = '800';
+    widthInput.placeholder = 'auto';
+    widthInput.value = String(w);
+    widthInput.dataset.colWidth = col.key;
+    widthInput.setAttribute('aria-label', col.label + ' Breite in Pixeln');
+
+    const unit = document.createElement('span');
+    unit.className = 'col-settings-unit';
+    unit.textContent = 'px';
+
+    row.appendChild(labelEl);
+    row.appendChild(widthInput);
+    row.appendChild(unit);
+    colPanel.appendChild(row);
   });
   shell.appendChild(colPanel);
 

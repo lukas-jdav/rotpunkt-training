@@ -40,7 +40,14 @@ function sanitizeTablePrefs(raw) {
   const sortBy = validSortKeys.includes(raw && raw.sortBy) ? raw.sortBy : def.sortBy;
   const sortDir = raw && raw.sortDir === 'desc' ? 'desc' : 'asc';
 
-  return { columnOrder: merged, hiddenColumns, sortBy, sortDir };
+  const rawWidths = raw && typeof raw.columnWidths === 'object' && !Array.isArray(raw.columnWidths)
+    ? raw.columnWidths
+    : {};
+  const columnWidths = Object.fromEntries(
+    Object.entries(rawWidths).filter(([k, v]) => validKeys.includes(k) && typeof v === 'number' && v >= 40 && v <= 800)
+  );
+
+  return { columnOrder: merged, hiddenColumns, sortBy, sortDir, columnWidths };
 }
 
 function sanitizeProfile(profile) {

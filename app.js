@@ -156,16 +156,32 @@ function bindEvents() {
 
   ui.routeBoard.addEventListener('change', event => {
     const cb = event.target.closest('input[data-action="toggle-column"]');
-    if (!cb) return;
-    const col = cb.dataset.col;
-    const prefs = appState.profile.tablePrefs;
-    if (cb.checked) {
-      prefs.hiddenColumns = prefs.hiddenColumns.filter(k => k !== col);
-    } else {
-      if (!prefs.hiddenColumns.includes(col)) prefs.hiddenColumns.push(col);
+    if (cb) {
+      const col = cb.dataset.col;
+      const prefs = appState.profile.tablePrefs;
+      if (cb.checked) {
+        prefs.hiddenColumns = prefs.hiddenColumns.filter(k => k !== col);
+      } else {
+        if (!prefs.hiddenColumns.includes(col)) prefs.hiddenColumns.push(col);
+      }
+      persistProfile();
+      renderRouteBoard(getComputedState().progressState);
+      return;
     }
-    persistProfile();
-    renderRouteBoard(getComputedState().progressState);
+
+    const widthInput = event.target.closest('input[data-col-width]');
+    if (widthInput) {
+      const col = widthInput.dataset.colWidth;
+      const val = parseInt(widthInput.value, 10);
+      if (!appState.profile.tablePrefs.columnWidths) appState.profile.tablePrefs.columnWidths = {};
+      if (val >= 40 && val <= 800) {
+        appState.profile.tablePrefs.columnWidths[col] = val;
+      } else {
+        delete appState.profile.tablePrefs.columnWidths[col];
+      }
+      persistProfile();
+      renderRouteBoard(getComputedState().progressState);
+    }
   });
 
   ui.routeBoard.addEventListener('dragstart', event => {
@@ -263,35 +279,6 @@ function bindEvents() {
   ui.routeLogForm.addEventListener('input', updateRouteSubmitState);
   ui.routeLogForm.addEventListener('change', updateRouteSubmitState);
 
-  ui.settingsColWidths.addEventListener('change', event => {
-    const toggle = event.target.closest('input[data-col-toggle]');
-    if (toggle) {
-      const col = toggle.dataset.colToggle;
-      const prefs = appState.profile.tablePrefs;
-      if (toggle.checked) {
-        prefs.hiddenColumns = prefs.hiddenColumns.filter(k => k !== col);
-      } else {
-        if (!prefs.hiddenColumns.includes(col)) prefs.hiddenColumns.push(col);
-      }
-      persistProfile();
-      renderRouteBoard(getComputedState().progressState);
-      return;
-    }
-    const widthInput = event.target.closest('input[data-col-width]');
-    if (widthInput) {
-      const col = widthInput.dataset.colWidth;
-      const val = parseInt(widthInput.value, 10);
-      if (!appState.profile.tablePrefs.columnWidths) appState.profile.tablePrefs.columnWidths = {};
-      if (val >= 40 && val <= 800) {
-        appState.profile.tablePrefs.columnWidths[col] = val;
-      } else {
-        delete appState.profile.tablePrefs.columnWidths[col];
-      }
-      persistProfile();
-      renderRouteBoard(getComputedState().progressState);
-    }
-  });
-
   ui.settingsStartGrade.addEventListener('change', event => {
     appState.profile.startGrade = event.target.value;
     persistProfile();
@@ -335,6 +322,12 @@ function bindEvents() {
     if (button.dataset.routeSyncAction === 'enable-browser') {
       enableBrowserNotifications();
     }
+  });
+
+  ui.settingsCloudSave.addEventListener('click', async () => {
+    if (!appState.currentUser) return;
+    await writeCloudSnapshot().catch(console.error);
+    showToast('In Konto gespeichert ✓');
   });
 
   ui.settingsResetProgress.addEventListener('click', resetProgressSafely);

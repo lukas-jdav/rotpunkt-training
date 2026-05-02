@@ -582,14 +582,20 @@
   .col-mgr-btn:hover { background: var(--gray-100); color: var(--gray-700); }
 
   .col-mgr-panel {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 16px;
-    padding: 10px 16px;
+    display: block;
+    padding: 10px 16px 6px;
     background: var(--gray-50);
     border-bottom: 1px solid var(--gray-200);
   }
   .col-mgr-panel.hidden { display: none; }
+  .col-mgr-panel-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray-400);
+    margin-bottom: 6px;
+  }
 
   .col-mgr-item {
     display: flex;
