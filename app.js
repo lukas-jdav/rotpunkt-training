@@ -705,7 +705,10 @@ function updateRouteSubmitState() {
 }
 
 function resetRouteForm() {
-  ui.routeLogForm.reset();
+  // form.reset() darf hier nicht aufgerufen werden: es würde den reset-Event
+  // erneut auslösen → requestAnimationFrame(resetRouteForm) → Endlosschleife.
+  // Der native Reset des Browsers übernimmt das Leeren aller Felder;
+  // resetRouteForm setzt nur die abweichenden Startwerte nach.
   document.getElementById('route-date').value = getTodayValue();
   document.getElementById('route-status').value = 'open';
   clearFeedback();
