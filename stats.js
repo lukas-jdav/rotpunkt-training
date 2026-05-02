@@ -139,11 +139,154 @@ function computeStats() {
   };
 }
 
+const _ascentFilters = {
+  grades: new Set(),
+  ascentTypes: new Set(),
+  dateRange: 'all',
+  showOpenInCurrent: false
+};
+
+function getAscentAvailableGrades() {
+  const set = new Set();
+  appState.routeEntries.forEach(e => {
+    if (!e.archived && e.grade && (e.status === 'done' || e.status === 'open')) {
+      set.add(String(e.grade));
+    }
+  });
+  return [...set].sort((a, b) => Number(a) - Number(b));
+}
+
+function getFilteredAscents(currentGrade) {
+  const f = _ascentFilters;
+  const matchesGrade = e => f.grades.size === 0 || f.grades.has(String(e.grade));
+  const matchesAscentType = e => {
+    if (f.ascentTypes.size === 0) return true;
+    if (e.status === 'open') return f.ascentTypes.has('open');
+    return f.ascentTypes.has(e.ascentType || 'rotpunkt');
+  };
+  const matchesDate = e => {
+    if (f.dateRange === 'all') return true;
+    if (!e.date) return false;
+    const days = (Date.now() - new Date(e.date + 'T00:00:00').getTime()) / 86400000;
+    if (f.dateRange === '30d') return days <= 30;
+    if (f.dateRange === '6m') return days <= 180;
+    if (f.dateRange === 'year') return days <= 365;
+    return true;
+  };
+
+  const done = appState.routeEntries.filter(e =>
+    !e.archived && e.status === 'done' && matchesGrade(e) && matchesAscentType(e) && matchesDate(e)
+  );
+
+  let open = [];
+  if (f.showOpenInCurrent && currentGrade) {
+    open = appState.routeEntries.filter(e =>
+      !e.archived && e.status === 'open' &&
+      String(e.grade) === String(currentGrade) &&
+      matchesGrade(e) && matchesAscentType(e)
+    );
+  }
+
+  return [...done, ...open].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+}
+
+function renderAscentBadge(entry) {
+  if (entry.status === 'open') {
+    return '<span class="tracker-pill pill-projekt">Offen</span>';
+  }
+  const type = entry.ascentType || 'rotpunkt';
+  const labels = { rotpunkt: 'Rotpunkt', flash: 'Flash', toprope: 'Toprope' };
+  return `<span class="tracker-pill pill-${type}">${labels[type] || 'Rotpunkt'}</span>`;
+}
+
+function renderAscentOverview(progressState) {
+  const currentGrade = progressState?.current?.grade ? String(progressState.current.grade) : null;
+  const grades = getAscentAvailableGrades();
+  const f = _ascentFilters;
+  const entries = getFilteredAscents(currentGrade);
+
+  const typeOptions = [
+    { value: 'rotpunkt', label: 'Rotpunkt' },
+    { value: 'flash', label: 'Flash' },
+    { value: 'toprope', label: 'Toprope' },
+    { value: 'open', label: 'Offen' }
+  ];
+
+  return `
+    <div class="card" style="grid-column:1/-1;">
+      <div class="eyebrow">Begehungsübersicht</div>
+      <h3 class="progress-card-title">${entries.length} Route${entries.length !== 1 ? 'n' : ''}</h3>
+
+      <div class="ascent-filter-row">
+        <div class="ascent-filter-label">Grad</div>
+        <div class="ascent-filter-chips">
+          <button type="button" class="grade-filter-btn ${f.grades.size === 0 ? 'active all' : ''}" data-ascent-action="grade-all">Alle</button>
+          ${grades.map(g => `
+            <button type="button" class="grade-filter-btn ${f.grades.has(g) ? 'active' : ''}" data-ascent-action="grade-toggle" data-value="${escapeHtml(g)}">${escapeHtml(g)}</button>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="ascent-filter-row">
+        <div class="ascent-filter-label">Begehungsstil</div>
+        <div class="ascent-filter-chips">
+          <button type="button" class="filter-preset-btn ${f.ascentTypes.size === 0 ? 'active' : ''}" data-ascent-action="type-all">Alle</button>
+          ${typeOptions.map(opt => `
+            <button type="button" class="filter-preset-btn ${f.ascentTypes.has(opt.value) ? 'active' : ''}" data-ascent-action="type-toggle" data-value="${opt.value}">${opt.label}</button>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="ascent-filter-row">
+        <div class="ascent-filter-label">Zeitraum</div>
+        <select class="ascent-date-select" data-ascent-action="date-range">
+          <option value="all" ${f.dateRange === 'all' ? 'selected' : ''}>Gesamter Zeitraum</option>
+          <option value="30d" ${f.dateRange === '30d' ? 'selected' : ''}>Letzte 30 Tage</option>
+          <option value="6m" ${f.dateRange === '6m' ? 'selected' : ''}>Letzte 6 Monate</option>
+          <option value="year" ${f.dateRange === 'year' ? 'selected' : ''}>Letztes Jahr</option>
+        </select>
+      </div>
+
+      ${currentGrade ? `
+        <label class="toggle-row" style="margin-top:10px;">
+          <input type="checkbox" data-ascent-action="toggle-open" ${f.showOpenInCurrent ? 'checked' : ''}>
+          <div>
+            <strong>Offene Routen im aktuellen Grad (${escapeHtml(currentGrade)}) zusätzlich anzeigen</strong>
+            <span>Dadurch siehst du auch noch nicht abgeschlossene Routen deines aktuellen Trainingsgrades.</span>
+          </div>
+        </label>
+      ` : ''}
+
+      <div style="overflow-x:auto;margin-top:14px;">
+        <table class="archive-table">
+          <thead><tr><th>Datum</th><th>Grad</th><th>Route</th><th>Begehung</th></tr></thead>
+          <tbody>
+            ${entries.length === 0
+              ? '<tr><td colspan="4" style="color:var(--gray-400);font-size:13px;text-align:center;padding:18px;">Keine Routen passen zu den Filtern.</td></tr>'
+              : entries.map(e => `
+                <tr>
+                  <td>${escapeHtml(e.date ? formatDate(e.date) : '—')}</td>
+                  <td><span class="route-grade-badge">${escapeHtml(e.grade || '?')}</span></td>
+                  <td>
+                    <div class="route-name-main">${escapeHtml(e.name)}</div>
+                    ${e.location ? `<div style="font-size:11px;color:var(--gray-400);">${escapeHtml(e.location)}</div>` : ''}
+                  </td>
+                  <td>${renderAscentBadge(e)}</td>
+                </tr>
+              `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
 function renderStats() {
   const panel = ui.statsPanel;
   if (!panel) return;
 
   const stats = computeStats();
+  const progressState = getComputedState().progressState;
   const total = stats.ascentCounts.rotpunkt + stats.ascentCounts.flash + stats.ascentCounts.toprope;
   const hasAttempts = stats.totalAttempts > 0;
 
@@ -243,6 +386,7 @@ function renderStats() {
           </div>
         </div>
 
+        ${renderAscentOverview(progressState)}
 
       </div>
     </div>

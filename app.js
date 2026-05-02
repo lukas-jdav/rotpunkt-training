@@ -215,6 +215,41 @@ function bindEvents() {
     renderRouteBoard(getComputedState().progressState);
   });
 
+  ui.statsPanel.addEventListener('click', event => {
+    const btn = event.target.closest('button[data-ascent-action]');
+    if (!btn) return;
+    const action = btn.dataset.ascentAction;
+    const value = btn.dataset.value;
+    if (action === 'grade-all') {
+      _ascentFilters.grades.clear();
+    } else if (action === 'grade-toggle') {
+      if (_ascentFilters.grades.has(value)) _ascentFilters.grades.delete(value);
+      else _ascentFilters.grades.add(value);
+    } else if (action === 'type-all') {
+      _ascentFilters.ascentTypes.clear();
+    } else if (action === 'type-toggle') {
+      if (_ascentFilters.ascentTypes.has(value)) _ascentFilters.ascentTypes.delete(value);
+      else _ascentFilters.ascentTypes.add(value);
+    } else {
+      return;
+    }
+    renderStats();
+  });
+
+  ui.statsPanel.addEventListener('change', event => {
+    const dateSel = event.target.closest('select[data-ascent-action="date-range"]');
+    if (dateSel) {
+      _ascentFilters.dateRange = dateSel.value;
+      renderStats();
+      return;
+    }
+    const openCb = event.target.closest('input[data-ascent-action="toggle-open"]');
+    if (openCb) {
+      _ascentFilters.showOpenInCurrent = openCb.checked;
+      renderStats();
+    }
+  });
+
   document.addEventListener('click', event => {
     if (!appState._colPanelOpen) return;
     if (event.target.closest('[data-action="toggle-col-panel"]')) return;

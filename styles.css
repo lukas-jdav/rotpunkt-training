@@ -1699,6 +1699,11 @@
   border-bottom: 1px solid var(--gray-100);
 }
 
+#new-routes-section .archive-table th,
+#new-routes-section .archive-table td {
+  padding: 8px 10px;
+}
+
 .archive-table th {
   font-size: 11px;
   font-weight: 700;
@@ -1719,6 +1724,50 @@
 [data-theme="dark"] .archive-table td { border-color: var(--gray-200); }
 
 [data-theme="dark"] .archive-table th { background: var(--gray-200); }
+
+.ascent-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.ascent-filter-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  min-width: 110px;
+}
+
+.ascent-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+}
+
+.ascent-date-select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--gray-200);
+  background: white;
+  color: var(--gray-800);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+[data-theme="dark"] .ascent-date-select {
+  background: var(--gray-100);
+  border-color: var(--gray-200);
+  color: var(--gray-800);
+}
+
+@media (max-width: 640px) {
+  .ascent-filter-label { min-width: 0; flex-basis: 100%; }
+}
 
 /* Toast */
 .toast {
