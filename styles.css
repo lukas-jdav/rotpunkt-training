@@ -678,7 +678,7 @@
   .route-name-sub, .route-notes-text, .route-location-text, .route-lock-note { color: var(--gray-600); font-size: 13px; }
   .route-name-sub { margin-top: 4px; }
   .route-notes-text { margin-top: 6px; }
-  .route-lock-note { margin-top: 6px; }
+  .route-lock-note { margin-top: 4px; text-align: center; }
 
   .route-section-separator td {
     padding: 10px 12px 6px;

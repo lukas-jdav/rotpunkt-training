@@ -490,13 +490,13 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
         }
 
         wrapper.appendChild(attemptSection);
-        td.appendChild(wrapper);
         if (locked) {
           const lockNote = document.createElement('div');
           lockNote.className = 'route-lock-note';
           lockNote.textContent = 'Gesperrt oberhalb des aktuellen Grades';
-          td.appendChild(lockNote);
+          wrapper.appendChild(lockNote);
         }
+        td.appendChild(wrapper);
         break;
       }
 
