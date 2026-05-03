@@ -110,7 +110,15 @@ function normalizeEntry(entry) {
     archived: Boolean(entry.archived) || false,
     attemptLog: Array.isArray(entry.attemptLog)
       ? entry.attemptLog.map(s => ({ date: String(s.date || ''), count: Math.max(0, Number(s.count) || 0), notes: String(s.notes || '') })).filter(s => s.count > 0)
-      : Number(entry.attempts) > 0 ? [{ date: '', count: Number(entry.attempts), notes: '' }] : []
+      : Number(entry.attempts) > 0 ? [{ date: '', count: Number(entry.attempts), notes: '' }] : [],
+    cycleHistory: Array.isArray(entry.cycleHistory)
+      ? entry.cycleHistory.filter(h => h && typeof h.cycle === 'number').map(h => ({
+          cycle: h.cycle,
+          status: h.status === 'done' ? 'done' : 'open',
+          ascentType: String(h.ascentType || ''),
+          attempts: Array.isArray(h.attempts) ? h.attempts : []
+        }))
+      : []
   };
 }
 
@@ -134,13 +142,36 @@ function serializeEntry(entry) {
     ascentType: entry.ascentType,
     source: entry.source,
     archived: entry.archived,
-    attemptLog: entry.attemptLog
+    attemptLog: entry.attemptLog,
+    cycleHistory: entry.cycleHistory
   };
 }
 
 function shouldPersistEntry(entry) {
   if (entry.source === 'custom') return true;
-  return entry.status !== 'open' || Boolean(entry.date) || (entry.attemptLog || []).length > 0;
+  return entry.status !== 'open' || Boolean(entry.date) || (entry.attemptLog || []).length > 0 || (entry.cycleHistory || []).length > 0;
+}
+
+function startNewMesoCycle() {
+  const cycleNum = appState.profile.currentCycle || 1;
+  appState.routeEntries = appState.routeEntries.map(entry => {
+    const hasActivity = entry.status === 'done' || (entry.attemptLog || []).length > 0;
+    if (!hasActivity) return entry;
+    return {
+      ...entry,
+      status: 'open',
+      ascentType: '',
+      attemptLog: [],
+      updatedAt: Date.now(),
+      cycleHistory: [
+        ...(entry.cycleHistory || []),
+        { cycle: cycleNum, status: entry.status, ascentType: entry.ascentType || '', attempts: entry.attemptLog || [] }
+      ]
+    };
+  });
+  appState.profile.currentCycle = cycleNum + 1;
+  persistAll();
+  renderApp();
 }
 
 function createEntryKey(entry) {

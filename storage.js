@@ -54,9 +54,13 @@ function sanitizeProfile(profile) {
   const startGrade = APP_CONFIG.allowedStartGrades.includes(String(profile.startGrade))
     ? String(profile.startGrade)
     : APP_CONFIG.defaultProfile.startGrade;
+  const currentCycle = Number.isInteger(profile.currentCycle) && profile.currentCycle >= 1
+    ? profile.currentCycle
+    : APP_CONFIG.defaultProfile.currentCycle;
   return {
     startGrade,
     vorstiegOnly: Boolean(profile.vorstiegOnly),
+    currentCycle,
     tablePrefs: sanitizeTablePrefs(profile.tablePrefs)
   };
 }

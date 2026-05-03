@@ -79,6 +79,7 @@ function renderSettingsModal() {
   ui.settingsSyncStatus.textContent = getSyncStatusText();
   ui.settingsStorageStatus.textContent = getTrackedEntryCount() + ' Routen im aktiven Speicher';
   ui.settingsCloudSave.disabled = !appState.currentUser || appState.syncStatus === 'syncing';
+  ui.settingsCycleLabel.textContent = String(appState.profile.currentCycle || 1);
 }
 
 // ── Metrics (Status-Tab) ──────────────────────────────────────────────────────
@@ -490,6 +491,26 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
         }
 
         wrapper.appendChild(attemptSection);
+
+        const cycleHist = entry.cycleHistory || [];
+        if (cycleHist.length > 0) {
+          const lastH = cycleHist[cycleHist.length - 1];
+          const cycleNote = document.createElement('div');
+          cycleNote.className = 'route-cycle-note';
+          let label;
+          if (lastH.status === 'done') {
+            const typeLabel = lastH.ascentType === 'toprope' ? 'Toprope'
+              : lastH.ascentType === 'flash' ? 'Flash' : 'Rotpunkt';
+            label = `Zyklus ${lastH.cycle}: ${typeLabel}`;
+          } else {
+            const n = (lastH.attempts || []).reduce((s, a) => s + a.count, 0);
+            label = `Zyklus ${lastH.cycle}: versucht${n > 0 ? ' (' + n + '×)' : ''}`;
+          }
+          if (cycleHist.length > 1) label += ` · +${cycleHist.length - 1} weitere`;
+          cycleNote.textContent = label;
+          wrapper.appendChild(cycleNote);
+        }
+
         if (locked) {
           const lockNote = document.createElement('div');
           lockNote.className = 'route-lock-note';

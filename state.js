@@ -53,6 +53,8 @@ const ui = {
   settingsSyncStatus: document.getElementById('settings-sync-status'),
   settingsStorageStatus: document.getElementById('settings-storage-status'),
   settingsResetProgress: document.getElementById('settings-reset-progress'),
+  settingsNewCycle: document.getElementById('settings-new-cycle'),
+  settingsCycleLabel: document.getElementById('settings-cycle-label'),
   settingsCloudSave: document.getElementById('settings-cloud-save'),
   statsPanel: document.getElementById('status-stats-panel'),
   toast: document.getElementById('toast'),

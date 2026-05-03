@@ -292,6 +292,7 @@ function bindEvents() {
   });
 
   ui.settingsResetProgress.addEventListener('click', resetProgressSafely);
+  ui.settingsNewCycle.addEventListener('click', startNewMesoCycleSafely);
 }
 
 function switchTab(tabId) {
@@ -484,6 +485,24 @@ function showFeedback(message, type) {
 function clearFeedback() {
   ui.formFeedback.textContent = '';
   ui.formFeedback.className = 'form-feedback';
+}
+
+function startNewMesoCycleSafely() {
+  const activeCount = appState.routeEntries.filter(e =>
+    e.status === 'done' || (e.attemptLog || []).length > 0
+  ).length;
+  const cycleNum = appState.profile.currentCycle || 1;
+
+  showConfirmDialog(
+    `Mesozyklus ${cycleNum} abschließen`,
+    `${activeCount} Route${activeCount !== 1 ? 'n' : ''} ${activeCount !== 1 ? 'werden' : 'wird'} auf „offen" zurückgesetzt. Bisherige Begehungen bleiben als Zyklushistorie erhalten.`,
+    'Neuen Zyklus starten'
+  ).then(confirmed => {
+    if (!confirmed) return;
+    startNewMesoCycle();
+    closeSettingsModal();
+    showToast(`Mesozyklus ${cycleNum + 1} gestartet`);
+  });
 }
 
 function resetProgressSafely() {

@@ -1,5 +1,5 @@
 const APP_CONFIG = {
-  storageVersion: 5,
+  storageVersion: 6,
   storageKeys: {
     routes: 'jdavRotpunkt.routes',
     profile: 'jdavRotpunkt.profile',
@@ -15,6 +15,7 @@ const APP_CONFIG = {
   defaultProfile: {
     startGrade: '5',
     vorstiegOnly: false,
+    currentCycle: 1,
     tablePrefs: {
       columnOrder: ['grad', 'aktionen', 'infos', 'route'],
       hiddenColumns: [],
