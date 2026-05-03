@@ -71,6 +71,7 @@ function getSyncStatusText() {
 
 function renderSettingsModal() {
   ui.settingsStartGrade.value = appState.profile.startGrade;
+  ui.settingsRedpointMaxGrade.value = appState.profile.redpointMaxGrade || APP_CONFIG.defaultProfile.redpointMaxGrade;
   ui.settingsVorstiegOnly.checked = appState.profile.vorstiegOnly;
   ui.settingsTheme.value = getCurrentTheme();
   ui.settingsLoginStatus.textContent = appState.currentUser
@@ -107,9 +108,13 @@ function renderMetrics(computed) {
 
   ui.overallProgressHint.textContent = progressState.progressHint;
   ui.overallProgressFill.style.width = progressPercent + '%';
+  const roadmapGrades = getRoadmapGrades();
+  if (ui.roadmapTitle) {
+    ui.roadmapTitle.textContent = 'Roadmap ' + roadmapGrades[0] + '–' + roadmapGrades[roadmapGrades.length - 1];
+  }
   ui.roadmapMeta.textContent = appState.profile.vorstiegOnly
     ? 'Roadmap mit Vorstieg-Fokus. Optionale Linien werden separat markiert.'
-    : 'Roadmap für die Grade 5 bis 8 mit aktuellem Fokus und den nächsten Schritten.';
+    : 'Roadmap bis maximal einen Hauptgrad über deinem Rotpunkt-Maximum.';
 }
 
 // ── Roadmap ───────────────────────────────────────────────────────────────────
@@ -119,7 +124,7 @@ function renderRoadmap(summaries, progressState) {
 
   ui.roadmapGrid.innerHTML = '';
 
-  APP_CONFIG.roadmapGrades.forEach(grade => {
+  getRoadmapGrades().forEach(grade => {
     const card = document.createElement('div');
     const state = getRoadmapState(grade, progressState, summaries);
     const summary = summariesByGrade.get(grade) || { total: 0, done: 0 };
@@ -183,6 +188,23 @@ function renderGradeFilterChips(summaries) {
 }
 
 // ── Route Board ───────────────────────────────────────────────────────────────
+
+function getRouteLocationDisplay(entry) {
+  if (!entry || !entry.location) return '';
+  if (/Empore/i.test(entry.location)) return 'Empore';
+  if (/Erdgeschoß/i.test(entry.location)) return 'Erdgeschoß';
+  return '';
+}
+
+function getRouteSetMetaDisplay(entry) {
+  if (!entry) return '';
+  const routesetter = String(entry.routesetter || '').trim();
+  const setDate = entry.setDate ? formatDate(entry.setDate) : '';
+  if (routesetter && setDate) return `Set by: ${routesetter} on ${setDate}`;
+  if (routesetter) return `Set by: ${routesetter}`;
+  if (setDate) return `Set on ${setDate}`;
+  return '';
+}
 
 function isEntryLocked(entry, progressState) {
   if (!progressState.current) return false;
@@ -528,9 +550,8 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
         break;
 
       case 'route': {
-        const locationDisplay = entry.location
-          ? entry.location.replace(/\s*·\s*Linie\s+\S+$/, '').trim()
-          : '';
+        const locationDisplay = getRouteLocationDisplay(entry);
+        const setMetaDisplay = getRouteSetMetaDisplay(entry);
         td.innerHTML = `
           <div class="route-name-main">
             ${escapeHtml(entry.name)}
@@ -538,7 +559,7 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
             ${appState.profile.vorstiegOnly && isVorstiegOptional(entry) ? '<span class="route-optional-badge">Optional</span>' : ''}
           </div>
           ${locationDisplay ? `<div class="route-name-sub">${escapeHtml(locationDisplay)}</div>` : ''}
-          ${entry.setDate ? `<div class="route-name-sub">Datum: ${escapeHtml(formatDate(entry.setDate))}</div>` : ''}
+          ${setMetaDisplay ? `<div class="route-name-sub">${escapeHtml(setMetaDisplay)}</div>` : ''}
           ${entry.notes ? `<div class="route-name-sub">${escapeHtml(entry.notes)}</div>` : ''}
           ${totalAttempts > 0 ? `<div class="route-attempt-info">${totalAttempts} ${totalAttempts === 1 ? 'Versuch' : 'Versuche'} gesamt${todayAttempts > 0 ? ' · heute ' + todayAttempts : ''}</div>` : ''}
         `;
@@ -567,14 +588,34 @@ function buildInfoCellHtml(entry) {
     badgeItems.push(`<span class="route-mini-badge route-color-chip"><span class="route-color-dot" style="background-color:${escapeHtml(c)}"></span>${name ? escapeHtml(name) : ''}</span>`);
   });
 
-  const linkHtml = entry.link
-    ? `<a class="route-meta-link route-meta-link-wide" href="${escapeHtml(entry.link)}" target="_blank" rel="noreferrer noopener">Vertical-Life ↗</a>`
+  const routeLink = getRouteExternalLink(entry);
+  const linkHtml = routeLink
+    ? `<a class="route-meta-link route-meta-link-wide" href="${escapeHtml(routeLink)}" target="_blank" rel="noreferrer noopener">Vertical-Life ↗</a>`
     : '';
 
   const gridItems = badgeItems.join('') + linkHtml;
   const gridHtml = gridItems ? `<div class="route-info-grid">${gridItems}</div>` : '';
 
   return `<div class="route-info-stack">${gridHtml}</div>`;
+}
+
+function getRouteExternalLink(entry) {
+  if (!entry) return '';
+  if (shouldUseMobileRouteLink()) {
+    return entry.mobileLink || entry.link || entry.webLink || '';
+  }
+  return entry.webLink || entry.link || entry.mobileLink || '';
+}
+
+function shouldUseMobileRouteLink() {
+  if (navigator.userAgentData && typeof navigator.userAgentData.mobile === 'boolean') {
+    return navigator.userAgentData.mobile;
+  }
+
+  const userAgent = navigator.userAgent || '';
+  if (/Android|iPhone|iPod|IEMobile|Opera Mini|Mobile/i.test(userAgent)) return true;
+
+  return window.matchMedia('(pointer: coarse)').matches && window.matchMedia('(max-width: 820px)').matches;
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
@@ -647,18 +688,23 @@ function renderNewRoutes() {
         <tbody>
           ${newEntries.map(e => {
             const colors = [e.primaryColor, e.secondaryColor].filter(Boolean);
+            const locationDisplay = getRouteLocationDisplay(e);
             const colorChips = colors.map(c => {
               const name = colorName(c);
               return `<span class="route-mini-badge route-color-chip"><span class="route-color-dot" style="background-color:${escapeHtml(c)}"></span>${name ? escapeHtml(name) : ''}</span>`;
             }).join(' ');
             const ropeBadge = e.routeCode ? `<span class="route-mini-badge">Seil ${escapeHtml(e.routeCode)}</span>` : '';
+            const routesetter = String(e.routesetter || '').trim();
             return `
               <tr>
-                <td>${escapeHtml(e.setDate ? formatDate(e.setDate) : '—')}</td>
+                <td>
+                  <div>${escapeHtml(e.setDate ? formatDate(e.setDate) : '—')}</div>
+                  ${routesetter ? `<div style="font-size:11px;color:var(--gray-400);">${escapeHtml(routesetter)}</div>` : ''}
+                </td>
                 <td><span class="route-grade-badge">${escapeHtml(e.grade || '?')}</span></td>
                 <td>
                   <div class="route-name-main">${escapeHtml(e.name)}</div>
-                  ${e.location ? `<div style="font-size:11px;color:var(--gray-400);">${escapeHtml(e.location)}</div>` : ''}
+                  ${locationDisplay ? `<div style="font-size:11px;color:var(--gray-400);">${escapeHtml(locationDisplay)}</div>` : ''}
                 </td>
                 <td style="display:flex; gap:4px; flex-wrap:wrap;">${ropeBadge}${colorChips}</td>
               </tr>

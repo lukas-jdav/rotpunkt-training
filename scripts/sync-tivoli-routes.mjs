@@ -17,6 +17,8 @@ const CSV_HEADERS = [
   'notes',
   'set_at',
   'link',
+  'web_link',
+  'mobile_link',
   'routesetter',
   'area',
   'sector'
@@ -54,9 +56,12 @@ async function main() {
     const existing = existingByKey.get(exactKey) || existingByLooseKey.get(looseKey);
     if (!existing) return route;
 
+    const existingMobileLink = isVlLink(existing.mobile_link) ? existing.mobile_link : (isVlLink(existing.link) ? existing.link : '');
     const merged = {
       ...route,
       link: isVlLink(route.link) ? route.link : (existing.link || route.link),
+      web_link: route.web_link || existing.web_link || route.link,
+      mobile_link: route.mobile_link || existingMobileLink,
       routesetter: route.routesetter || existing.routesetter || 'N/A ',
       area: existing.area || route.area,
       sector: existing.sector || route.sector
@@ -244,8 +249,12 @@ function extractVlLink(route) {
     || route.short_url
     || route.climb_link;
   if (vl && typeof vl === 'string' && vl.startsWith('http')) return vl;
-  // Fallback: link to the route on the 8a.nu topo page.
-  return `${SOURCE_URL}#route-${route.id}`;
+  // 8a no longer exposes this for every route; callers provide web fallbacks.
+  return '';
+}
+
+function buildWebRouteLink(route) {
+  return `${GYM_BASE}/zlaggables/sportclimbing/${route.id}/ascents`;
 }
 
 function normalizeRoute(route) {
@@ -258,6 +267,8 @@ function normalizeRoute(route) {
   const routesetter = route.route_setter?.name ? String(route.route_setter.name).trim() : 'N/A ';
   const setAt = formatUtcStamp(route.set_at);
   const notes = String(route.notes || '').trim();
+  const webLink = buildWebRouteLink(route);
+  const mobileLink = extractVlLink(route);
 
   return {
     location,
@@ -267,7 +278,9 @@ function normalizeRoute(route) {
     name,
     notes,
     set_at: setAt,
-    link: extractVlLink(route),
+    link: mobileLink || `${SOURCE_URL}#route-${route.id}`,
+    web_link: webLink,
+    mobile_link: mobileLink,
     routesetter,
     area,
     sector

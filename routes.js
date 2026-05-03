@@ -8,12 +8,20 @@ function buildHallRouteId(row, index) {
 }
 
 function buildHallRouteNotes(row) {
-  const parts = [];
-  const notes = String(row.notes || '').trim();
-  const routesetter = String(row.routesetter || '').trim();
-  if (notes) parts.push(notes);
-  if (routesetter && routesetter.toUpperCase() !== 'N/A') parts.push('Schrauber: ' + routesetter);
-  return parts.join(' · ');
+  return String(row.notes || '').trim();
+}
+
+function normalizeRoutesetter(value) {
+  const routesetter = String(value || '').trim();
+  return routesetter && routesetter.toUpperCase() !== 'N/A' ? routesetter : '';
+}
+
+function normalizeAttemptSession(session) {
+  return {
+    date: String(session.date || ''),
+    count: Math.max(0, Number(session.count) || 0),
+    notes: String(session.notes || '')
+  };
 }
 
 function parseHallRouteData(rawCsv) {
@@ -55,7 +63,10 @@ function parseHallRouteData(rawCsv) {
         row.location ? 'Linie ' + String(row.location).trim() : ''
       ].filter(Boolean).join(' · '),
       notes: buildHallRouteNotes(row),
+      routesetter: normalizeRoutesetter(row.routesetter),
       link: String(row.link || '').trim(),
+      webLink: String(row.web_link || '').trim(),
+      mobileLink: String(row.mobile_link || '').trim(),
       primaryColor: normalizeColor(row.color_1),
       secondaryColor: normalizeColor(row.color_2),
       source: 'hall'
@@ -101,7 +112,10 @@ function normalizeEntry(entry) {
     name,
     location: String(entry.location || '').trim(),
     notes: String(entry.notes || '').trim(),
+    routesetter: normalizeRoutesetter(entry.routesetter),
     link: String(entry.link || '').trim(),
+    webLink: String(entry.webLink || '').trim(),
+    mobileLink: String(entry.mobileLink || '').trim(),
     primaryColor: normalizeColor(entry.primaryColor),
     secondaryColor: normalizeColor(entry.secondaryColor),
     status: normalizedStatus,
@@ -109,17 +123,131 @@ function normalizeEntry(entry) {
     source: entry.source === 'hall' ? 'hall' : 'custom',
     archived: Boolean(entry.archived) || false,
     attemptLog: Array.isArray(entry.attemptLog)
-      ? entry.attemptLog.map(s => ({ date: String(s.date || ''), count: Math.max(0, Number(s.count) || 0), notes: String(s.notes || '') })).filter(s => s.count > 0)
+      ? entry.attemptLog.map(normalizeAttemptSession).filter(s => s.count > 0)
       : Number(entry.attempts) > 0 ? [{ date: '', count: Number(entry.attempts), notes: '' }] : [],
     cycleHistory: Array.isArray(entry.cycleHistory)
       ? entry.cycleHistory.filter(h => h && typeof h.cycle === 'number').map(h => ({
           cycle: h.cycle,
           status: h.status === 'done' ? 'done' : 'open',
           ascentType: String(h.ascentType || ''),
-          attempts: Array.isArray(h.attempts) ? h.attempts : []
+          date: String(h.date || h.completedDate || ''),
+          attempts: Array.isArray(h.attempts) ? h.attempts.map(normalizeAttemptSession).filter(s => s.count > 0) : []
         }))
       : []
   };
+}
+
+function createRouteSnapshot(entry) {
+  return {
+    grade: String(entry.grade || ''),
+    rawDifficulty: String(entry.rawDifficulty || ''),
+    routeCode: String(entry.routeCode || ''),
+    name: String(entry.name || ''),
+    location: String(entry.location || ''),
+    notes: String(entry.notes || ''),
+    routesetter: String(entry.routesetter || ''),
+    source: entry.source === 'hall' ? 'hall' : 'custom'
+  };
+}
+
+function normalizeAscentArchiveRecord(record) {
+  if (!record || typeof record !== 'object') return null;
+  const route = record.route && typeof record.route === 'object'
+    ? record.route
+    : record;
+  const name = String(route.name || record.name || '').trim();
+  const grade = String(route.grade || record.grade || '').trim();
+  if (!name || !grade) return null;
+
+  const status = record.status === 'done' ? 'done' : 'open';
+  const ascentType = status === 'done'
+    ? (record.ascentType === 'toprope' ? 'toprope' : (record.ascentType === 'flash' ? 'flash' : 'rotpunkt'))
+    : '';
+  const attempts = Array.isArray(record.attempts)
+    ? record.attempts.map(normalizeAttemptSession).filter(s => s.count > 0)
+    : [];
+  const routeSnapshot = createRouteSnapshot({
+    grade,
+    rawDifficulty: route.rawDifficulty || record.rawDifficulty,
+    routeCode: route.routeCode || record.routeCode,
+    name,
+    location: route.location || record.location,
+    notes: route.notes || record.notes,
+    routesetter: route.routesetter || record.routesetter,
+    source: route.source || record.source
+  });
+
+  return {
+    id: String(record.id || ''),
+    entryId: String(record.entryId || ''),
+    cycle: Math.max(1, Number(record.cycle) || 1),
+    status,
+    ascentType,
+    date: String(record.date || ''),
+    attempts,
+    route: routeSnapshot,
+    archivedAt: String(record.archivedAt || '')
+  };
+}
+
+function createAscentArchiveKey(record) {
+  const normalized = normalizeAscentArchiveRecord(record);
+  if (!normalized) return '';
+  return [
+    normalized.entryId || normalized.route.name.toLowerCase(),
+    normalized.cycle,
+    normalized.status,
+    normalized.ascentType,
+    normalized.date,
+    normalized.route.grade,
+    normalized.route.name.toLowerCase()
+  ].join('||');
+}
+
+function createAscentArchiveId(record) {
+  return 'archive-' + createAscentArchiveKey(record).replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').slice(0, 120);
+}
+
+function createAscentArchiveRecord(entry, cycleNum, history) {
+  const source = history || entry;
+  const record = normalizeAscentArchiveRecord({
+    entryId: entry.id,
+    cycle: cycleNum,
+    status: source.status,
+    ascentType: source.ascentType || '',
+    date: source.date || '',
+    attempts: source.attempts || entry.attemptLog || [],
+    route: createRouteSnapshot(entry),
+    archivedAt: new Date().toISOString()
+  });
+  if (!record) return null;
+  return { ...record, id: record.id || createAscentArchiveId(record) };
+}
+
+function mergeAscentArchiveRecords(existingRecords, newRecords) {
+  const byKey = new Map();
+  [...(existingRecords || []), ...(newRecords || [])].forEach(rawRecord => {
+    const record = normalizeAscentArchiveRecord(rawRecord);
+    if (!record) return;
+    const withId = { ...record, id: record.id || createAscentArchiveId(record) };
+    byKey.set(createAscentArchiveKey(withId), withId);
+  });
+  return [...byKey.values()];
+}
+
+function syncProfileAscentArchiveFromEntries() {
+  const records = [];
+  (appState.routeEntries || []).forEach(entry => {
+    (entry.cycleHistory || []).forEach(history => {
+      const record = createAscentArchiveRecord(entry, history.cycle || appState.profile.currentCycle || 1, history);
+      if (record) records.push(record);
+    });
+  });
+
+  if (records.length === 0) return false;
+  const previousLength = (appState.profile.ascentArchive || []).length;
+  appState.profile.ascentArchive = mergeAscentArchiveRecords(appState.profile.ascentArchive, records);
+  return appState.profile.ascentArchive.length !== previousLength;
 }
 
 function serializeEntry(entry) {
@@ -135,7 +263,10 @@ function serializeEntry(entry) {
     name: entry.name,
     location: entry.location,
     notes: entry.notes,
+    routesetter: entry.routesetter,
     link: entry.link,
+    webLink: entry.webLink,
+    mobileLink: entry.mobileLink,
     primaryColor: entry.primaryColor,
     secondaryColor: entry.secondaryColor,
     status: entry.status,
@@ -154,23 +285,29 @@ function shouldPersistEntry(entry) {
 
 function startNewMesoCycle() {
   const cycleNum = appState.profile.currentCycle || 1;
+  const archiveRecords = [];
   appState.routeEntries = appState.routeEntries.map(entry => {
     const hasActivity = entry.status === 'done' || (entry.attemptLog || []).length > 0;
     if (!hasActivity) return entry;
+    const archiveRecord = createAscentArchiveRecord(entry, cycleNum);
+    if (archiveRecord) archiveRecords.push(archiveRecord);
     return {
       ...entry,
       status: 'open',
       ascentType: '',
+      date: '',
       attemptLog: [],
       updatedAt: Date.now(),
       cycleHistory: [
         ...(entry.cycleHistory || []),
-        { cycle: cycleNum, status: entry.status, ascentType: entry.ascentType || '', attempts: entry.attemptLog || [] }
+        { cycle: cycleNum, status: entry.status, ascentType: entry.ascentType || '', date: entry.date || '', attempts: entry.attemptLog || [] }
       ]
     };
   });
+  appState.profile.ascentArchive = mergeAscentArchiveRecords(appState.profile.ascentArchive, archiveRecords);
   appState.profile.currentCycle = cycleNum + 1;
   persistAll();
+  initGradeFilter();
   renderApp();
 }
 
@@ -201,6 +338,7 @@ function mergeRouteEntries(storedEntries) {
         date: entry.status === 'done' ? entry.date : '',
         updatedAt: entry.updatedAt || hallEntry.updatedAt,
         attemptLog: entry.attemptLog || [],
+        cycleHistory: entry.cycleHistory || [],
         archived: false
       });
     } else {
@@ -240,6 +378,22 @@ function isTrackedGrade(grade) {
   const normalizedGrade = String(grade || '').trim();
   if (APP_CONFIG.hiddenGrades.has(normalizedGrade)) return false;
   return Number(normalizedGrade) >= Number(appState.profile.startGrade || APP_CONFIG.defaultProfile.startGrade);
+}
+
+function getGradeBaseNumber(grade) {
+  const match = String(grade || '').trim().match(/^(\d+)/);
+  return match ? Number(match[1]) : null;
+}
+
+function getRoadmapGrades() {
+  const start = Number(appState.profile.startGrade || APP_CONFIG.defaultProfile.startGrade);
+  const redpointMax = getGradeBaseNumber(appState.profile.redpointMaxGrade || APP_CONFIG.defaultProfile.redpointMaxGrade);
+  const end = Math.max(start, (redpointMax || Number(APP_CONFIG.defaultProfile.redpointMaxGrade)) + 1);
+  const grades = [];
+  for (let grade = start; grade <= end; grade += 1) {
+    grades.push(String(grade));
+  }
+  return grades;
 }
 
 function isRouteNew(entry) {
@@ -484,7 +638,8 @@ function getFilteredEntries() {
       || entry.location.toLowerCase().includes(searchTerm)
       || entry.routeCode.toLowerCase().includes(searchTerm)
       || entry.rawDifficulty.toLowerCase().includes(searchTerm)
-      || entry.notes.toLowerCase().includes(searchTerm);
+      || entry.notes.toLowerCase().includes(searchTerm)
+      || entry.routesetter.toLowerCase().includes(searchTerm);
 
     const matchesGrade = selectedGrades.length === 0 || selectedGrades.includes(entry.grade);
     const matchesStatus = statusFilter === 'all' || selectionFromEntry(entry) === statusFilter;

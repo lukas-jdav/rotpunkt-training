@@ -14,8 +14,10 @@ const APP_CONFIG = {
   },
   defaultProfile: {
     startGrade: '5',
+    redpointMaxGrade: '7',
     vorstiegOnly: false,
     currentCycle: 1,
+    ascentArchive: [],
     tablePrefs: {
       columnOrder: ['grad', 'aktionen', 'infos', 'route'],
       hiddenColumns: [],
@@ -30,7 +32,8 @@ const APP_CONFIG = {
     { key: 'infos',    label: 'Infos',         sortable: true,  hideable: true  },
     { key: 'route',    label: 'Route / Bereich', sortable: true,  hideable: true  },
   ],
-  allowedStartGrades: ['4', '5', '6'],
+  allowedStartGrades: ['3', '4', '5', '6', '7'],
+  allowedRedpointMaxGrades: ['5', '5+', '6-', '6', '6+', '7-', '7', '7+', '8-', '8', '8+', '9-', '9'],
   roadmapGrades: ['5', '6', '7', '8'],
   hiddenGrades: new Set(['3']),
   vorstiegMandatoryRanges: [[18, 34], [47, 56]],

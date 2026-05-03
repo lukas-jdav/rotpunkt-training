@@ -56,8 +56,9 @@ function initFirebase() {
       renderAuthUI();
       if (!user) {
         appState.syncStatus = 'local';
-        appState.routeEntries = loadRouteEntries();
         appState.profile = loadProfile();
+        appState.routeEntries = loadRouteEntries();
+        if (syncProfileAscentArchiveFromEntries()) persistProfile(false);
         renderApp();
         return;
       }
@@ -73,11 +74,12 @@ function initFirebase() {
         if (doc.exists) {
           const data = doc.data() || {};
           const cloudEntries = Array.isArray(data.entries) ? data.entries.map(normalizeEntry).filter(Boolean) : [];
-          appState.routeEntries = mergeRouteEntries(cloudEntries);
           if (data.profile && typeof data.profile === 'object') {
             appState.profile = sanitizeProfile({ ...APP_CONFIG.defaultProfile, ...data.profile });
             persistProfile(false);
           }
+          appState.routeEntries = mergeRouteEntries(cloudEntries);
+          if (syncProfileAscentArchiveFromEntries()) persistProfile(false);
         } else {
           await writeCloudSnapshot();
         }

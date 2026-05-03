@@ -4,6 +4,7 @@ function init() {
   migrateLegacyStorage();
   appState.profile = loadProfile();
   appState.routeEntries = loadRouteEntries();
+  if (syncProfileAscentArchiveFromEntries()) persistProfile(false);
   initGradeFilter();
   initFirebase();
   bindEvents();
@@ -256,7 +257,7 @@ function bindEvents() {
     }
     const openCb = event.target.closest('input[data-ascent-action="toggle-open"]');
     if (openCb) {
-      _ascentFilters.showOpenInCurrent = openCb.checked;
+      _ascentFilters.showOpenRoutes = openCb.checked;
       renderStats();
     }
   });
@@ -276,6 +277,13 @@ function bindEvents() {
 
   ui.settingsStartGrade.addEventListener('change', event => {
     appState.profile.startGrade = event.target.value;
+    persistProfile();
+    initGradeFilter();
+    renderApp();
+  });
+
+  ui.settingsRedpointMaxGrade.addEventListener('change', event => {
+    appState.profile.redpointMaxGrade = event.target.value;
     persistProfile();
     renderApp();
   });
