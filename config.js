@@ -22,6 +22,7 @@ const APP_CONFIG = {
       columnOrder: ['grad', 'aktionen', 'infos', 'route'],
       hiddenColumns: [],
       columnWidths: {},
+      columnGap: 15,
       sortBy: null,
       sortDir: 'asc'
     }
@@ -31,6 +32,13 @@ const APP_CONFIG = {
     { key: 'aktionen', label: 'Aktionen',      sortable: false, hideable: false },
     { key: 'infos',    label: 'Infos',         sortable: true,  hideable: true  },
     { key: 'route',    label: 'Route / Bereich', sortable: true,  hideable: true  },
+  ],
+  routeSortOptions: [
+    { value: 'setDate', label: 'Datum', defaultDir: 'desc' },
+    { value: 'grad', label: 'Grad', defaultDir: 'asc' },
+    { value: 'route', label: 'Route', defaultDir: 'asc' },
+    { value: 'infos', label: 'Seil', defaultDir: 'asc' },
+    { value: 'status', label: 'Status', defaultDir: 'asc' }
   ],
   allowedStartGrades: ['3', '4', '5', '6', '7'],
   allowedRedpointMaxGrades: ['5', '5+', '6-', '6', '6+', '7-', '7', '7+', '8-', '8', '8+', '9-', '9'],

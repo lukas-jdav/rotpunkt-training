@@ -250,6 +250,101 @@ function syncProfileAscentArchiveFromEntries() {
   return appState.profile.ascentArchive.length !== previousLength;
 }
 
+function getPastMesoCycleSummaries() {
+  const currentCycle = appState.profile.currentCycle || 1;
+  const summaries = new Map();
+
+  const ensureSummary = cycle => {
+    if (!summaries.has(cycle)) {
+      summaries.set(cycle, {
+        cycle,
+        ascents: 0,
+        attempts: 0,
+        routeKeys: new Set(),
+        recordKeys: new Set()
+      });
+    }
+    return summaries.get(cycle);
+  };
+
+  const addRecord = record => {
+    const cycle = Math.max(1, Number(record.cycle) || 1);
+    if (cycle >= currentCycle) return;
+    const summary = ensureSummary(cycle);
+    const route = record.route || record;
+    const recordKey = [
+      record.entryId || route.name || '',
+      cycle,
+      record.status || '',
+      record.ascentType || '',
+      record.date || '',
+      route.grade || '',
+      route.name || ''
+    ].join('||').toLowerCase();
+    if (summary.recordKeys.has(recordKey)) return;
+    summary.recordKeys.add(recordKey);
+    if (record.status === 'done') summary.ascents += 1;
+    summary.attempts += (record.attempts || []).reduce((sum, attempt) => sum + attempt.count, 0);
+    summary.routeKeys.add(String(record.entryId || route.name || '') + '|' + String(route.grade || ''));
+  };
+
+  (appState.profile.ascentArchive || [])
+    .map(normalizeAscentArchiveRecord)
+    .filter(Boolean)
+    .forEach(addRecord);
+
+  (appState.routeEntries || []).forEach(entry => {
+    (entry.cycleHistory || []).forEach(history => {
+      addRecord({
+        entryId: entry.id,
+        cycle: history.cycle,
+        status: history.status,
+        ascentType: history.ascentType,
+        date: history.date || '',
+        attempts: history.attempts || [],
+        route: entry
+      });
+    });
+  });
+
+  return [...summaries.values()]
+    .map(summary => ({
+      cycle: summary.cycle,
+      ascents: summary.ascents,
+      attempts: summary.attempts,
+      routes: summary.routeKeys.size
+    }))
+    .sort((left, right) => right.cycle - left.cycle);
+}
+
+function deletePastMesoCycle(cycleNum) {
+  const cycle = Math.max(1, Number(cycleNum) || 0);
+  const currentCycle = appState.profile.currentCycle || 1;
+  if (!cycle || cycle >= currentCycle) return { ascents: 0, routes: 0 };
+  const previousSummary = getPastMesoCycleSummaries().find(summary => summary.cycle === cycle)
+    || { ascents: 0, routes: 0 };
+
+  appState.profile.ascentArchive = (appState.profile.ascentArchive || []).filter(rawRecord => {
+    const record = normalizeAscentArchiveRecord(rawRecord);
+    if (!record || record.cycle !== cycle) return true;
+    return false;
+  });
+
+  appState.routeEntries = appState.routeEntries.map(entry => {
+    const originalLength = (entry.cycleHistory || []).length;
+    const cycleHistory = (entry.cycleHistory || []).filter(history => {
+      if (Number(history.cycle) !== cycle) return true;
+      return false;
+    });
+    if (cycleHistory.length === originalLength) return entry;
+    return { ...entry, cycleHistory, updatedAt: Date.now() };
+  });
+
+  persistAll();
+  renderApp();
+  return { ascents: previousSummary.ascents, routes: previousSummary.routes };
+}
+
 function serializeEntry(entry) {
   return {
     id: entry.id,
@@ -584,10 +679,14 @@ function sortEntries(entries, sortBy, sortDir) {
       case 'grad':
         diff = Number(left.grade) - Number(right.grade);
         break;
-      case 'route': {
+      case 'setDate': {
         const ld = left.setDate || '';
         const rd = right.setDate || '';
         diff = ld < rd ? -1 : ld > rd ? 1 : 0;
+        break;
+      }
+      case 'route': {
+        diff = (left.name || '').localeCompare(right.name || '', 'de', { sensitivity: 'base' });
         break;
       }
       case 'bereich':
@@ -599,6 +698,14 @@ function sortEntries(entries, sortBy, sortDir) {
         diff = lr - rr;
         break;
       }
+      case 'status':
+        diff = getStatusPriority(left) - getStatusPriority(right);
+        break;
+    }
+    if (diff === 0) {
+      const byGrade = Number(left.grade) - Number(right.grade);
+      if (byGrade !== 0) return byGrade;
+      return left.name.localeCompare(right.name, 'de', { sensitivity: 'base' });
     }
     return diff * dir;
   });
@@ -611,6 +718,13 @@ function getAvailableGrades(summaries) {
 function sanitizeSelectedGrades(availableGrades) {
   const availableSet = new Set(availableGrades);
   appState.filters.grades = appState.filters.grades.filter(grade => availableSet.has(grade));
+}
+
+function getFocusFilterGrades(progressState = getComputedState().progressState) {
+  const grades = [];
+  if (progressState.current) grades.push(progressState.current.grade);
+  if (progressState.canStartNext && progressState.next) grades.push(progressState.next.grade);
+  return grades;
 }
 
 function toggleGradeFilter(value) {

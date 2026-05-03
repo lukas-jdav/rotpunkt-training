@@ -81,6 +81,23 @@ function renderSettingsModal() {
   ui.settingsStorageStatus.textContent = getTrackedEntryCount() + ' Routen im aktiven Speicher';
   ui.settingsCloudSave.disabled = !appState.currentUser || appState.syncStatus === 'syncing';
   ui.settingsCycleLabel.textContent = String(appState.profile.currentCycle || 1);
+  if (ui.settingsCycleArchive) {
+    const cycleSummaries = getPastMesoCycleSummaries();
+    ui.settingsCycleArchive.innerHTML = cycleSummaries.length
+      ? `
+        <div class="cycle-archive-title">Vergangene Mesozyklen</div>
+        ${cycleSummaries.map(summary => `
+          <div class="cycle-archive-row">
+            <div>
+              <strong>Mesozyklus ${escapeHtml(String(summary.cycle))}</strong>
+              <span>${summary.ascents} Begehung${summary.ascents !== 1 ? 'en' : ''} · ${summary.routes} Route${summary.routes !== 1 ? 'n' : ''} · ${summary.attempts} Versuch${summary.attempts !== 1 ? 'e' : ''}</span>
+            </div>
+            <button type="button" class="danger-btn small-danger-btn" data-action="delete-cycle" data-cycle="${escapeHtml(String(summary.cycle))}">Löschen</button>
+          </div>
+        `).join('')}
+      `
+      : '<div class="cycle-archive-empty">Noch keine vergangenen Mesozyklen gespeichert.</div>';
+  }
 }
 
 // ── Metrics (Status-Tab) ──────────────────────────────────────────────────────
@@ -146,10 +163,9 @@ function renderRoadmap(summaries, progressState) {
 function getActivePreset() {
   const { search, grades, status } = appState.filters;
   if (search) return null;
-  const start = Number(appState.profile.startGrade);
-  const focusGrades = [String(start), String(start + 1)].sort();
+  const focusGrades = getFocusFilterGrades().sort();
   const currentGrades = [...grades].sort();
-  if (status === 'open' && JSON.stringify(currentGrades) === JSON.stringify(focusGrades)) return 'focus';
+  if (focusGrades.length > 0 && status === 'open' && JSON.stringify(currentGrades) === JSON.stringify(focusGrades)) return 'focus';
   if (status === 'open' && grades.length === 0) return 'projects';
   if (status === 'all' && grades.length === 0) return 'all';
   return null;
@@ -234,6 +250,7 @@ function renderRouteBoard(progressState) {
     : [];
 
   ui.routeBoard.innerHTML = '';
+  if (ui.routeFilterMeta) ui.routeFilterMeta.innerHTML = '';
 
   if (!trackedEntries.length) {
     const empty = document.createElement('div');
@@ -243,26 +260,11 @@ function renderRouteBoard(progressState) {
     return;
   }
 
-  if (!filteredEntries.length) {
-    const empty = document.createElement('div');
-    empty.className = 'tracker-empty';
-    empty.textContent = 'Keine Route passt aktuell zu deinem Filter.';
-    ui.routeBoard.appendChild(empty);
-    return;
-  }
-
   const activeColumns = getActiveColumns();
   const prefs = appState.profile.tablePrefs;
 
   const shell = document.createElement('section');
   shell.className = 'route-table-shell';
-
-  // ── Header bar ────────────────────────────────────────────────────────────
-  const tableHead = document.createElement('div');
-  tableHead.className = 'route-table-head';
-
-  const headRight = document.createElement('div');
-  headRight.className = 'route-table-head-right';
 
   const meta = document.createElement('div');
   meta.className = 'route-table-meta';
@@ -275,10 +277,55 @@ function renderRouteBoard(progressState) {
   colMgrBtn.title = 'Spalten anpassen';
   colMgrBtn.textContent = '⚙';
 
-  headRight.appendChild(meta);
-  headRight.appendChild(colMgrBtn);
-  tableHead.appendChild(headRight);
-  shell.appendChild(tableHead);
+  if (ui.routeFilterMeta) {
+    ui.routeFilterMeta.innerHTML = '';
+    ui.routeFilterMeta.appendChild(meta);
+    ui.routeFilterMeta.appendChild(colMgrBtn);
+  }
+
+  const gradeRow = document.createElement('div');
+  gradeRow.className = 'ascent-filter-row route-grade-row';
+
+  const gradeLabel = document.createElement('div');
+  gradeLabel.className = 'ascent-filter-label';
+  gradeLabel.textContent = 'Grad';
+  gradeRow.appendChild(gradeLabel);
+  gradeRow.appendChild(ui.routeGradeChips);
+  shell.appendChild(gradeRow);
+
+  const sortRow = document.createElement('div');
+  sortRow.className = 'ascent-filter-row route-sort-row';
+
+  const sortLabel = document.createElement('div');
+  sortLabel.className = 'ascent-filter-label';
+  sortLabel.textContent = 'Sortierung';
+  sortRow.appendChild(sortLabel);
+
+  const sortChips = document.createElement('div');
+  sortChips.className = 'ascent-filter-chips';
+  const activeSortBy = prefs.sortBy || 'setDate';
+  const activeSortDir = prefs.sortBy ? prefs.sortDir : 'asc';
+  (APP_CONFIG.routeSortOptions || []).forEach(option => {
+    const active = activeSortBy === option.value;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'filter-preset-btn' + (active ? ' active' : '');
+    button.dataset.action = 'sort-column';
+    button.dataset.col = option.value;
+    button.textContent = option.label + (active ? (activeSortDir === 'asc' ? ' ↑' : ' ↓') : '');
+    sortChips.appendChild(button);
+  });
+  sortRow.appendChild(sortChips);
+  shell.appendChild(sortRow);
+
+  if (!filteredEntries.length) {
+    const empty = document.createElement('div');
+    empty.className = 'tracker-empty';
+    empty.textContent = 'Keine Route passt aktuell zu deinem Filter.';
+    shell.appendChild(empty);
+    ui.routeBoard.appendChild(shell);
+    return;
+  }
 
   // ── Column manager panel ──────────────────────────────────────────────────
   const colPanel = document.createElement('div');
@@ -288,6 +335,35 @@ function renderRouteBoard(progressState) {
   panelTitle.className = 'col-mgr-panel-title';
   panelTitle.textContent = 'Spalten anpassen';
   colPanel.appendChild(panelTitle);
+
+  const gapRow = document.createElement('div');
+  gapRow.className = 'col-settings-row';
+
+  const gapLabel = document.createElement('label');
+  gapLabel.className = 'col-settings-label';
+  gapLabel.style.cssText = 'flex:1;min-width:0;';
+  gapLabel.textContent = 'Spaltenabstand';
+  gapLabel.setAttribute('for', 'route-column-gap');
+
+  const gapInput = document.createElement('input');
+  gapInput.id = 'route-column-gap';
+  gapInput.type = 'number';
+  gapInput.className = 'col-settings-input';
+  gapInput.min = '0';
+  gapInput.max = '40';
+  gapInput.placeholder = 'auto';
+  gapInput.value = prefs.columnGap === undefined ? '' : String(prefs.columnGap);
+  gapInput.dataset.colGap = 'true';
+  gapInput.setAttribute('aria-label', 'Spaltenabstand in Pixeln');
+
+  const gapUnit = document.createElement('span');
+  gapUnit.className = 'col-settings-unit';
+  gapUnit.textContent = 'px';
+
+  gapRow.appendChild(gapLabel);
+  gapRow.appendChild(gapInput);
+  gapRow.appendChild(gapUnit);
+  colPanel.appendChild(gapRow);
 
   const colWidthsNow = prefs.columnWidths || {};
   APP_CONFIG.tableColumns.forEach(col => {
@@ -344,6 +420,7 @@ function renderRouteBoard(progressState) {
 
   const table = document.createElement('table');
   table.className = 'route-table';
+  table.style.setProperty('--route-col-gap', (prefs.columnGap ?? APP_CONFIG.defaultProfile.tablePrefs.columnGap) + 'px');
 
   const thead = document.createElement('thead');
   const headerRow = document.createElement('tr');
@@ -440,12 +517,15 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
         const actions = document.createElement('div');
         actions.className = 'route-status-actions';
         const vorstiegEligible = isVorstiegMandatory(entry) || isVorstiegOptional(entry);
-        const doneInPriorCycle = (entry.cycleHistory || []).some(h => h.status === 'done');
+        const selection = selectionFromEntry(entry);
+        const redpointDoneInPriorCycle = (entry.cycleHistory || [])
+          .some(h => h.status === 'done' && h.ascentType !== 'toprope');
+        const flashUnavailable = selection === 'rotpunkt' || redpointDoneInPriorCycle;
         const statusOptions = vorstiegEligible
           ? [
               { value: 'open',      label: 'Offen' },
               { value: 'toprope',   label: 'Toprope' },
-              ...(!doneInPriorCycle ? [{ value: 'flash', label: 'Flash' }] : []),
+              { value: 'flash',     label: 'Flash', disabled: flashUnavailable },
               { value: 'rotpunkt',  label: 'Rotpunkt' }
             ]
           : [
@@ -455,12 +535,15 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
         statusOptions.forEach(option => {
           const btn = document.createElement('button');
           btn.type = 'button';
-          btn.className = 'status-btn status-' + option.value + (selectionFromEntry(entry) === option.value ? ' active' : '');
-          btn.disabled = locked;
+          btn.className = 'status-btn status-' + option.value
+            + (selection === option.value ? ' active' : '')
+            + (option.disabled ? ' is-disabled-placeholder' : '');
+          btn.disabled = locked || Boolean(option.disabled);
           btn.dataset.action = 'set-status';
           btn.dataset.entryId = entry.id;
           btn.dataset.status = option.value;
           btn.textContent = option.label;
+          if (option.disabled) btn.title = 'Flash ist nach einer Rotpunkt-Begehung nicht mehr möglich';
           actions.appendChild(btn);
         });
         if (entry.source === 'custom') {
@@ -501,15 +584,19 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
           attemptSection.appendChild(noteArea);
         }
 
-        const pastSessions = (entry.attemptLog || []).filter(s => s.date !== today && s.count > 0);
-        if (pastSessions.length > 0) {
+        const attemptSessions = (entry.attemptLog || []).filter(s => s.count > 0);
+        if (attemptSessions.length > 0) {
           const hist = document.createElement('details');
           hist.className = 'attempt-history';
-          const rows = pastSessions
-            .slice().reverse()
-            .map(s => `<div class="attempt-hist-row"><span class="attempt-hist-date">${escapeHtml(s.date ? formatDate(s.date) : '—')}</span><span class="attempt-hist-count">${s.count}×</span>${s.notes ? `<span class="attempt-hist-note">${escapeHtml(s.notes)}</span>` : ''}</div>`)
+          const rows = attemptSessions
+            .slice()
+            .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
+            .map(s => {
+              const isToday = s.date === today;
+              return `<div class="attempt-hist-row"><span class="attempt-hist-date">${escapeHtml(s.date ? formatDate(s.date) : '—')}</span><span class="attempt-hist-count">${s.count}×</span><span class="attempt-hist-tag">${isToday ? 'Heute' : ''}</span>${s.notes ? `<span class="attempt-hist-note">${escapeHtml(s.notes)}</span>` : ''}</div>`;
+            })
             .join('');
-          hist.innerHTML = `<summary class="attempt-hist-summary">${pastSessions.length} frühere Session${pastSessions.length !== 1 ? 's' : ''}</summary>${rows}`;
+          hist.innerHTML = `<summary class="attempt-hist-summary">Versuchstage anzeigen</summary>${rows}`;
           attemptSection.appendChild(hist);
         }
 
@@ -683,7 +770,7 @@ function renderNewRoutes() {
         <span class="archive-count">${newEntries.length} Route${newEntries.length !== 1 ? 'n' : ''} aus den letzten 28 Tagen</span>
       </summary>
       <div class="archive-note">Routen, die in den letzten 28 Tagen geschraubt wurden.</div>
-      <div style="overflow-x:auto;"><table class="archive-table">
+      <div class="new-routes-table-wrap"><table class="archive-table new-routes-table">
         <thead><tr><th>Datum</th><th>Grad</th><th>Route</th><th>Seil / Farbe</th></tr></thead>
         <tbody>
           ${newEntries.map(e => {
@@ -691,9 +778,9 @@ function renderNewRoutes() {
             const locationDisplay = getRouteLocationDisplay(e);
             const colorChips = colors.map(c => {
               const name = colorName(c);
-              return `<span class="route-mini-badge route-color-chip"><span class="route-color-dot" style="background-color:${escapeHtml(c)}"></span>${name ? escapeHtml(name) : ''}</span>`;
-            }).join(' ');
-            const ropeBadge = e.routeCode ? `<span class="route-mini-badge">Seil ${escapeHtml(e.routeCode)}</span>` : '';
+              return `<span class="route-mini-badge route-color-chip new-route-chip"><span class="route-color-dot" style="background-color:${escapeHtml(c)}"></span>${name ? escapeHtml(name) : ''}</span>`;
+            }).join('');
+            const ropeBadge = e.routeCode ? `<span class="route-mini-badge new-route-chip">Seil ${escapeHtml(e.routeCode)}</span>` : '';
             const routesetter = String(e.routesetter || '').trim();
             return `
               <tr>
@@ -706,7 +793,7 @@ function renderNewRoutes() {
                   <div class="route-name-main">${escapeHtml(e.name)}</div>
                   ${locationDisplay ? `<div style="font-size:11px;color:var(--gray-400);">${escapeHtml(locationDisplay)}</div>` : ''}
                 </td>
-                <td style="display:flex; gap:4px; flex-wrap:wrap;">${ropeBadge}${colorChips}</td>
+                <td><div class="new-route-info-line">${ropeBadge}${colorChips}</div></td>
               </tr>
             `;
           }).join('')}

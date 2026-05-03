@@ -374,6 +374,11 @@ function renderAscentOverview(progressState) {
     { value: 'toprope', label: 'Toprope' },
     { value: 'open', label: 'Offen' }
   ];
+  const ropeOptions = [
+    { value: 'all', label: 'Alle' },
+    { value: 'vorstieg', label: 'Vorstieg möglich' },
+    { value: 'toprope', label: 'Nur Toprope' }
+  ];
 
   return `
     <details class="card stats-details stats-details-wide" open>
@@ -385,6 +390,16 @@ function renderAscentOverview(progressState) {
         <span class="stats-details-indicator" aria-hidden="true">▾</span>
       </summary>
       <div class="stats-details-body">
+
+      <div class="ascent-filter-row">
+        <div class="ascent-filter-label">Zeitraum</div>
+        <select class="ascent-date-select" data-ascent-action="date-range">
+          <option value="all" ${f.dateRange === 'all' ? 'selected' : ''}>Gesamter Zeitraum</option>
+          <option value="30d" ${f.dateRange === '30d' ? 'selected' : ''}>Letzte 30 Tage</option>
+          <option value="6m" ${f.dateRange === '6m' ? 'selected' : ''}>Letzte 6 Monate</option>
+          <option value="year" ${f.dateRange === 'year' ? 'selected' : ''}>Letztes Jahr</option>
+        </select>
+      </div>
 
       <div class="ascent-filter-row">
         <div class="ascent-filter-label">Grad</div>
@@ -407,13 +422,12 @@ function renderAscentOverview(progressState) {
       </div>
 
       <div class="ascent-filter-row">
-        <div class="ascent-filter-label">Zeitraum</div>
-        <select class="ascent-date-select" data-ascent-action="date-range">
-          <option value="all" ${f.dateRange === 'all' ? 'selected' : ''}>Gesamter Zeitraum</option>
-          <option value="30d" ${f.dateRange === '30d' ? 'selected' : ''}>Letzte 30 Tage</option>
-          <option value="6m" ${f.dateRange === '6m' ? 'selected' : ''}>Letzte 6 Monate</option>
-          <option value="year" ${f.dateRange === 'year' ? 'selected' : ''}>Letztes Jahr</option>
-        </select>
+        <div class="ascent-filter-label">Routenart</div>
+        <div class="ascent-filter-chips">
+          ${ropeOptions.map(opt => `
+            <button type="button" class="filter-preset-btn ${f.ropeFilter === opt.value ? 'active' : ''}" data-ascent-action="rope-filter" data-value="${opt.value}">${opt.label}</button>
+          `).join('')}
+        </div>
       </div>
 
       <div class="ascent-filter-row">

@@ -68,10 +68,13 @@
       </select>
       <div id="route-grade-chips" class="grade-filter-shell" aria-label="Gradfilter"></div>
     </div>
-    <div class="filter-presets" id="filter-presets">
-      <button class="filter-preset-btn" data-preset="focus">Aktueller Fokus</button>
-      <button class="filter-preset-btn" data-preset="projects">Offene Projekte</button>
-      <button class="filter-preset-btn" data-preset="all">Alle anzeigen</button>
+    <div class="route-filter-bar">
+      <div class="filter-presets" id="filter-presets">
+        <button class="filter-preset-btn" data-preset="focus">Aktueller Fokus</button>
+        <button class="filter-preset-btn" data-preset="projects">Offene Projekte</button>
+        <button class="filter-preset-btn" data-preset="all">Alle anzeigen</button>
+      </div>
+      <div id="route-filter-meta" class="route-filter-meta"></div>
     </div>
     <div id="route-board" aria-live="polite"></div>
     <div id="new-routes-section"></div>
@@ -406,6 +409,7 @@
         <div style="margin-top:12px;">
           <button id="settings-new-cycle" type="button" class="secondary-btn">Neuen Mesozyklus starten</button>
         </div>
+        <div id="settings-cycle-archive" class="cycle-archive-list"></div>
       </div>
 
       <div class="settings-card danger-zone">

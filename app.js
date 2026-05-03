@@ -14,11 +14,7 @@ function init() {
 }
 
 function initGradeFilter() {
-  const { progressState } = getComputedState();
-  const grades = [];
-  if (progressState.current) grades.push(progressState.current.grade);
-  if (progressState.canStartNext && progressState.next) grades.push(progressState.next.grade);
-  appState.filters.grades = grades;
+  appState.filters.grades = getFocusFilterGrades();
 }
 
 function bindEvents() {
@@ -37,6 +33,9 @@ function bindEvents() {
   ui.settingsClose.addEventListener('click', closeSettingsModal);
   ui.settingsModal.addEventListener('click', event => {
     if (event.target === ui.settingsModal) closeSettingsModal();
+    const button = event.target.closest('button[data-action="delete-cycle"]');
+    if (!button) return;
+    deletePastMesoCycleSafely(Number(button.dataset.cycle));
   });
 
   document.addEventListener('keydown', event => {
@@ -81,6 +80,17 @@ function bindEvents() {
     applyFilterPreset(button.dataset.preset);
   });
 
+  if (ui.routeFilterMeta) {
+    ui.routeFilterMeta.addEventListener('click', event => {
+      const button = event.target.closest('button[data-action]');
+      if (!button) return;
+      if (button.dataset.action === 'toggle-col-panel') {
+        appState._colPanelOpen = !appState._colPanelOpen;
+        renderRouteBoard(getComputedState().progressState);
+      }
+    });
+  }
+
   ui.routeBoard.addEventListener('blur', event => {
     const textarea = event.target.closest('textarea[data-action="save-note"]');
     if (!textarea) return;
@@ -107,11 +117,11 @@ function bindEvents() {
       const col = button.dataset.col;
       const prefs = appState.profile.tablePrefs;
       if (prefs.sortBy === col) {
-        if (prefs.sortDir === 'asc') prefs.sortDir = 'desc';
-        else { prefs.sortBy = null; prefs.sortDir = 'asc'; }
+        prefs.sortDir = prefs.sortDir === 'asc' ? 'desc' : 'asc';
       } else {
+        const sortOption = (APP_CONFIG.routeSortOptions || []).find(option => option.value === col);
         prefs.sortBy = col;
-        prefs.sortDir = 'asc';
+        prefs.sortDir = sortOption?.defaultDir || 'asc';
       }
       persistProfile();
       renderRouteBoard(getComputedState().progressState);
@@ -168,6 +178,17 @@ function bindEvents() {
       } else {
         delete appState.profile.tablePrefs.columnWidths[col];
       }
+      persistProfile();
+      renderRouteBoard(getComputedState().progressState);
+      return;
+    }
+
+    const gapInput = event.target.closest('input[data-col-gap]');
+    if (gapInput) {
+      const val = parseInt(gapInput.value, 10);
+      appState.profile.tablePrefs.columnGap = val >= 0 && val <= 40
+        ? val
+        : APP_CONFIG.defaultProfile.tablePrefs.columnGap;
       persistProfile();
       renderRouteBoard(getComputedState().progressState);
     }
@@ -235,6 +256,8 @@ function bindEvents() {
     } else if (action === 'type-toggle') {
       if (_ascentFilters.ascentTypes.has(value)) _ascentFilters.ascentTypes.delete(value);
       else _ascentFilters.ascentTypes.add(value);
+    } else if (action === 'rope-filter') {
+      _ascentFilters.ropeFilter = value || 'all';
     } else if (action === 'sort-by') {
       if (_ascentFilters.sortBy === value) {
         _ascentFilters.sortDir = _ascentFilters.sortDir === 'asc' ? 'desc' : 'asc';
@@ -335,8 +358,7 @@ function applyFilterPreset(preset) {
   ui.routeSearch.value = '';
 
   if (preset === 'focus') {
-    const start = Number(appState.profile.startGrade);
-    appState.filters.grades = [String(start), String(start + 1)].filter(g => !Number.isNaN(Number(g)));
+    appState.filters.grades = getFocusFilterGrades();
     appState.filters.status = 'open';
     ui.routeStatusFilter.value = 'open';
   } else if (preset === 'projects') {
@@ -517,6 +539,21 @@ function startNewMesoCycleSafely() {
     startNewMesoCycle();
     closeSettingsModal();
     showToast(`Mesozyklus ${cycleNum + 1} gestartet`);
+  });
+}
+
+function deletePastMesoCycleSafely(cycleNum) {
+  const summary = getPastMesoCycleSummaries().find(item => item.cycle === cycleNum);
+  if (!summary) return;
+
+  showConfirmDialog(
+    `Mesozyklus ${cycleNum} löschen`,
+    `${summary.ascents} Begehung${summary.ascents !== 1 ? 'en' : ''} und zugehörige Versuchsdaten aus diesem Zyklus werden aus Profil-Archiv und Routenhistorie entfernt.`,
+    'Mesozyklus löschen'
+  ).then(confirmed => {
+    if (!confirmed) return;
+    deletePastMesoCycle(cycleNum);
+    showToast(`Mesozyklus ${cycleNum} gelöscht`);
   });
 }
 

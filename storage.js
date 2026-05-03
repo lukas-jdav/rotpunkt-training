@@ -26,7 +26,10 @@ function migrateLegacyStorage() {
 function sanitizeTablePrefs(raw) {
   const def = APP_CONFIG.defaultProfile.tablePrefs;
   const validKeys = APP_CONFIG.tableColumns.map(c => c.key);
-  const validSortKeys = APP_CONFIG.tableColumns.filter(c => c.sortable).map(c => c.key);
+  const validSortKeys = [
+    ...APP_CONFIG.tableColumns.filter(c => c.sortable).map(c => c.key),
+    ...(APP_CONFIG.routeSortOptions || []).map(option => option.value)
+  ];
 
   const columnOrder = Array.isArray(raw && raw.columnOrder)
     ? raw.columnOrder.filter(k => validKeys.includes(k))
@@ -46,8 +49,10 @@ function sanitizeTablePrefs(raw) {
   const columnWidths = Object.fromEntries(
     Object.entries(rawWidths).filter(([k, v]) => validKeys.includes(k) && typeof v === 'number' && v >= 40 && v <= 800)
   );
+  const rawColumnGap = Number(raw && raw.columnGap);
+  const columnGap = rawColumnGap >= 0 && rawColumnGap <= 40 ? rawColumnGap : def.columnGap;
 
-  return { columnOrder: merged, hiddenColumns, sortBy, sortDir, columnWidths };
+  return { columnOrder: merged, hiddenColumns, sortBy, sortDir, columnWidths, columnGap };
 }
 
 function sanitizeProfile(profile) {
