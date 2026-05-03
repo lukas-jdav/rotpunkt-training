@@ -32,8 +32,8 @@ const APP_CONFIG = {
   allowedStartGrades: ['4', '5', '6'],
   roadmapGrades: ['5', '6', '7', '8'],
   hiddenGrades: new Set(['3']),
-  vorstiegMandatoryRanges: [[18, 34], [47, 50]],
-  vorstiegOptionalRanges: [[51, 56]],
+  vorstiegMandatoryRanges: [[18, 34], [47, 56]],
+  vorstiegOptionalRanges: [],
   firebaseConfig: {
     apiKey: 'AIzaSyCyXeMjZy81orV5S2_wbxVsArmhgeoFe8M',
     authDomain: 'jdav-rotpunkt-training.firebaseapp.com',
