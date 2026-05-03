@@ -418,11 +418,12 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
         const actions = document.createElement('div');
         actions.className = 'route-status-actions';
         const vorstiegEligible = isVorstiegMandatory(entry) || isVorstiegOptional(entry);
+        const doneInPriorCycle = (entry.cycleHistory || []).some(h => h.status === 'done');
         const statusOptions = vorstiegEligible
           ? [
               { value: 'open',      label: 'Offen' },
               { value: 'toprope',   label: 'Toprope' },
-              { value: 'flash',     label: 'Flash' },
+              ...(!doneInPriorCycle ? [{ value: 'flash', label: 'Flash' }] : []),
               { value: 'rotpunkt',  label: 'Rotpunkt' }
             ]
           : [
