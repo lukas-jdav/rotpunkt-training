@@ -416,12 +416,19 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
 
         const actions = document.createElement('div');
         actions.className = 'route-status-actions';
-        [
-          { value: 'open', label: 'Offen' },
-          { value: 'toprope', label: 'Toprope' },
-          { value: 'flash', label: 'Flash' },
-          { value: 'rotpunkt', label: 'Rotpunkt' }
-        ].forEach(option => {
+        const vorstiegEligible = isVorstiegMandatory(entry) || isVorstiegOptional(entry);
+        const statusOptions = vorstiegEligible
+          ? [
+              { value: 'open',      label: 'Offen' },
+              { value: 'toprope',   label: 'Toprope' },
+              { value: 'flash',     label: 'Flash' },
+              { value: 'rotpunkt',  label: 'Rotpunkt' }
+            ]
+          : [
+              { value: 'open',    label: 'Offen' },
+              { value: 'toprope', label: 'Toprope' }
+            ];
+        statusOptions.forEach(option => {
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'status-btn status-' + option.value + (selectionFromEntry(entry) === option.value ? ' active' : '');
