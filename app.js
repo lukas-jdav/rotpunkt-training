@@ -543,12 +543,18 @@ function startNewMesoCycleSafely() {
 }
 
 function deletePastMesoCycleSafely(cycleNum) {
-  const summary = getPastMesoCycleSummaries().find(item => item.cycle === cycleNum);
+  const cycleSummaries = getPastMesoCycleSummaries();
+  const highestPastCycle = cycleSummaries[0]?.cycle || 0;
+  const summary = cycleSummaries.find(item => item.cycle === cycleNum);
   if (!summary) return;
+  if (cycleNum !== highestPastCycle) {
+    showToast('Bitte zuerst den höchsten Mesozyklus löschen');
+    return;
+  }
 
   showConfirmDialog(
     `Mesozyklus ${cycleNum} löschen`,
-    `${summary.ascents} Begehung${summary.ascents !== 1 ? 'en' : ''} und zugehörige Versuchsdaten aus diesem Zyklus werden aus Profil-Archiv und Routenhistorie entfernt.`,
+    `${summary.ascents} Begehung${summary.ascents !== 1 ? 'en' : ''} und zugehörige Versuchsdaten aus diesem Zyklus werden entfernt. Danach bist du wieder in Mesozyklus ${cycleNum}.`,
     'Mesozyklus löschen'
   ).then(confirmed => {
     if (!confirmed) return;

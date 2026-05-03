@@ -83,6 +83,7 @@ function renderSettingsModal() {
   ui.settingsCycleLabel.textContent = String(appState.profile.currentCycle || 1);
   if (ui.settingsCycleArchive) {
     const cycleSummaries = getPastMesoCycleSummaries();
+    const highestPastCycle = cycleSummaries[0]?.cycle || 0;
     ui.settingsCycleArchive.innerHTML = cycleSummaries.length
       ? `
         <div class="cycle-archive-title">Vergangene Mesozyklen</div>
@@ -92,7 +93,9 @@ function renderSettingsModal() {
               <strong>Mesozyklus ${escapeHtml(String(summary.cycle))}</strong>
               <span>${summary.ascents} Begehung${summary.ascents !== 1 ? 'en' : ''} · ${summary.routes} Route${summary.routes !== 1 ? 'n' : ''} · ${summary.attempts} Versuch${summary.attempts !== 1 ? 'e' : ''}</span>
             </div>
-            <button type="button" class="danger-btn small-danger-btn" data-action="delete-cycle" data-cycle="${escapeHtml(String(summary.cycle))}">Löschen</button>
+            ${summary.cycle === highestPastCycle
+              ? `<button type="button" class="danger-btn small-danger-btn" data-action="delete-cycle" data-cycle="${escapeHtml(String(summary.cycle))}">Löschen</button>`
+              : '<span class="cycle-archive-locked">Erst höheren Zyklus löschen</span>'}
           </div>
         `).join('')}
       `

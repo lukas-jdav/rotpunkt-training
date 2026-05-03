@@ -320,8 +320,10 @@ function getPastMesoCycleSummaries() {
 function deletePastMesoCycle(cycleNum) {
   const cycle = Math.max(1, Number(cycleNum) || 0);
   const currentCycle = appState.profile.currentCycle || 1;
-  if (!cycle || cycle >= currentCycle) return { ascents: 0, routes: 0 };
-  const previousSummary = getPastMesoCycleSummaries().find(summary => summary.cycle === cycle)
+  const pastSummaries = getPastMesoCycleSummaries();
+  const highestPastCycle = pastSummaries[0]?.cycle || 0;
+  if (!cycle || cycle >= currentCycle || cycle !== highestPastCycle) return { ascents: 0, routes: 0 };
+  const previousSummary = pastSummaries.find(summary => summary.cycle === cycle)
     || { ascents: 0, routes: 0 };
 
   appState.profile.ascentArchive = (appState.profile.ascentArchive || []).filter(rawRecord => {
@@ -340,6 +342,7 @@ function deletePastMesoCycle(cycleNum) {
     return { ...entry, cycleHistory, updatedAt: Date.now() };
   });
 
+  appState.profile.currentCycle = cycle;
   persistAll();
   renderApp();
   return { ascents: previousSummary.ascents, routes: previousSummary.routes };

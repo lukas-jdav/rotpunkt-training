@@ -1182,6 +1182,11 @@
     color: var(--gray-400);
     font-size: 13px;
   }
+  .cycle-archive-locked {
+    margin-top: 0;
+    text-align: right;
+    flex-shrink: 0;
+  }
   .small-danger-btn {
     padding: 6px 10px;
     font-size: 12px;
