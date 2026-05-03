@@ -238,10 +238,6 @@ function renderRouteBoard(progressState) {
   const tableHead = document.createElement('div');
   tableHead.className = 'route-table-head';
 
-  const title = document.createElement('div');
-  title.className = 'route-table-title';
-  title.textContent = 'Direkte Routenliste';
-
   const headRight = document.createElement('div');
   headRight.className = 'route-table-head-right';
 
@@ -258,7 +254,6 @@ function renderRouteBoard(progressState) {
 
   headRight.appendChild(meta);
   headRight.appendChild(colMgrBtn);
-  tableHead.appendChild(title);
   tableHead.appendChild(headRight);
   shell.appendChild(tableHead);
 

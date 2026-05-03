@@ -548,21 +548,12 @@
 
   .route-table-head {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
+    justify-content: flex-end;
+    align-items: center;
     gap: 12px;
-    flex-wrap: wrap;
-    padding: 14px 16px;
+    padding: 10px 16px;
     border-bottom: 1px solid var(--gray-100);
     background: linear-gradient(180deg,#fbfcfc 0%, #f4f7f5 100%);
-  }
-
-  .route-table-title {
-    color: var(--dav-green);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
   }
 
   .route-table-meta { color: var(--gray-400); font-size: 13px; }
