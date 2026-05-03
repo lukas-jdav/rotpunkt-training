@@ -143,7 +143,9 @@ const _ascentFilters = {
   grades: new Set(),
   ascentTypes: new Set(),
   dateRange: 'all',
-  showOpenInCurrent: false
+  showOpenInCurrent: false,
+  sortBy: 'date',
+  sortDir: 'desc'
 };
 
 function getAscentAvailableGrades() {
@@ -187,7 +189,21 @@ function getFilteredAscents(currentGrade) {
     );
   }
 
-  return [...done, ...open].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  const dir = _ascentFilters.sortDir === 'asc' ? 1 : -1;
+  return [...done, ...open].sort((a, b) => {
+    switch (_ascentFilters.sortBy) {
+      case 'grade':
+        return (Number(a.grade) - Number(b.grade)) * dir;
+      case 'type': {
+        const order = { rotpunkt: 0, flash: 1, toprope: 2, open: 3 };
+        const at = a.status === 'open' ? 'open' : (a.ascentType || 'rotpunkt');
+        const bt = b.status === 'open' ? 'open' : (b.ascentType || 'rotpunkt');
+        return ((order[at] ?? 3) - (order[bt] ?? 3)) * dir;
+      }
+      default:
+        return (a.date || '').localeCompare(b.date || '') * dir;
+    }
+  });
 }
 
 function renderAscentBadge(entry) {
@@ -245,6 +261,21 @@ function renderAscentOverview(progressState) {
           <option value="6m" ${f.dateRange === '6m' ? 'selected' : ''}>Letzte 6 Monate</option>
           <option value="year" ${f.dateRange === 'year' ? 'selected' : ''}>Letztes Jahr</option>
         </select>
+      </div>
+
+      <div class="ascent-filter-row">
+        <div class="ascent-filter-label">Sortierung</div>
+        <div class="ascent-filter-chips">
+          ${[
+            { value: 'date', label: 'Datum' },
+            { value: 'grade', label: 'Grad' },
+            { value: 'type', label: 'Begehungsstil' }
+          ].map(opt => {
+            const active = f.sortBy === opt.value;
+            const arrow = active ? (f.sortDir === 'asc' ? ' ↑' : ' ↓') : '';
+            return `<button type="button" class="filter-preset-btn ${active ? 'active' : ''}" data-ascent-action="sort-by" data-value="${opt.value}">${opt.label}${arrow}</button>`;
+          }).join('')}
+        </div>
       </div>
 
       ${currentGrade ? `

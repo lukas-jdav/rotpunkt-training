@@ -234,6 +234,13 @@ function bindEvents() {
     } else if (action === 'type-toggle') {
       if (_ascentFilters.ascentTypes.has(value)) _ascentFilters.ascentTypes.delete(value);
       else _ascentFilters.ascentTypes.add(value);
+    } else if (action === 'sort-by') {
+      if (_ascentFilters.sortBy === value) {
+        _ascentFilters.sortDir = _ascentFilters.sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        _ascentFilters.sortBy = value;
+        _ascentFilters.sortDir = value === 'date' ? 'desc' : 'asc';
+      }
     } else {
       return;
     }
