@@ -389,6 +389,13 @@ function renderRouteBoard(progressState) {
   tableWrap.appendChild(table);
   shell.appendChild(tableWrap);
   ui.routeBoard.appendChild(shell);
+
+  requestAnimationFrame(() => {
+    ui.routeBoard.querySelectorAll('th[data-col]').forEach(th => {
+      const input = ui.routeBoard.querySelector('input[data-col-width="' + th.dataset.col + '"]');
+      if (input && !input.value) input.placeholder = String(th.offsetWidth);
+    });
+  });
 }
 
 function appendEntryRow(row, entry, progressState, activeColumns) {
@@ -518,22 +525,6 @@ function appendEntryRow(row, entry, progressState, activeColumns) {
         td.innerHTML = `<div class="route-location-text">${escapeHtml(entry.location || '—')}</div>`;
         break;
 
-      case 'versuche':
-        td.className = 'col-numeric';
-        td.innerHTML = `<span class="route-attempts-badge">${totalAttempts > 0 ? totalAttempts : '—'}</span>`;
-        break;
-
-      case 'gesetzt':
-        td.className = 'col-date';
-        td.innerHTML = `<span class="route-date-text">${escapeHtml(entry.setDate ? formatDate(entry.setDate) : '—')}</span>`;
-        break;
-
-      case 'zuletzt': {
-        const last = getLastActiveDate(entry);
-        td.className = 'col-date';
-        td.innerHTML = `<span class="route-date-text">${escapeHtml(last ? formatDate(last) : '—')}</span>`;
-        break;
-      }
     }
 
     row.appendChild(td);
@@ -619,7 +610,7 @@ function renderNewRoutes() {
     return;
   }
 
-  ui.newRoutesSection.className = 'section archive-section';
+  ui.newRoutesSection.className = 'archive-section';
   ui.newRoutesSection.innerHTML = `
     <details class="archive-details">
       <summary class="archive-summary">

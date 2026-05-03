@@ -379,12 +379,6 @@ function getTotalAttempts(entry) {
   return (entry.attemptLog || []).reduce((sum, s) => sum + s.count, 0);
 }
 
-function getLastActiveDate(entry) {
-  const log = entry.attemptLog || [];
-  if (!log.length) return '';
-  return log.reduce((latest, s) => s.date > latest ? s.date : latest, '');
-}
-
 function sortEntries(entries, sortBy, sortDir) {
   const dir = sortDir === 'desc' ? -1 : 1;
 
@@ -414,25 +408,10 @@ function sortEntries(entries, sortBy, sortDir) {
       case 'bereich':
         diff = (left.location || '').localeCompare(right.location || '', 'de', { sensitivity: 'base' });
         break;
-      case 'versuche':
-        diff = getTotalAttempts(left) - getTotalAttempts(right);
-        break;
       case 'infos': {
         const lr = getRopeNumber(left) ?? Infinity;
         const rr = getRopeNumber(right) ?? Infinity;
         diff = lr - rr;
-        break;
-      }
-      case 'gesetzt': {
-        const ld = left.setDate || '';
-        const rd = right.setDate || '';
-        diff = ld < rd ? -1 : ld > rd ? 1 : 0;
-        break;
-      }
-      case 'zuletzt': {
-        const ll = getLastActiveDate(left);
-        const rl = getLastActiveDate(right);
-        diff = ll < rl ? -1 : ll > rl ? 1 : 0;
         break;
       }
     }

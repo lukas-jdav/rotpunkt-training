@@ -28,9 +28,6 @@ const APP_CONFIG = {
     { key: 'aktionen', label: 'Aktionen',      sortable: false, hideable: false },
     { key: 'infos',    label: 'Infos',         sortable: true,  hideable: true  },
     { key: 'route',    label: 'Route / Bereich', sortable: true,  hideable: true  },
-    { key: 'versuche', label: 'Versuche',      sortable: true,  hideable: true, defaultHidden: true },
-    { key: 'gesetzt',  label: 'Gesetzt am',    sortable: true,  hideable: true, defaultHidden: true },
-    { key: 'zuletzt',  label: 'Zuletzt aktiv', sortable: true,  hideable: true, defaultHidden: true }
   ],
   allowedStartGrades: ['4', '5', '6'],
   roadmapGrades: ['5', '6', '7', '8'],
