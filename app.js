@@ -569,8 +569,8 @@ function resetProgressSafely() {
 
   showConfirmDialog(
     'Fortschritt zurücksetzen',
-    `Wirklich alle ${trackedEntries.length} Einträge auf „offen" zurücksetzen? Das kann nicht rückgängig gemacht werden.`,
-    'Zurücksetzen'
+    `Wirklich alle ${trackedEntries.length} Einträge auf „offen" zurücksetzen? Alle Begehungen, Versuche und die Zyklushistorie werden unwiderruflich gelöscht.`,
+    'Alles zurücksetzen'
   ).then(confirmed => {
     if (!confirmed) return;
     appState.routeEntries = appState.routeEntries.map(entry => ({
@@ -578,12 +578,16 @@ function resetProgressSafely() {
       status: 'open',
       ascentType: '',
       date: '',
+      attemptLog: [],
+      cycleHistory: [],
       updatedAt: Date.now()
     }));
-    persistRoutes();
+    appState.profile.currentCycle = 1;
+    persistAll();
+    initGradeFilter();
     renderApp();
     closeSettingsModal();
-    showToast('Fortschritt zurückgesetzt');
+    showToast('Fortschritt vollständig zurückgesetzt');
   });
 }
 
