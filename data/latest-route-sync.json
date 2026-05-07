@@ -1,17 +1,52 @@
 {
-  "generatedAt": "2026-05-06T09:21:13.155Z",
+  "generatedAt": "2026-05-07T09:28:46.555Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
-  "totalRoutes": 142,
-  "hasChanges": false,
-  "changeId": "",
+  "totalRoutes": 143,
+  "hasChanges": true,
+  "changeId": "2026-05-07T09:28:46.555Z::4.1||wurmling|4.3||hochspannung::::4.5||saturday night blues",
   "summary": {
-    "added": 0,
+    "added": 2,
     "updated": 0,
-    "removed": 0
+    "removed": 1
   },
   "changes": {
-    "added": [],
+    "added": [
+      {
+        "location": "4.1",
+        "name": "Wurmling",
+        "difficulty": "4",
+        "area": "Sportklettern Empore",
+        "sector": "Empore",
+        "set_at": "2026-05-06 13:06:11 UTC",
+        "routesetter": "Jochen Schäfer",
+        "color_1": "#ff0000",
+        "color_2": ""
+      },
+      {
+        "location": "4.3",
+        "name": "Hochspannung",
+        "difficulty": "6-",
+        "area": "Sportklettern Empore",
+        "sector": "Empore",
+        "set_at": "2026-05-06 13:11:41 UTC",
+        "routesetter": "Jochen Schäfer",
+        "color_1": "#808080",
+        "color_2": ""
+      }
+    ],
     "updated": [],
-    "removed": []
+    "removed": [
+      {
+        "location": "4.5",
+        "name": "Saturday Night Blues",
+        "difficulty": "4+",
+        "area": "Sportklettern Empore",
+        "sector": "Empore",
+        "set_at": "2025-07-05 12:00:00 UTC",
+        "routesetter": "Silas Pollmann",
+        "color_1": "#ffa500",
+        "color_2": ""
+      }
+    ]
   }
 }
