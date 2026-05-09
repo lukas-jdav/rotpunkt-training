@@ -1,140 +1,17 @@
 window.TIVOLI_ROUTE_SYNC = {
-  "generatedAt": "2026-05-08T08:20:02.245Z",
+  "generatedAt": "2026-05-09T08:25:10.115Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
   "totalRoutes": 138,
-  "hasChanges": true,
-  "changeId": "2026-05-08T08:20:02.245Z::1.2||butterplatte|7.1||anti floh|9.1||grasshopper::::1.2||snake|7.1||roter faden|7.2||ein platz an der sonne|7.3||sommer blues|8.1||schmerz lass nach|8.3||luftpumpe|9.1||zoologischer garten|9.3||jump, baby. jump!",
+  "hasChanges": false,
+  "changeId": "",
   "summary": {
-    "added": 3,
+    "added": 0,
     "updated": 0,
-    "removed": 8
+    "removed": 0
   },
   "changes": {
-    "added": [
-      {
-        "location": "1.2",
-        "name": "Butterplatte",
-        "difficulty": "7-",
-        "area": "Sportklettern Empore",
-        "sector": "Empore",
-        "set_at": "2026-05-07 16:02:58 UTC",
-        "routesetter": "Flo Weikert",
-        "color_1": "#ffd700",
-        "color_2": ""
-      },
-      {
-        "location": "7.1",
-        "name": "Anti Floh",
-        "difficulty": "5+",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2026-05-07 16:04:20 UTC",
-        "routesetter": "Thomas Busch",
-        "color_1": "#9400d3",
-        "color_2": ""
-      },
-      {
-        "location": "9.1",
-        "name": "Grasshopper",
-        "difficulty": "5-",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2026-05-07 16:05:26 UTC",
-        "routesetter": "N/A ",
-        "color_1": "#0000ff",
-        "color_2": ""
-      }
-    ],
+    "added": [],
     "updated": [],
-    "removed": [
-      {
-        "location": "1.2",
-        "name": "Snake",
-        "difficulty": "6",
-        "area": "Sportklettern Empore",
-        "sector": "Empore",
-        "set_at": "2025-05-22 10:30:19 UTC",
-        "routesetter": "N/A ",
-        "color_1": "#ffff00",
-        "color_2": ""
-      },
-      {
-        "location": "7.1",
-        "name": "Roter Faden",
-        "difficulty": "7",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2025-08-01 12:00:00 UTC",
-        "routesetter": "Flo Weikert",
-        "color_1": "#ffffff",
-        "color_2": ""
-      },
-      {
-        "location": "7.2",
-        "name": "Ein Platz An Der Sonne",
-        "difficulty": "5-",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2025-08-21 12:00:00 UTC",
-        "routesetter": "N/A ",
-        "color_1": "#ffa500",
-        "color_2": ""
-      },
-      {
-        "location": "7.3",
-        "name": "Sommer Blues",
-        "difficulty": "6+",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2025-08-30 20:50:37 UTC",
-        "routesetter": "N/A ",
-        "color_1": "#9400d3",
-        "color_2": ""
-      },
-      {
-        "location": "8.1",
-        "name": "Schmerz lass nach",
-        "difficulty": "7-",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2025-08-01 12:00:00 UTC",
-        "routesetter": "Flo Weikert",
-        "color_1": "#808080",
-        "color_2": ""
-      },
-      {
-        "location": "8.3",
-        "name": "Luftpumpe",
-        "difficulty": "8+",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2025-08-30 20:51:08 UTC",
-        "routesetter": "Julius Dammann",
-        "color_1": "#32cd32",
-        "color_2": ""
-      },
-      {
-        "location": "9.1",
-        "name": "Zoologischer Garten",
-        "difficulty": "5",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2025-08-30 20:51:52 UTC",
-        "routesetter": "Julius Dammann",
-        "color_1": "#0000ff",
-        "color_2": ""
-      },
-      {
-        "location": "9.3",
-        "name": "Jump, Baby. Jump!",
-        "difficulty": "8-",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2025-08-30 20:52:26 UTC",
-        "routesetter": "Julius Dammann",
-        "color_1": "#ffa500",
-        "color_2": "#000000"
-      }
-    ]
+    "removed": []
   }
 };
