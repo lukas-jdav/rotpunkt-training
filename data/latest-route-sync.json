@@ -1,52 +1,288 @@
 {
-  "generatedAt": "2026-05-12T09:34:29.599Z",
+  "generatedAt": "2026-05-13T09:42:31.889Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
   "totalRoutes": 139,
   "hasChanges": true,
-  "changeId": "2026-05-12T09:34:29.599Z::4.2||hippo streck dich|7.1||pflaumenmatsch::::7.1||anti floh",
+  "changeId": "2026-05-13T09:42:31.889Z::::11.2||eis-zeit|12.1||idiocracy|12.2||dancing in the moonlight|13.2||rettet timmy|38.1||lila kobold|38.2||vergessener weg|38.3||letzte route|39.2||leo war hier|40.2||neon|42.3||sahnetorte::",
   "summary": {
-    "added": 2,
-    "updated": 0,
-    "removed": 1
+    "added": 0,
+    "updated": 10,
+    "removed": 0
   },
   "changes": {
-    "added": [
+    "added": [],
+    "updated": [
       {
-        "location": "4.2",
-        "name": "Hippo streck dich",
-        "difficulty": "6",
-        "area": "Sportklettern Empore",
-        "sector": "Empore",
-        "set_at": "2026-05-11 17:41:24 UTC",
-        "routesetter": "Thomas Busch",
-        "color_1": "#32cd32",
-        "color_2": ""
+        "before": {
+          "location": "11.2",
+          "name": "Eis-Zeit",
+          "difficulty": "6",
+          "area": "Sportklettern Erdgeschoß",
+          "sector": "Main Wall",
+          "set_at": "2026-04-23 12:00:00 UTC",
+          "routesetter": "Dominik Schuler",
+          "color_1": "#ffffff",
+          "color_2": "#ff0000"
+        },
+        "after": {
+          "location": "11.2",
+          "name": "Eis-Zeit",
+          "difficulty": "6+",
+          "area": "Sportklettern Erdgeschoß",
+          "sector": "Main Wall",
+          "set_at": "2026-04-23 12:00:00 UTC",
+          "routesetter": "Dominik Schuler",
+          "color_1": "#ffffff",
+          "color_2": "#ff0000"
+        },
+        "changedFields": [
+          "difficulty"
+        ]
       },
       {
-        "location": "7.1",
-        "name": "Pflaumenmatsch",
-        "difficulty": "5+",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2026-05-07 16:04:20 UTC",
-        "routesetter": "Thomas Busch",
-        "color_1": "#9400d3",
-        "color_2": ""
+        "before": {
+          "location": "12.1",
+          "name": "Idiocracy",
+          "difficulty": "5-",
+          "area": "Sportklettern Erdgeschoß",
+          "sector": "Main Wall",
+          "set_at": "2026-04-17 12:00:00 UTC",
+          "routesetter": "Silas Pollmann",
+          "color_1": "#808080",
+          "color_2": ""
+        },
+        "after": {
+          "location": "12.1",
+          "name": "Idiocracy",
+          "difficulty": "5+",
+          "area": "Sportklettern Erdgeschoß",
+          "sector": "Main Wall",
+          "set_at": "2026-04-17 12:00:00 UTC",
+          "routesetter": "Silas Pollmann",
+          "color_1": "#808080",
+          "color_2": ""
+        },
+        "changedFields": [
+          "difficulty"
+        ]
+      },
+      {
+        "before": {
+          "location": "12.2",
+          "name": "Dancing in the moonlight",
+          "difficulty": "9+",
+          "area": "Sportklettern Erdgeschoß",
+          "sector": "Main Wall",
+          "set_at": "2026-04-18 12:00:00 UTC",
+          "routesetter": "Silas Pollmann",
+          "color_1": "#32cd32",
+          "color_2": ""
+        },
+        "after": {
+          "location": "12.2",
+          "name": "Dancing in the moonlight",
+          "difficulty": "9",
+          "area": "Sportklettern Erdgeschoß",
+          "sector": "Main Wall",
+          "set_at": "2026-04-18 12:00:00 UTC",
+          "routesetter": "Silas Pollmann",
+          "color_1": "#32cd32",
+          "color_2": ""
+        },
+        "changedFields": [
+          "difficulty"
+        ]
+      },
+      {
+        "before": {
+          "location": "13.2",
+          "name": "Rettet Timmy",
+          "difficulty": "6+",
+          "area": "Sportklettern Erdgeschoß",
+          "sector": "Main Wall",
+          "set_at": "2026-04-24 10:48:02 UTC",
+          "routesetter": "Silas Pollmann",
+          "color_1": "#0000ff",
+          "color_2": ""
+        },
+        "after": {
+          "location": "13.2",
+          "name": "Rettet Timmy",
+          "difficulty": "6",
+          "area": "Sportklettern Erdgeschoß",
+          "sector": "Main Wall",
+          "set_at": "2026-04-24 10:48:02 UTC",
+          "routesetter": "Silas Pollmann",
+          "color_1": "#0000ff",
+          "color_2": ""
+        },
+        "changedFields": [
+          "difficulty"
+        ]
+      },
+      {
+        "before": {
+          "location": "38.1",
+          "name": "Lila Kobold",
+          "difficulty": "4",
+          "area": "Sportklettern Empore",
+          "sector": "Empore",
+          "set_at": "2026-04-24 10:54:07 UTC",
+          "routesetter": "Dominik Schuler",
+          "color_1": "#9400d3",
+          "color_2": ""
+        },
+        "after": {
+          "location": "38.1",
+          "name": "Lila Kobold",
+          "difficulty": "4+",
+          "area": "Sportklettern Empore",
+          "sector": "Empore",
+          "set_at": "2026-04-24 10:54:07 UTC",
+          "routesetter": "Dominik Schuler",
+          "color_1": "#9400d3",
+          "color_2": ""
+        },
+        "changedFields": [
+          "difficulty"
+        ]
+      },
+      {
+        "before": {
+          "location": "38.2",
+          "name": "Vergessener Weg",
+          "difficulty": "5-",
+          "area": "Sportklettern Empore",
+          "sector": "Empore",
+          "set_at": "2026-04-24 10:55:12 UTC",
+          "routesetter": "Dominik Schuler",
+          "color_1": "#ffa500",
+          "color_2": ""
+        },
+        "after": {
+          "location": "38.2",
+          "name": "Vergessener Weg",
+          "difficulty": "5",
+          "area": "Sportklettern Empore",
+          "sector": "Empore",
+          "set_at": "2026-04-24 10:55:12 UTC",
+          "routesetter": "Dominik Schuler",
+          "color_1": "#ffa500",
+          "color_2": ""
+        },
+        "changedFields": [
+          "difficulty"
+        ]
+      },
+      {
+        "before": {
+          "location": "38.3",
+          "name": "Letzte Route",
+          "difficulty": "6-",
+          "area": "Sportklettern Empore",
+          "sector": "Empore",
+          "set_at": "2026-04-30 12:59:17 UTC",
+          "routesetter": "Stefan Nagel",
+          "color_1": "#ffffff",
+          "color_2": "#ff0000"
+        },
+        "after": {
+          "location": "38.3",
+          "name": "Letzte Route",
+          "difficulty": "6-",
+          "area": "Sportklettern Empore",
+          "sector": "Empore",
+          "set_at": "2026-04-30 12:59:17 UTC",
+          "routesetter": "Stefan Nagel",
+          "color_1": "#ffffff",
+          "color_2": ""
+        },
+        "changedFields": [
+          "color_2"
+        ]
+      },
+      {
+        "before": {
+          "location": "39.2",
+          "name": "Leo war hier",
+          "difficulty": "7",
+          "area": "Sportklettern Empore",
+          "sector": "Empore",
+          "set_at": "2026-04-30 13:01:02 UTC",
+          "routesetter": "Julius Dammann",
+          "color_1": "#ff0000",
+          "color_2": ""
+        },
+        "after": {
+          "location": "39.2",
+          "name": "Leo war hier",
+          "difficulty": "7+",
+          "area": "Sportklettern Empore",
+          "sector": "Empore",
+          "set_at": "2026-04-30 13:01:02 UTC",
+          "routesetter": "Julius Dammann",
+          "color_1": "#ff0000",
+          "color_2": ""
+        },
+        "changedFields": [
+          "difficulty"
+        ]
+      },
+      {
+        "before": {
+          "location": "40.2",
+          "name": "Neon",
+          "difficulty": "6+",
+          "area": "Sportklettern Empore",
+          "sector": "Empore",
+          "set_at": "2026-04-27 13:37:49 UTC",
+          "routesetter": "Laurin Ebert",
+          "color_1": "#ffa500",
+          "color_2": ""
+        },
+        "after": {
+          "location": "40.2",
+          "name": "Neon",
+          "difficulty": "7-",
+          "area": "Sportklettern Empore",
+          "sector": "Empore",
+          "set_at": "2026-04-27 13:37:49 UTC",
+          "routesetter": "Laurin Ebert",
+          "color_1": "#ffa500",
+          "color_2": ""
+        },
+        "changedFields": [
+          "difficulty"
+        ]
+      },
+      {
+        "before": {
+          "location": "42.3",
+          "name": "Sahnetorte",
+          "difficulty": "4+",
+          "area": "Sportklettern Empore",
+          "sector": "Empore",
+          "set_at": "2026-04-30 13:02:35 UTC",
+          "routesetter": "Julius Dammann",
+          "color_1": "#808080",
+          "color_2": ""
+        },
+        "after": {
+          "location": "42.3",
+          "name": "Sahnetorte",
+          "difficulty": "4",
+          "area": "Sportklettern Empore",
+          "sector": "Empore",
+          "set_at": "2026-04-30 13:02:35 UTC",
+          "routesetter": "Julius Dammann",
+          "color_1": "#808080",
+          "color_2": ""
+        },
+        "changedFields": [
+          "difficulty"
+        ]
       }
     ],
-    "updated": [],
-    "removed": [
-      {
-        "location": "7.1",
-        "name": "Anti Floh",
-        "difficulty": "5+",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2026-05-07 16:04:20 UTC",
-        "routesetter": "Thomas Busch",
-        "color_1": "#9400d3",
-        "color_2": ""
-      }
-    ]
+    "removed": []
   }
 }
