@@ -1,40 +1,51 @@
 {
-  "generatedAt": "2026-05-17T09:02:32.964Z",
+  "generatedAt": "2026-05-18T11:05:15.205Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
-  "totalRoutes": 142,
+  "totalRoutes": 143,
   "hasChanges": true,
-  "changeId": "2026-05-17T09:02:32.964Z::7.2||whiteout::::7.2||no brainer",
+  "changeId": "2026-05-18T11:05:15.205Z::7.3||monster safari|8.2||flut und ebbe::::8.2||elvis",
   "summary": {
-    "added": 1,
+    "added": 2,
     "updated": 0,
     "removed": 1
   },
   "changes": {
     "added": [
       {
-        "location": "7.2",
-        "name": "Whiteout",
-        "difficulty": "7+",
+        "location": "7.3",
+        "name": "Monster Safari",
+        "difficulty": "4+",
         "area": "Sportklettern Erdgeschoß",
         "sector": "Main Wall",
-        "set_at": "2026-05-13 13:01:41 UTC",
+        "set_at": "2026-05-18 10:38:22 UTC",
         "routesetter": "Thomas Busch",
-        "color_1": "#ffffff",
-        "color_2": "#ff0000"
+        "color_1": "#ffa500",
+        "color_2": ""
+      },
+      {
+        "location": "8.2",
+        "name": "Flut und Ebbe",
+        "difficulty": "6",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2026-05-18 06:43:38 UTC",
+        "routesetter": "Silas Pollmann",
+        "color_1": "#ff0000",
+        "color_2": ""
       }
     ],
     "updated": [],
     "removed": [
       {
-        "location": "7.2",
-        "name": "No Brainer",
-        "difficulty": "7+",
+        "location": "8.2",
+        "name": "Elvis",
+        "difficulty": "5-",
         "area": "Sportklettern Erdgeschoß",
         "sector": "Main Wall",
-        "set_at": "2026-05-13 13:01:41 UTC",
-        "routesetter": "Thomas Busch",
-        "color_1": "#ffffff",
-        "color_2": "#ff0000"
+        "set_at": "2025-08-09 12:00:00 UTC",
+        "routesetter": "N/A ",
+        "color_1": "#ff0000",
+        "color_2": ""
       }
     ]
   }
