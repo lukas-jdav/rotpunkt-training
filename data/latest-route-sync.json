@@ -1,17 +1,57 @@
 {
-  "generatedAt": "2026-06-01T12:33:32.747Z",
+  "generatedAt": "2026-06-02T11:15:16.239Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
-  "totalRoutes": 142,
-  "hasChanges": false,
-  "changeId": "",
+  "totalRoutes": 143,
+  "hasChanges": true,
+  "changeId": "2026-06-02T11:15:16.239Z::1.4||rätsel der woche::9.1||grasshopper::",
   "summary": {
-    "added": 0,
-    "updated": 0,
+    "added": 1,
+    "updated": 1,
     "removed": 0
   },
   "changes": {
-    "added": [],
-    "updated": [],
+    "added": [
+      {
+        "location": "1.4",
+        "name": "Rätsel der Woche",
+        "difficulty": "9-",
+        "area": "Sportklettern Empore",
+        "sector": "Empore",
+        "set_at": "2026-06-02 10:40:56 UTC",
+        "routesetter": "Jochen Schäfer",
+        "color_1": "#ffffff",
+        "color_2": "#ff0000"
+      }
+    ],
+    "updated": [
+      {
+        "before": {
+          "location": "9.1",
+          "name": "Grasshopper",
+          "difficulty": "5-",
+          "area": "Sportklettern Erdgeschoß",
+          "sector": "Main Wall",
+          "set_at": "2026-05-07 16:05:26 UTC",
+          "routesetter": "N/A ",
+          "color_1": "#0000ff",
+          "color_2": ""
+        },
+        "after": {
+          "location": "9.1",
+          "name": "Grasshopper",
+          "difficulty": "5-",
+          "area": "Sportklettern Erdgeschoß",
+          "sector": "Main Wall",
+          "set_at": "2026-05-07 16:05:26 UTC",
+          "routesetter": "Silas Pollmann",
+          "color_1": "#0000ff",
+          "color_2": ""
+        },
+        "changedFields": [
+          "routesetter"
+        ]
+      }
+    ],
     "removed": []
   }
 }
