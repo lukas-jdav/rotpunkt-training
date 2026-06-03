@@ -1,57 +1,74 @@
 {
-  "generatedAt": "2026-06-02T11:15:16.239Z",
+  "generatedAt": "2026-06-03T11:54:18.566Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
-  "totalRoutes": 143,
+  "totalRoutes": 146,
   "hasChanges": true,
-  "changeId": "2026-06-02T11:15:16.239Z::1.4||rätsel der woche::9.1||grasshopper::",
+  "changeId": "2026-06-03T11:54:18.566Z::18.2||nicht ärgern!|19.3||humpa-humpa|20.2||copy-paste|20.3||spinat-power::::31.1||ich kam, ich sah, ich fliegte",
   "summary": {
-    "added": 1,
-    "updated": 1,
-    "removed": 0
+    "added": 4,
+    "updated": 0,
+    "removed": 1
   },
   "changes": {
     "added": [
       {
-        "location": "1.4",
-        "name": "Rätsel der Woche",
-        "difficulty": "9-",
-        "area": "Sportklettern Empore",
-        "sector": "Empore",
-        "set_at": "2026-06-02 10:40:56 UTC",
-        "routesetter": "Jochen Schäfer",
+        "location": "18.2",
+        "name": "Nicht ärgern!",
+        "difficulty": "6+",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2026-06-03 08:57:12 UTC",
+        "routesetter": "Thomas Busch",
+        "color_1": "#000000",
+        "color_2": ""
+      },
+      {
+        "location": "19.3",
+        "name": "Humpa-Humpa",
+        "difficulty": "5",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2026-06-03 08:57:56 UTC",
+        "routesetter": "Thomas Busch",
         "color_1": "#ffffff",
         "color_2": "#ff0000"
-      }
-    ],
-    "updated": [
+      },
       {
-        "before": {
-          "location": "9.1",
-          "name": "Grasshopper",
-          "difficulty": "5-",
-          "area": "Sportklettern Erdgeschoß",
-          "sector": "Main Wall",
-          "set_at": "2026-05-07 16:05:26 UTC",
-          "routesetter": "N/A ",
-          "color_1": "#0000ff",
-          "color_2": ""
-        },
-        "after": {
-          "location": "9.1",
-          "name": "Grasshopper",
-          "difficulty": "5-",
-          "area": "Sportklettern Erdgeschoß",
-          "sector": "Main Wall",
-          "set_at": "2026-05-07 16:05:26 UTC",
-          "routesetter": "Silas Pollmann",
-          "color_1": "#0000ff",
-          "color_2": ""
-        },
-        "changedFields": [
-          "routesetter"
-        ]
+        "location": "20.2",
+        "name": "Copy-Paste",
+        "difficulty": "9-",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2026-06-03 08:59:06 UTC",
+        "routesetter": "Flo Weikert",
+        "color_1": "#32cd32",
+        "color_2": ""
+      },
+      {
+        "location": "20.3",
+        "name": "Spinat-Power",
+        "difficulty": "5+",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2026-06-03 09:01:24 UTC",
+        "routesetter": "Flo Weikert",
+        "color_1": "#ff0000",
+        "color_2": ""
       }
     ],
-    "removed": []
+    "updated": [],
+    "removed": [
+      {
+        "location": "31.1",
+        "name": "Ich kam, ich sah, ich fliegte",
+        "difficulty": "7",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2025-11-20 17:50:38 UTC",
+        "routesetter": "Linus Baltes",
+        "color_1": "#0000ff",
+        "color_2": ""
+      }
+    ]
   }
 }
