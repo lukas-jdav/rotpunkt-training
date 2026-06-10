@@ -1,17 +1,162 @@
 {
-  "generatedAt": "2026-06-09T10:32:17.336Z",
+  "generatedAt": "2026-06-10T10:53:35.427Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
-  "totalRoutes": 147,
-  "hasChanges": false,
-  "changeId": "",
+  "totalRoutes": 142,
+  "hasChanges": true,
+  "changeId": "2026-06-10T10:53:35.427Z::18.3||green|27.1||white|43.1||blue|43.2||orange::::27.1||für die kleinen|27.2||aufgeben befreit|28.1||fingers of glory|28.2||erstmal ein(en)drehen|43.1||slide to the side|43.2||schuss ins blaue|43.3||dünne luft, dicke griffe|44.1||vorsicht, rutschgefahr|44.2||sag du!",
   "summary": {
-    "added": 0,
+    "added": 4,
     "updated": 0,
-    "removed": 0
+    "removed": 9
   },
   "changes": {
-    "added": [],
+    "added": [
+      {
+        "location": "18.3",
+        "name": "Green",
+        "difficulty": "5+",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2026-06-06 12:00:00 UTC",
+        "routesetter": "Julius Dammann",
+        "color_1": "#008000",
+        "color_2": ""
+      },
+      {
+        "location": "27.1",
+        "name": "White",
+        "difficulty": "8+",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2026-06-09 12:00:00 UTC",
+        "routesetter": "Laurin Ebert",
+        "color_1": "#ffffff",
+        "color_2": ""
+      },
+      {
+        "location": "43.1",
+        "name": "Blue",
+        "difficulty": "8",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2026-06-09 12:00:00 UTC",
+        "routesetter": "Silas Pollmann",
+        "color_1": "#0000ff",
+        "color_2": ""
+      },
+      {
+        "location": "43.2",
+        "name": "Orange",
+        "difficulty": "9",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2026-06-10 09:46:42 UTC",
+        "routesetter": "Silas Pollmann",
+        "color_1": "#ffa500",
+        "color_2": ""
+      }
+    ],
     "updated": [],
-    "removed": []
+    "removed": [
+      {
+        "location": "27.1",
+        "name": "Für die Kleinen",
+        "difficulty": "8-",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2025-09-27 12:00:00 UTC",
+        "routesetter": "Silas Pollmann",
+        "color_1": "#9400d3",
+        "color_2": ""
+      },
+      {
+        "location": "27.2",
+        "name": "Aufgeben befreit",
+        "difficulty": "7-",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2025-09-30 12:00:00 UTC",
+        "routesetter": "Dominik Schuler",
+        "color_1": "#ffffff",
+        "color_2": ""
+      },
+      {
+        "location": "28.1",
+        "name": "Fingers of Glory",
+        "difficulty": "8+",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2025-09-26 14:34:17 UTC",
+        "routesetter": "Silas Pollmann",
+        "color_1": "#3cb03c",
+        "color_2": ""
+      },
+      {
+        "location": "28.2",
+        "name": "erstmal ein(en)drehen",
+        "difficulty": "7-",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2025-10-01 09:03:08 UTC",
+        "routesetter": "Linus Baltes",
+        "color_1": "#808080",
+        "color_2": ""
+      },
+      {
+        "location": "43.1",
+        "name": "Slide to the side",
+        "difficulty": "8",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2025-09-27 12:00:00 UTC",
+        "routesetter": "Laurin Ebert",
+        "color_1": "#ffa500",
+        "color_2": ""
+      },
+      {
+        "location": "43.2",
+        "name": "Schuss ins blaue",
+        "difficulty": "8",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2025-10-01 12:00:00 UTC",
+        "routesetter": "Linus Baltes",
+        "color_1": "#0000ff",
+        "color_2": ""
+      },
+      {
+        "location": "43.3",
+        "name": "Dünne Luft, dicke Griffe",
+        "difficulty": "7-",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2025-10-07 14:06:44 UTC",
+        "routesetter": "Dominik Schuler",
+        "color_1": "#ffff00",
+        "color_2": ""
+      },
+      {
+        "location": "44.1",
+        "name": "Vorsicht, Rutschgefahr",
+        "difficulty": "7",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2025-10-01 09:08:36 UTC",
+        "routesetter": "Silas Pollmann",
+        "color_1": "#000000",
+        "color_2": ""
+      },
+      {
+        "location": "44.2",
+        "name": "Sag du!",
+        "difficulty": "8-",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2025-09-30 12:00:00 UTC",
+        "routesetter": "Dominik Schuler",
+        "color_1": "#ff69b4",
+        "color_2": ""
+      }
+    ]
   }
 }
