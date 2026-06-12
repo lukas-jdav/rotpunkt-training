@@ -1,153 +1,51 @@
 window.TIVOLI_ROUTE_SYNC = {
-  "generatedAt": "2026-06-11T11:20:48.434Z",
+  "generatedAt": "2026-06-12T10:58:55.807Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
-  "totalRoutes": 142,
+  "totalRoutes": 145,
   "hasChanges": true,
-  "changeId": "2026-06-11T11:20:48.434Z::::1.2||butterplatte|4.2||hippo streck dich|8.2||flut und ebbe|9.1||grasshopper|9.3||explosion::",
+  "changeId": "2026-06-12T10:58:55.807Z::43.3||dampfmaschine|44.1||die dunkle seite der pusteblume|44.2||locker bleiben::::",
   "summary": {
-    "added": 0,
-    "updated": 5,
+    "added": 3,
+    "updated": 0,
     "removed": 0
   },
   "changes": {
-    "added": [],
-    "updated": [
+    "added": [
       {
-        "before": {
-          "location": "1.2",
-          "name": "Butterplatte",
-          "difficulty": "7-",
-          "area": "Sportklettern Empore",
-          "sector": "Empore",
-          "set_at": "2026-05-07 16:02:58 UTC",
-          "routesetter": "Flo Weikert",
-          "color_1": "#ffd700",
-          "color_2": ""
-        },
-        "after": {
-          "location": "1.2",
-          "name": "Butterplatte",
-          "difficulty": "7",
-          "area": "Sportklettern Empore",
-          "sector": "Empore",
-          "set_at": "2026-05-07 16:02:58 UTC",
-          "routesetter": "Flo Weikert",
-          "color_1": "#ffd700",
-          "color_2": ""
-        },
-        "changedFields": [
-          "difficulty"
-        ]
+        "location": "43.3",
+        "name": "Dampfmaschine",
+        "difficulty": "6+",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2026-06-11 13:50:25 UTC",
+        "routesetter": "Flo Weikert",
+        "color_1": "#ffd700",
+        "color_2": ""
       },
       {
-        "before": {
-          "location": "4.2",
-          "name": "Hippo streck dich",
-          "difficulty": "6",
-          "area": "Sportklettern Empore",
-          "sector": "Empore",
-          "set_at": "2026-05-11 17:41:24 UTC",
-          "routesetter": "Thomas Busch",
-          "color_1": "#32cd32",
-          "color_2": ""
-        },
-        "after": {
-          "location": "4.2",
-          "name": "Hippo streck dich",
-          "difficulty": "6+",
-          "area": "Sportklettern Empore",
-          "sector": "Empore",
-          "set_at": "2026-05-11 17:41:24 UTC",
-          "routesetter": "Thomas Busch",
-          "color_1": "#32cd32",
-          "color_2": ""
-        },
-        "changedFields": [
-          "difficulty"
-        ]
+        "location": "44.1",
+        "name": "Die dunkle Seite der Pusteblume",
+        "difficulty": "7+/8-",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2026-06-11 13:50:58 UTC",
+        "routesetter": "Julius Dammann",
+        "color_1": "#000000",
+        "color_2": ""
       },
       {
-        "before": {
-          "location": "8.2",
-          "name": "Flut und Ebbe",
-          "difficulty": "6",
-          "area": "Sportklettern Erdgeschoß",
-          "sector": "Main Wall",
-          "set_at": "2026-05-18 06:43:38 UTC",
-          "routesetter": "Silas Pollmann",
-          "color_1": "#ff0000",
-          "color_2": ""
-        },
-        "after": {
-          "location": "8.2",
-          "name": "Flut und Ebbe",
-          "difficulty": "6-",
-          "area": "Sportklettern Erdgeschoß",
-          "sector": "Main Wall",
-          "set_at": "2026-05-18 06:43:38 UTC",
-          "routesetter": "Silas Pollmann",
-          "color_1": "#ff0000",
-          "color_2": ""
-        },
-        "changedFields": [
-          "difficulty"
-        ]
-      },
-      {
-        "before": {
-          "location": "9.1",
-          "name": "Grasshopper",
-          "difficulty": "5-",
-          "area": "Sportklettern Erdgeschoß",
-          "sector": "Main Wall",
-          "set_at": "2026-05-07 16:05:26 UTC",
-          "routesetter": "Silas Pollmann",
-          "color_1": "#0000ff",
-          "color_2": ""
-        },
-        "after": {
-          "location": "9.1",
-          "name": "Grasshopper",
-          "difficulty": "5",
-          "area": "Sportklettern Erdgeschoß",
-          "sector": "Main Wall",
-          "set_at": "2026-05-07 16:05:26 UTC",
-          "routesetter": "Silas Pollmann",
-          "color_1": "#0000ff",
-          "color_2": ""
-        },
-        "changedFields": [
-          "difficulty"
-        ]
-      },
-      {
-        "before": {
-          "location": "9.3",
-          "name": "Explosion",
-          "difficulty": "7+/8-",
-          "area": "Sportklettern Erdgeschoß",
-          "sector": "Main Wall",
-          "set_at": "2026-05-13 13:03:20 UTC",
-          "routesetter": "Silas Pollmann",
-          "color_1": "#e3bb09",
-          "color_2": "#000000"
-        },
-        "after": {
-          "location": "9.3",
-          "name": "Explosion",
-          "difficulty": "7+",
-          "area": "Sportklettern Erdgeschoß",
-          "sector": "Main Wall",
-          "set_at": "2026-05-13 13:03:20 UTC",
-          "routesetter": "Silas Pollmann",
-          "color_1": "#e3bb09",
-          "color_2": "#000000"
-        },
-        "changedFields": [
-          "difficulty"
-        ]
+        "location": "44.2",
+        "name": "Locker bleiben",
+        "difficulty": "9",
+        "area": "Sportklettern Erdgeschoß",
+        "sector": "Main Wall",
+        "set_at": "2026-06-11 13:52:06 UTC",
+        "routesetter": "Julius Dammann",
+        "color_1": "#ff69b4",
+        "color_2": ""
       }
     ],
+    "updated": [],
     "removed": []
   }
 };
