@@ -1,50 +1,16 @@
 window.TIVOLI_ROUTE_SYNC = {
-  "generatedAt": "2026-06-12T10:58:55.807Z",
+  "generatedAt": "2026-06-13T09:54:45.736Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
   "totalRoutes": 145,
-  "hasChanges": true,
-  "changeId": "2026-06-12T10:58:55.807Z::43.3||dampfmaschine|44.1||die dunkle seite der pusteblume|44.2||locker bleiben::::",
+  "hasChanges": false,
+  "changeId": "",
   "summary": {
-    "added": 3,
+    "added": 0,
     "updated": 0,
     "removed": 0
   },
   "changes": {
-    "added": [
-      {
-        "location": "43.3",
-        "name": "Dampfmaschine",
-        "difficulty": "6+",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2026-06-11 13:50:25 UTC",
-        "routesetter": "Flo Weikert",
-        "color_1": "#ffd700",
-        "color_2": ""
-      },
-      {
-        "location": "44.1",
-        "name": "Die dunkle Seite der Pusteblume",
-        "difficulty": "7+/8-",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2026-06-11 13:50:58 UTC",
-        "routesetter": "Julius Dammann",
-        "color_1": "#000000",
-        "color_2": ""
-      },
-      {
-        "location": "44.2",
-        "name": "Locker bleiben",
-        "difficulty": "9",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2026-06-11 13:52:06 UTC",
-        "routesetter": "Julius Dammann",
-        "color_1": "#ff69b4",
-        "color_2": ""
-      }
-    ],
+    "added": [],
     "updated": [],
     "removed": []
   }
