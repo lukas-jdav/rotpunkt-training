@@ -1,28 +1,16 @@
 window.TIVOLI_ROUTE_SYNC = {
-  "generatedAt": "2026-06-16T12:09:59.475Z",
+  "generatedAt": "2026-06-17T11:43:59.148Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
   "totalRoutes": 146,
-  "hasChanges": true,
-  "changeId": "2026-06-16T12:09:59.475Z::1.5||eskalierende deeskalation::::",
+  "hasChanges": false,
+  "changeId": "",
   "summary": {
-    "added": 1,
+    "added": 0,
     "updated": 0,
     "removed": 0
   },
   "changes": {
-    "added": [
-      {
-        "location": "1.5",
-        "name": "Eskalierende Deeskalation",
-        "difficulty": "6-",
-        "area": "Sportklettern Empore",
-        "sector": "Empore",
-        "set_at": "2026-06-16 10:08:27 UTC",
-        "routesetter": "Jochen Schäfer",
-        "color_1": "#008000",
-        "color_2": ""
-      }
-    ],
+    "added": [],
     "updated": [],
     "removed": []
   }
