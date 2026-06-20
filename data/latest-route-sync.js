@@ -1,85 +1,17 @@
 window.TIVOLI_ROUTE_SYNC = {
-  "generatedAt": "2026-06-19T11:18:38.970Z",
+  "generatedAt": "2026-06-20T10:07:25.641Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
   "totalRoutes": 146,
-  "hasChanges": true,
-  "changeId": "2026-06-19T11:18:38.970Z::28.1||irgendwas mit mimmimi|28.2||am ende gut|29.1||weiß mit rotem kreuz::::29.1||dinofrühstück|29.2||gute frage|30.2||sorry",
+  "hasChanges": false,
+  "changeId": "",
   "summary": {
-    "added": 3,
+    "added": 0,
     "updated": 0,
-    "removed": 3
+    "removed": 0
   },
   "changes": {
-    "added": [
-      {
-        "location": "28.1",
-        "name": "irgendwas mit Mimmimi",
-        "difficulty": "8+",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2026-06-17 12:00:00 UTC",
-        "routesetter": "Silas Pollmann",
-        "color_1": "#32cd32",
-        "color_2": ""
-      },
-      {
-        "location": "28.2",
-        "name": "Am Ende gut",
-        "difficulty": "7",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2026-06-18 14:49:25 UTC",
-        "routesetter": "Julius Dammann",
-        "color_1": "#808080",
-        "color_2": ""
-      },
-      {
-        "location": "29.1",
-        "name": "Weiß mit rotem Kreuz",
-        "difficulty": "6",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2026-06-16 12:00:00 UTC",
-        "routesetter": "Laurin Ebert",
-        "color_1": "#ffffff",
-        "color_2": "#ff0000"
-      }
-    ],
+    "added": [],
     "updated": [],
-    "removed": [
-      {
-        "location": "29.1",
-        "name": "Dinofrühstück",
-        "difficulty": "6",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2025-10-06 14:49:23 UTC",
-        "routesetter": "Dominik Schuler",
-        "color_1": "#ff69b4",
-        "color_2": "#000000"
-      },
-      {
-        "location": "29.2",
-        "name": "Gute Frage",
-        "difficulty": "8-",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2025-10-07 14:04:54 UTC",
-        "routesetter": "Silas Pollmann",
-        "color_1": "#9400d3",
-        "color_2": "#ffffff"
-      },
-      {
-        "location": "30.2",
-        "name": "Sorry",
-        "difficulty": "7",
-        "area": "Sportklettern Erdgeschoß",
-        "sector": "Main Wall",
-        "set_at": "2025-11-27 15:25:19 UTC",
-        "routesetter": "Silas Pollmann",
-        "color_1": "#808080",
-        "color_2": ""
-      }
-    ]
+    "removed": []
   }
 };
