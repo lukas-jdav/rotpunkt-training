@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '0 7 * * *'
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/sync-tivoli-routes.yml'
 
 permissions:
   contents: write
