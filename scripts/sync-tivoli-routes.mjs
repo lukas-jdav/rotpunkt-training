@@ -52,9 +52,12 @@ async function main() {
 }
 
 async function fetchSourceHtml() {
+  const encoded = encodeURIComponent(SOURCE_URL);
   const sources = [
     { url: SOURCE_URL, name: '8a.nu' },
-    { url: `https://r.jina.ai/http://r.jina.ai/https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing`, name: 'Jina Reader' }
+    { url: `https://api.allorigins.win/raw?url=${encoded}`, name: 'AllOrigins proxy' },
+    { url: `https://corsproxy.io/?url=${encoded}`, name: 'Corsproxy' },
+    { url: `https://api.codetabs.com/v1/proxy?quest=${encoded}`, name: 'CodeTabs proxy' }
   ];
   let lastError = null;
   for (const source of sources) {
@@ -62,11 +65,11 @@ async function fetchSourceHtml() {
       const response = await fetch(source.url, { headers: { accept: 'text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.8', 'user-agent': 'Mozilla/5.0' }, redirect: 'follow' });
       if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
       const html = await response.text();
-      if (html.includes('__NUXT_DATA__')) return html;
-      if (source.name === 'Jina Reader' && html.trim()) return html;
+      if (html.includes('__NUXT_DATA__')) { console.log(`[sync-tivoli-routes] Datenquelle: ${source.name}`); return html; }
+      throw new Error('Antwort enthält keine __NUXT_DATA__-Route-Daten');
     } catch (error) { lastError = new Error(`${source.name}: ${error.message}`); }
   }
-  throw new Error(`Keine Routendatenquelle erreichbar. Direkter 8a.nu-Abruf und Reader-Fallback fehlgeschlagen (${lastError?.message || 'unbekannter Fehler'}).`);
+  throw new Error(`Keine Routendatenquelle erreichbar. ${lastError?.message || 'Unbekannter Fehler'}`);
 }
 
 function extractRoutesFromNuxtData(html) {
