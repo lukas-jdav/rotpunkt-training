@@ -2,13 +2,8 @@ name: Sync Tivoli Routes
 
 on:
   schedule:
-    - cron: '0 7 * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
-  push:
-    paths:
-      - '.github/workflows/sync-tivoli-routes.yml'
-      - 'scripts/sync-tivoli-routes.mjs'
-      - '.tivoli-sync-trigger'
 
 permissions:
   contents: write
