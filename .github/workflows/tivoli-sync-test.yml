@@ -1,6 +1,7 @@
 name: Tivoli Sync Test
 
 on:
+  push:
   issues:
     types: [opened]
 
@@ -10,7 +11,7 @@ permissions:
 
 jobs:
   test:
-    if: startsWith(github.event.issue.title, '[Tivoli Sync Test]')
+    if: github.event_name == 'push' || startsWith(github.event.issue.title, '[Tivoli Sync Test]')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
