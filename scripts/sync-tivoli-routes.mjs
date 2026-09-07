@@ -107,8 +107,21 @@ async function main() {
 async function fetchSourceHtml() {
   const encoded = encodeURIComponent(SOURCE_URL);
   const sources = [
-    { url: SOURCE_URL, name: '8a.nu', headers: { accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' } },
-    { url: `https://r.jina.ai/${SOURCE_URL}`, name: 'Jina Reader', headers: { accept: 'text/html,*/*;q=0.8', 'x-return-format': 'html' } },
+    {
+      url: SOURCE_URL,
+      name: '8a.nu',
+      headers: { accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
+    },
+    {
+      url: `https://r.jina.ai/${SOURCE_URL}`,
+      name: 'Jina Reader',
+      headers: {
+        accept: 'text/html,*/*;q=0.8',
+        'x-respond-with': 'html',
+        'x-respond-timing': 'network-idle',
+        'x-no-cache': 'true'
+      }
+    },
     { url: `https://api.allorigins.win/raw?url=${encoded}`, name: 'AllOrigins proxy', headers: { accept: 'text/html,*/*;q=0.8' } },
     { url: `https://corsproxy.io/?url=${encoded}`, name: 'Corsproxy', headers: { accept: 'text/html,*/*;q=0.8' } },
     { url: `https://api.codetabs.com/v1/proxy?quest=${encoded}`, name: 'CodeTabs proxy', headers: { accept: 'text/html,*/*;q=0.8' } }
@@ -379,9 +392,7 @@ function parseCsvLine(line) {
       if (inQuotes && nextCharacter === '"') {
         current += '"';
         index += 1;
-      } else {
-        inQuotes = !inQuotes;
-      }
+      } else inQuotes = !inQuotes;
       continue;
     }
     if (character === ',' && !inQuotes) {
@@ -498,15 +509,4 @@ function printSummary({ totalRoutes, added, updated, removed, updatedFiles, sour
   console.log(`[sync-tivoli-routes] Neu: ${added.length} | Geändert: ${updated.length} | Entfernt: ${removed.length}`);
   if (updatedFiles.length) console.log(`[sync-tivoli-routes] Dateien aktualisiert: ${updatedFiles.join(', ')}`);
   else console.log('[sync-tivoli-routes] Keine Routendatenänderung.');
-}
-
-function normalizeColor(value) {
-  const stringValue = String(value ?? '').trim();
-  if (!stringValue) return '';
-  if (stringValue.startsWith('#')) return stringValue;
-  const named = {
-    red: '#ff0000', blue: '#0000ff', green: '#008000', yellow: '#ffff00', orange: '#ffa500',
-    pink: '#ff69b4', white: '#ffffff', black: '#000000', grey: '#808080', gray: '#808080', purple: '#9400d3'
-  };
-  return named[stringValue.toLowerCase()] || stringValue;
 }
