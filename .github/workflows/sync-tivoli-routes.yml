@@ -26,7 +26,10 @@ jobs:
           node-version: '22'
 
       - name: Run Tivoli route sync
-        run: node scripts/sync-tivoli-routes.mjs | tee sync-output.log
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/sync-tivoli-routes.mjs | tee sync-output.log
 
       - name: Show git status
         run: git status --short
