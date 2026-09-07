@@ -2,13 +2,8 @@ name: Sync Tivoli Routes
 
 on:
   schedule:
-    - cron: '55 * * * *'
+    - cron: '56 * * * *'
   workflow_dispatch:
-  workflow_run:
-    workflows:
-      - pages build and deployment
-    types:
-      - completed
 
 permissions:
   contents: write
@@ -19,7 +14,6 @@ concurrency:
 
 jobs:
   sync:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
