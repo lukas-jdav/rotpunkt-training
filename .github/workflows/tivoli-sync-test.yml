@@ -24,7 +24,7 @@ jobs:
       - name: Run Tivoli sync test
         run: |
           set -o pipefail
-          node scripts/sync-tivoli-routes.mjs | tee sync-output.log
+          node --import ./scripts/sync-tivoli-globals.mjs scripts/sync-tivoli-routes.mjs | tee sync-output.log
 
       - name: Publish summary
         if: always()
