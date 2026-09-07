@@ -1,0 +1,38 @@
+name: Tivoli Sync Test
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  test:
+    if: startsWith(github.event.issue.title, '[Tivoli Sync Test]')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run Tivoli sync test
+        run: |
+          set -o pipefail
+          node scripts/sync-tivoli-routes.mjs | tee sync-output.log
+
+      - name: Publish summary
+        if: always()
+        run: |
+          {
+            echo "## Tivoli Sync Test"
+            echo
+            echo '```text'
+            cat sync-output.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
