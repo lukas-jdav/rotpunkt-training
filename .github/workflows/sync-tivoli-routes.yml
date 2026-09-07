@@ -2,7 +2,7 @@ name: Sync Tivoli Routes
 
 on:
   schedule:
-    - cron: '56 * * * *'
+    - cron: '0 11 * * *'
   workflow_dispatch:
 
 permissions:
