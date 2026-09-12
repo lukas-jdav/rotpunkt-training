@@ -152,6 +152,7 @@ function loadRouteEntries() {
     const removedHallEntries = storedEntries.filter(entry =>
       entry.source === 'hall' && entry.id && !currentHallIds.has(String(entry.id))
     );
+    const removedHallIds = new Set(removedHallEntries.map(entry => String(entry.id)));
 
     if (removedHallEntries.length) {
       const additions = removedHallEntries.map(entry => ({
@@ -166,7 +167,15 @@ function loadRouteEntries() {
       persistProfile(false);
     }
 
-    return mergeRouteEntries(storedEntries);
+    // A removed Hallenroute remains available only as historical data. Mark it
+    // archived before mergeRouteEntries() so it cannot appear in the active list.
+    const entriesForMerge = storedEntries.map(entry =>
+      removedHallIds.has(String(entry.id))
+        ? { ...entry, archived: true }
+        : entry
+    );
+
+    return mergeRouteEntries(entriesForMerge);
   } catch (error) {
     return mergeRouteEntries([]);
   }
@@ -178,8 +187,8 @@ function persistProfile(allowCloud = true) {
 }
 
 function persistRoutes(allowCloud = true) {
-  // Alle Hallenrouten werden gespeichert, damit beim nächsten Sync/Start auch
-  // das Entfernen einer bisher offenen Route erkannt und archiviert werden kann.
+  // Alle Hallenrouten werden gespeichert, damit beim nächsten Start auch das
+  // Entfernen einer bisher offenen Route erkannt und archiviert werden kann.
   const persistedEntries = appState.routeEntries
     .filter(entry => entry.source === 'hall' || shouldPersistEntry(entry))
     .map(serializeEntry);
