@@ -55,6 +55,63 @@ function sanitizeTablePrefs(raw) {
   return { columnOrder: merged, hiddenColumns, sortBy, sortDir, columnWidths, columnGap };
 }
 
+function normalizeRouteArchiveRecord(record) {
+  if (!record || typeof record !== 'object') return null;
+  const route = record.route && typeof record.route === 'object' ? record.route : record;
+  const id = String(record.id || route.id || '').trim();
+  const name = String(route.name || '').trim();
+  if (!id || !name) return null;
+
+  return {
+    id,
+    archivedAt: String(record.archivedAt || '').trim(),
+    route: {
+      id,
+      createdAt: Number(route.createdAt) || 0,
+      updatedAt: Number(route.updatedAt) || 0,
+      setDate: String(route.setDate || '').trim(),
+      grade: String(route.grade || '').trim(),
+      rawDifficulty: String(route.rawDifficulty || '').trim(),
+      routeCode: String(route.routeCode || '').trim(),
+      name,
+      location: String(route.location || '').trim(),
+      notes: String(route.notes || '').trim(),
+      routesetter: String(route.routesetter || '').trim(),
+      link: String(route.link || '').trim(),
+      webLink: String(route.webLink || '').trim(),
+      mobileLink: String(route.mobileLink || '').trim(),
+      primaryColor: String(route.primaryColor || '').trim(),
+      secondaryColor: String(route.secondaryColor || '').trim(),
+      source: route.source === 'hall' ? 'hall' : 'custom',
+      status: route.status === 'done' ? 'done' : 'open',
+      ascentType: String(route.ascentType || '').trim(),
+      date: String(route.date || '').trim(),
+      attemptLog: Array.isArray(route.attemptLog) ? route.attemptLog : [],
+      cycleHistory: Array.isArray(route.cycleHistory) ? route.cycleHistory : []
+    }
+  };
+}
+
+function mergeRouteArchiveRecords(existing, additions) {
+  const byId = new Map();
+  [...(existing || []), ...(additions || [])].forEach(raw => {
+    const record = normalizeRouteArchiveRecord(raw);
+    if (!record) return;
+    const previous = byId.get(record.id);
+    byId.set(record.id, previous ? {
+      ...record,
+      archivedAt: previous.archivedAt || record.archivedAt,
+      route: {
+        ...previous.route,
+        ...record.route,
+        attemptLog: record.route.attemptLog.length ? record.route.attemptLog : previous.route.attemptLog,
+        cycleHistory: record.route.cycleHistory.length ? record.route.cycleHistory : previous.route.cycleHistory
+      }
+    } : record);
+  });
+  return [...byId.values()];
+}
+
 function sanitizeProfile(profile) {
   const startGrade = APP_CONFIG.allowedStartGrades.includes(String(profile.startGrade))
     ? String(profile.startGrade)
@@ -71,6 +128,7 @@ function sanitizeProfile(profile) {
     vorstiegOnly: Boolean(profile.vorstiegOnly),
     currentCycle,
     ascentArchive: mergeAscentArchiveRecords(APP_CONFIG.defaultProfile.ascentArchive, profile.ascentArchive),
+    routeArchive: mergeRouteArchiveRecords(APP_CONFIG.defaultProfile.routeArchive || [], profile.routeArchive),
     tablePrefs: sanitizeTablePrefs(profile.tablePrefs)
   };
 }
@@ -78,10 +136,10 @@ function sanitizeProfile(profile) {
 function loadProfile() {
   try {
     const raw = localStorage.getItem(APP_CONFIG.storageKeys.profile);
-    if (!raw) return { ...APP_CONFIG.defaultProfile };
+    if (!raw) return { ...APP_CONFIG.defaultProfile, routeArchive: [] };
     return sanitizeProfile(JSON.parse(raw));
   } catch (error) {
-    return { ...APP_CONFIG.defaultProfile };
+    return { ...APP_CONFIG.defaultProfile, routeArchive: [] };
   }
 }
 
@@ -90,6 +148,24 @@ function loadRouteEntries() {
     const raw = localStorage.getItem(APP_CONFIG.storageKeys.routes);
     const parsed = raw ? JSON.parse(raw) : [];
     const storedEntries = Array.isArray(parsed) ? parsed.map(normalizeEntry).filter(Boolean) : [];
+    const currentHallIds = new Set(HALL_ROUTE_ENTRIES.map(entry => String(entry.id || '').trim()).filter(Boolean));
+    const removedHallEntries = storedEntries.filter(entry =>
+      entry.source === 'hall' && entry.id && !currentHallIds.has(String(entry.id))
+    );
+
+    if (removedHallEntries.length) {
+      const additions = removedHallEntries.map(entry => ({
+        id: entry.id,
+        archivedAt: new Date().toISOString(),
+        route: serializeEntry(entry)
+      }));
+      appState.profile.routeArchive = mergeRouteArchiveRecords(
+        appState.profile.routeArchive,
+        additions
+      );
+      persistProfile(false);
+    }
+
     return mergeRouteEntries(storedEntries);
   } catch (error) {
     return mergeRouteEntries([]);
@@ -102,7 +178,11 @@ function persistProfile(allowCloud = true) {
 }
 
 function persistRoutes(allowCloud = true) {
-  const persistedEntries = appState.routeEntries.filter(shouldPersistEntry).map(serializeEntry);
+  // Alle Hallenrouten werden gespeichert, damit beim nächsten Sync/Start auch
+  // das Entfernen einer bisher offenen Route erkannt und archiviert werden kann.
+  const persistedEntries = appState.routeEntries
+    .filter(entry => entry.source === 'hall' || shouldPersistEntry(entry))
+    .map(serializeEntry);
   localStorage.setItem(APP_CONFIG.storageKeys.routes, JSON.stringify(persistedEntries));
   if (allowCloud) writeCloudSnapshot().catch(() => {});
 }
@@ -120,7 +200,9 @@ async function writeCloudSnapshot() {
     return;
   }
 
-  const persistedEntries = appState.routeEntries.filter(shouldPersistEntry).map(serializeEntry);
+  const persistedEntries = appState.routeEntries
+    .filter(entry => entry.source === 'hall' || shouldPersistEntry(entry))
+    .map(serializeEntry);
   appState.syncStatus = 'syncing';
   renderSettingsModal();
 
