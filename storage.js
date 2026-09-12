@@ -167,15 +167,23 @@ function loadRouteEntries() {
       persistProfile(false);
     }
 
-    // A removed Hallenroute remains available only as historical data. Mark it
-    // archived before mergeRouteEntries() so it cannot appear in the active list.
+    // Removed Hallenrouten stay in storage only as archived historical records.
     const entriesForMerge = storedEntries.map(entry =>
       removedHallIds.has(String(entry.id))
         ? { ...entry, archived: true }
         : entry
     );
 
-    return mergeRouteEntries(entriesForMerge);
+    // Persist the current Hallenliste immediately. This creates the baseline
+    // required to detect the next replacement/removal even if the user makes
+    // no manual route changes in between.
+    const mergedEntries = mergeRouteEntries(entriesForMerge);
+    const persistedEntries = mergedEntries
+      .filter(entry => entry.source === 'hall' || shouldPersistEntry(entry))
+      .map(serializeEntry);
+    localStorage.setItem(APP_CONFIG.storageKeys.routes, JSON.stringify(persistedEntries));
+
+    return mergedEntries;
   } catch (error) {
     return mergeRouteEntries([]);
   }
