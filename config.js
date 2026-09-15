@@ -1,5 +1,5 @@
 const APP_CONFIG = {
-  storageVersion: 6,
+  storageVersion: 7,
   storageKeys: {
     routes: 'jdavRotpunkt.routes',
     profile: 'jdavRotpunkt.profile',
@@ -18,6 +18,7 @@ const APP_CONFIG = {
     vorstiegOnly: false,
     currentCycle: 1,
     ascentArchive: [],
+    routeArchive: [],
     tablePrefs: {
       columnOrder: ['grad', 'aktionen', 'infos', 'route'],
       hiddenColumns: [],
@@ -30,8 +31,8 @@ const APP_CONFIG = {
   tableColumns: [
     { key: 'grad',     label: 'Grad',         sortable: true,  hideable: false },
     { key: 'aktionen', label: 'Aktionen',      sortable: false, hideable: false },
-    { key: 'infos',    label: 'Infos',         sortable: true,  hideable: true  },
-    { key: 'route',    label: 'Route / Bereich', sortable: true,  hideable: true  },
+    { key: 'infos',    label: 'Infos',        sortable: true,  hideable: true  },
+    { key: 'route',    label: 'Route / Bereich', sortable: true, hideable: true  },
   ],
   routeSortOptions: [
     { value: 'setDate', label: 'Datum', defaultDir: 'desc' },
