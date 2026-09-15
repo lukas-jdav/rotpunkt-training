@@ -116,6 +116,7 @@ function archiveRemovedHallRoutes(entries) {
   const currentHallIds = new Set((HALL_ROUTE_ENTRIES || []).map(entry => String(entry.id || '').trim()).filter(Boolean));
   const activeEntries = [];
   const removedEntries = [];
+  const ascentArchiveAdditions = [];
 
   (entries || []).forEach(entry => {
     const externalHallLink = [entry && entry.link, entry && entry.webLink, entry && entry.mobileLink]
@@ -132,6 +133,11 @@ function archiveRemovedHallRoutes(entries) {
         archivedAt: new Date().toISOString(),
         route: { ...entry, source: 'hall', archived: true }
       });
+
+      if ((entry.status === 'done' || (entry.attemptLog || []).length > 0) && typeof createAscentArchiveRecord === 'function') {
+        const ascentRecord = createAscentArchiveRecord(entry, appState.profile.currentCycle || 1);
+        if (ascentRecord) ascentArchiveAdditions.push(ascentRecord);
+      }
     } else {
       activeEntries.push(entry);
     }
@@ -139,13 +145,24 @@ function archiveRemovedHallRoutes(entries) {
 
   if (!removedEntries.length) return activeEntries;
 
-  const previousLength = (appState.profile.routeArchive || []).length;
+  const previousRouteArchiveLength = (appState.profile.routeArchive || []).length;
   appState.profile.routeArchive = mergeRouteArchiveRecords(
     appState.profile.routeArchive,
     removedEntries
   );
 
-  if (appState.profile.routeArchive.length !== previousLength) {
+  const previousAscentArchiveLength = (appState.profile.ascentArchive || []).length;
+  if (ascentArchiveAdditions.length) {
+    appState.profile.ascentArchive = mergeAscentArchiveRecords(
+      appState.profile.ascentArchive,
+      ascentArchiveAdditions
+    );
+  }
+
+  if (
+    appState.profile.routeArchive.length !== previousRouteArchiveLength ||
+    appState.profile.ascentArchive.length !== previousAscentArchiveLength
+  ) {
     const persistToCloud = Boolean(FIREBASE_STATE.db && appState.currentUser);
     persistProfile(persistToCloud);
   }
