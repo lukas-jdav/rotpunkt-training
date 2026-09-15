@@ -118,11 +118,19 @@ function archiveRemovedHallRoutes(entries) {
   const removedEntries = [];
 
   (entries || []).forEach(entry => {
-    if (entry && entry.source === 'hall' && entry.id && !currentHallIds.has(String(entry.id))) {
+    const externalHallLink = [entry && entry.link, entry && entry.webLink, entry && entry.mobileLink]
+      .map(value => String(value || ''))
+      .join(' ');
+    const looksLikeImportedHallRoute = /8a\.nu|vertical-life\.info/i.test(externalHallLink);
+    const isRemovedHallRoute = entry && entry.id && !currentHallIds.has(String(entry.id)) && (
+      entry.source === 'hall' || (entry.source === 'custom' && looksLikeImportedHallRoute)
+    );
+
+    if (isRemovedHallRoute) {
       removedEntries.push({
         id: String(entry.id),
         archivedAt: new Date().toISOString(),
-        route: { ...entry, archived: true }
+        route: { ...entry, source: 'hall', archived: true }
       });
     } else {
       activeEntries.push(entry);
@@ -138,7 +146,8 @@ function archiveRemovedHallRoutes(entries) {
   );
 
   if (appState.profile.routeArchive.length !== previousLength) {
-    persistProfile(false);
+    const persistToCloud = Boolean(FIREBASE_STATE.db && appState.currentUser);
+    persistProfile(persistToCloud);
   }
 
   console.info(`[route-archive] ${removedEntries.length} entfernte Hallenroute(n) archiviert.`);
