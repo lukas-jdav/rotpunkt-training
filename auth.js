@@ -90,7 +90,10 @@ function initFirebase() {
         appState.syncStatus = 'error';
       }
 
-      persistRoutes(false);
+      // Nach dem Merge auch die bereinigte aktive Routenliste zurück in die Cloud schreiben.
+      // Dadurch bleiben entfernte Hallenrouten nur noch im routeArchive und tauchen nicht
+      // beim nächsten Login wieder als alte aktive/custom Routen auf.
+      persistRoutes(true);
       renderApp();
     });
   } catch (error) {
@@ -118,7 +121,7 @@ async function signInWithGoogle() {
   }
 
   try {
-    await FIREBASE_STATE.auth.signInWithPopup(provider);
+    await firebase.auth().signInWithPopup(provider);
   } catch (error) {
     console.error('Popup-Login:', error);
     showAuthError(getReadableAuthError(error));
