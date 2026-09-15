@@ -242,7 +242,9 @@ async function writeCloudSnapshot() {
     return;
   }
 
-  const persistedEntries = appState.routeEntries.filter(shouldPersistEntry).map(serializeEntry);
+  const persistedEntries = appState.routeEntries
+    .filter(entry => entry.source === 'hall' || shouldPersistEntry(entry))
+    .map(serializeEntry);
   appState.syncStatus = 'syncing';
   renderSettingsModal();
 
