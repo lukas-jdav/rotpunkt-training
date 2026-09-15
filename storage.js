@@ -112,6 +112,47 @@ function mergeRouteArchiveRecords(existing, additions) {
   return [...byId.values()];
 }
 
+function archiveRemovedHallRoutes(entries) {
+  const currentHallIds = new Set((HALL_ROUTE_ENTRIES || []).map(entry => String(entry.id || '').trim()).filter(Boolean));
+  const activeEntries = [];
+  const removedEntries = [];
+
+  (entries || []).forEach(entry => {
+    if (entry && entry.source === 'hall' && entry.id && !currentHallIds.has(String(entry.id))) {
+      removedEntries.push({
+        id: String(entry.id),
+        archivedAt: new Date().toISOString(),
+        route: { ...entry, archived: true }
+      });
+    } else {
+      activeEntries.push(entry);
+    }
+  });
+
+  if (!removedEntries.length) return activeEntries;
+
+  const previousLength = (appState.profile.routeArchive || []).length;
+  appState.profile.routeArchive = mergeRouteArchiveRecords(
+    appState.profile.routeArchive,
+    removedEntries
+  );
+
+  if (appState.profile.routeArchive.length !== previousLength) {
+    persistProfile(false);
+  }
+
+  console.info(`[route-archive] ${removedEntries.length} entfernte Hallenroute(n) archiviert.`);
+  return activeEntries;
+}
+
+// Alle Aufrufer von mergeRouteEntries – einschließlich des Cloud-Syncs –
+// müssen dieselbe Archivlogik verwenden. Die eigentliche Merge-Implementierung
+// bleibt in routes.js; hier wird ihr ein archivierter Datensatz entzogen.
+const mergeRouteEntriesWithoutRemovedRoutes = mergeRouteEntries;
+mergeRouteEntries = function(storedEntries) {
+  return mergeRouteEntriesWithoutRemovedRoutes(archiveRemovedHallRoutes(storedEntries));
+};
+
 function sanitizeProfile(profile) {
   const startGrade = APP_CONFIG.allowedStartGrades.includes(String(profile.startGrade))
     ? String(profile.startGrade)
@@ -148,36 +189,11 @@ function loadRouteEntries() {
     const raw = localStorage.getItem(APP_CONFIG.storageKeys.routes);
     const parsed = raw ? JSON.parse(raw) : [];
     const storedEntries = Array.isArray(parsed) ? parsed.map(normalizeEntry).filter(Boolean) : [];
-    const currentHallIds = new Set(HALL_ROUTE_ENTRIES.map(entry => String(entry.id || '').trim()).filter(Boolean));
-    const removedHallEntries = storedEntries.filter(entry =>
-      entry.source === 'hall' && entry.id && !currentHallIds.has(String(entry.id))
-    );
-    const removedHallIds = new Set(removedHallEntries.map(entry => String(entry.id)));
+    const activeEntries = archiveRemovedHallRoutes(storedEntries);
 
-    if (removedHallEntries.length) {
-      const additions = removedHallEntries.map(entry => ({
-        id: entry.id,
-        archivedAt: new Date().toISOString(),
-        route: serializeEntry(entry)
-      }));
-      appState.profile.routeArchive = mergeRouteArchiveRecords(
-        appState.profile.routeArchive,
-        additions
-      );
-      persistProfile(false);
-    }
-
-    // Removed Hallenrouten stay in storage only as archived historical records.
-    const entriesForMerge = storedEntries.map(entry =>
-      removedHallIds.has(String(entry.id))
-        ? { ...entry, archived: true }
-        : entry
-    );
-
-    // Persist the current Hallenliste immediately. This creates the baseline
-    // required to detect the next replacement/removal even if the user makes
-    // no manual route changes in between.
-    const mergedEntries = mergeRouteEntries(entriesForMerge);
+    // Nur aktive Routen werden in die sichtbare Hallenliste gemerged.
+    // Entfernte Hallenrouten bleiben ausschließlich im routeArchive erhalten.
+    const mergedEntries = mergeRouteEntries(activeEntries);
     const persistedEntries = mergedEntries
       .filter(entry => entry.source === 'hall' || shouldPersistEntry(entry))
       .map(serializeEntry);
@@ -217,9 +233,7 @@ async function writeCloudSnapshot() {
     return;
   }
 
-  const persistedEntries = appState.routeEntries
-    .filter(entry => entry.source === 'hall' || shouldPersistEntry(entry))
-    .map(serializeEntry);
+  const persistedEntries = appState.routeEntries.filter(shouldPersistEntry).map(serializeEntry);
   appState.syncStatus = 'syncing';
   renderSettingsModal();
 
