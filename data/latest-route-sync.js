@@ -1,5 +1,5 @@
 window.TIVOLI_ROUTE_SYNC = {
-  "generatedAt": "2026-09-21T08:58:50.477Z",
+  "generatedAt": "2026-09-22T08:34:06.820Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
   "sourceName": "Jina Reader",
   "totalRoutes": 146,
