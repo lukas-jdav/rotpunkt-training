@@ -1,18 +1,227 @@
 window.TIVOLI_ROUTE_SYNC = {
-  "generatedAt": "2026-10-07T10:17:35.295Z",
+  "generatedAt": "2026-10-08T10:37:02.783Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
   "sourceName": "Jina Reader",
-  "totalRoutes": 145,
-  "hasChanges": false,
-  "changeId": "",
+  "totalRoutes": 142,
+  "hasChanges": true,
+  "changeId": "7d8bc167",
   "summary": {
-    "added": 0,
+    "added": 10,
     "updated": 0,
-    "removed": 0
+    "removed": 13
   },
   "changes": {
-    "added": [],
+    "added": [
+      {
+        "location": "5.1",
+        "difficulty": "3",
+        "name": "Safari",
+        "set_at": "2026-09-12 12:00:00 UTC",
+        "routesetter": "Julius Dammann",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "5.2",
+        "difficulty": "6+",
+        "name": "Rampe ohne Hände",
+        "set_at": "2026-10-03 12:00:00 UTC",
+        "routesetter": "N/A ",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "5.3",
+        "difficulty": "6-",
+        "name": "Warwohlnix",
+        "set_at": "2026-09-30 12:00:00 UTC",
+        "routesetter": "Enno van gen Haßend",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "6.1",
+        "difficulty": "4",
+        "name": "Nicht hinschauen",
+        "set_at": "2026-09-19 12:00:00 UTC",
+        "routesetter": "Philipp Colditz",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "6.2",
+        "difficulty": "7-",
+        "name": "Black Mamba",
+        "set_at": "2026-09-19 12:00:00 UTC",
+        "routesetter": "Julius Dammann",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "6.3",
+        "difficulty": "6-",
+        "name": "Bugaboo Spire",
+        "set_at": "2026-09-23 10:21:24 UTC",
+        "routesetter": "N/A ",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "35.1",
+        "difficulty": "5-",
+        "name": "Schattenkante",
+        "set_at": "2026-10-03 12:00:00 UTC",
+        "routesetter": "Philipp Colditz",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "35.2",
+        "difficulty": "6",
+        "name": "Kurzsichtig",
+        "set_at": "2026-10-03 12:00:00 UTC",
+        "routesetter": "Philipp Colditz",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "55.1",
+        "difficulty": "6",
+        "name": "Trainspotting",
+        "set_at": "2026-10-05 12:00:00 UTC",
+        "routesetter": "Silas Pollmann",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "55.2",
+        "difficulty": "4+",
+        "name": "Out In The Green",
+        "set_at": "2026-10-05 12:00:00 UTC",
+        "routesetter": "Silas Pollmann",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      }
+    ],
     "updated": [],
-    "removed": []
+    "removed": [
+      {
+        "location": "5.1",
+        "difficulty": "3",
+        "name": "Blue",
+        "set_at": "2026-09-12 12:00:00 UTC",
+        "routesetter": "N/A ",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "6.1",
+        "difficulty": "4",
+        "name": "Pink",
+        "set_at": "2026-09-19 12:00:00 UTC",
+        "routesetter": "N/A ",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "6.2",
+        "difficulty": "6+",
+        "name": "Black",
+        "set_at": "2026-09-19 12:00:00 UTC",
+        "routesetter": "N/A ",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "6.3",
+        "difficulty": "5+",
+        "name": "Green",
+        "set_at": "2026-09-23 10:21:24 UTC",
+        "routesetter": "N/A ",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "35.1",
+        "difficulty": "5-",
+        "name": "Sturm",
+        "set_at": "2026-01-03 12:00:00 UTC",
+        "routesetter": "Dominik Schuler",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "35.2",
+        "difficulty": "5+",
+        "name": "Frisch gestrichen",
+        "set_at": "2026-01-27 12:00:00 UTC",
+        "routesetter": "Jochen Schäfer",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "35.3",
+        "difficulty": "7",
+        "name": "Oben schwer, doof!",
+        "set_at": "2026-04-02 11:24:36 UTC",
+        "routesetter": "Jochen Schäfer",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "55.1",
+        "difficulty": "6-",
+        "name": "Pizza süß-sauer",
+        "set_at": "2025-12-29 12:00:00 UTC",
+        "routesetter": "Linus Baltes",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "55.2",
+        "difficulty": "7+",
+        "name": "CARLO war hier",
+        "set_at": "2026-01-08 12:04:02 UTC",
+        "routesetter": "Julius Dammann",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "55.3",
+        "difficulty": "5",
+        "name": "Black",
+        "set_at": "2026-03-31 12:00:00 UTC",
+        "routesetter": "Silas Pollmann",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "56.1",
+        "difficulty": "6",
+        "name": "Normalweg",
+        "set_at": "2026-01-03 12:00:00 UTC",
+        "routesetter": "Dominik Schuler",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "56.3",
+        "difficulty": "7",
+        "name": "Aaron's Weg",
+        "set_at": "2026-01-12 15:58:52 UTC",
+        "routesetter": "N/A ",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "56.4",
+        "difficulty": "7+",
+        "name": "Kraftfutter",
+        "set_at": "2026-01-14 14:08:01 UTC",
+        "routesetter": "Jochen Schäfer",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      }
+    ]
   }
 };
