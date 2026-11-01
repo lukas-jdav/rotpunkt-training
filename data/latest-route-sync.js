@@ -1,18 +1,74 @@
 window.TIVOLI_ROUTE_SYNC = {
-  "generatedAt": "2026-10-31T09:40:28.901Z",
+  "generatedAt": "2026-11-01T10:29:08.970Z",
   "sourceUrl": "https://www.8a.nu/gyms/badminton-kletterhalle-tivoli/topos/sportclimbing",
   "sourceName": "Jina Reader",
-  "totalRoutes": 146,
-  "hasChanges": false,
-  "changeId": "",
+  "totalRoutes": 148,
+  "hasChanges": true,
+  "changeId": "c54917cf",
   "summary": {
-    "added": 0,
+    "added": 4,
     "updated": 0,
-    "removed": 0
+    "removed": 2
   },
   "changes": {
-    "added": [],
+    "added": [
+      {
+        "location": "55.3",
+        "difficulty": "7+/8-",
+        "name": "Maya's Frust",
+        "set_at": "2026-10-23 12:00:00 UTC",
+        "routesetter": "Dominik Schuler",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "56.1",
+        "difficulty": "8-",
+        "name": "Cross Off",
+        "set_at": "2026-10-31 21:07:10 UTC",
+        "routesetter": "Laurin Ebert",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "56.2",
+        "difficulty": "4",
+        "name": "Covid",
+        "set_at": "2026-10-23 12:00:00 UTC",
+        "routesetter": "Dominik Schuler",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "56.3",
+        "difficulty": "6",
+        "name": "Free Fall",
+        "set_at": "2026-10-20 12:00:00 UTC",
+        "routesetter": "Silas Pollmann",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      }
+    ],
     "updated": [],
-    "removed": []
+    "removed": [
+      {
+        "location": "5.2",
+        "difficulty": "6+",
+        "name": "Rampe ohne Hände",
+        "set_at": "2026-10-03 12:00:00 UTC",
+        "routesetter": "N/A ",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      },
+      {
+        "location": "56.2",
+        "difficulty": "4",
+        "name": "Marmor",
+        "set_at": "2026-01-08 12:04:31 UTC",
+        "routesetter": "Flo Weikert",
+        "area": "Sportklettern Empore",
+        "sector": "Empore"
+      }
+    ]
   }
 };
